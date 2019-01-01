@@ -25,7 +25,7 @@ public class DropNormalColumn extends ColumnOperation
 	protected void Down()
 	{
 		CreateNormalColumn tempVar = new CreateNormalColumn();
-		tempVar.setCopyFrom(this);
+		tempVar.copyFrom(this);
 		tempVar.setIsPrimaryKey(this.getIsPrimaryKey());
 		tempVar.setIsIdentity(this.getIsIdentity());
 		this.AddOperation(tempVar);

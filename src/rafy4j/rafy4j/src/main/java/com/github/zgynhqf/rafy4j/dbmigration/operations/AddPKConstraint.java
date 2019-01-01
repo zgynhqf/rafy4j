@@ -6,7 +6,7 @@ public class AddPKConstraint extends ColumnOperation
 	protected void Down()
 	{
 		RemovePKConstraint tempVar = new RemovePKConstraint();
-		tempVar.setCopyFrom(this);
+		tempVar.copyFrom(this);
 		this.AddOperation(tempVar);
 	}
 }

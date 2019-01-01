@@ -146,7 +146,6 @@ public class ModelDiffer {
     }
 
     private boolean equals(Column a, Column b) {
-        //a.DataType == b.DataType &&
         if (a.getTable().getName().equalsIgnoreCase(b.getTable().getName()) &&
                 a.getName().equalsIgnoreCase(b.getName()) &&
                 dbTypeConverter.IsCompatible(a.getDbType(), b.getDbType()) &&

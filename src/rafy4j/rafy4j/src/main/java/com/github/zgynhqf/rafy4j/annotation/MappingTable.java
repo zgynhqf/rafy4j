@@ -26,5 +26,5 @@ public @interface MappingTable {
      *
      * @return
      */
-    boolean mapAllPropertiesToColumn() default true;
+    boolean mapAllFieldsToColumn() default true;
 }

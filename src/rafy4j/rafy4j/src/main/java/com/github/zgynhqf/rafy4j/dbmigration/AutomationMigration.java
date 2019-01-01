@@ -157,7 +157,7 @@ public class AutomationMigration {
 
     private void AddColumn(Column column) {
         CreateNormalColumn tempVar = new CreateNormalColumn();
-        tempVar.setCopyFromColumn(column);
+        tempVar.copyFromColumn(column);
         tempVar.setIsPrimaryKey(column.isPrimaryKey());
         tempVar.setIsIdentity(column.isIdentity());
         this.AddOperation(tempVar);
@@ -165,7 +165,7 @@ public class AutomationMigration {
         //自增列必然是不可空的，在创建列时已经同时把不可空约束给创建好了，所以这里不需要重复添加了。
         if (column.isRequired() && !column.isIdentity()) {
             AddNotNullConstraint constraint = new AddNotNullConstraint();
-            constraint.setCopyFromColumn(column);
+            constraint.copyFromColumn(column);
             this.AddOperation(constraint);
         }
 
@@ -196,12 +196,12 @@ public class AutomationMigration {
             //所以当表的主键名称不是 id 的时候不能走 RemoveNotNullConstraint 这个方法。
             if (column.isRequired() && !column.getName().equalsIgnoreCase(EntityConvention.IdColumnName)) {
                 RemoveNotNullConstraint tempVar2 = new RemoveNotNullConstraint();
-                tempVar2.setCopyFromColumn(column);
+                tempVar2.copyFromColumn(column);
                 this.AddOperation(tempVar2);
             }
 
             DropNormalColumn tempVar3 = new DropNormalColumn();
-            tempVar3.setCopyFromColumn(column);
+            tempVar3.copyFromColumn(column);
             tempVar3.setIsPrimaryKey(column.isPrimaryKey());
             tempVar3.setIsIdentity(column.isIdentity());
             this.AddOperation(tempVar3);
@@ -212,7 +212,7 @@ public class AutomationMigration {
         //数据类型
         if (columnChanges.getIsDbTypeChanged()) {
             AlterColumnType op = new AlterColumnType();
-            op.setCopyFromColumn(columnChanges.getOldColumn());
+            op.copyFromColumn(columnChanges.getOldColumn());
             op.setNewType(columnChanges.getNewColumn().getDbType());
             op.setIsRequired(columnChanges.getOldColumn().isRequired());
             this.AddOperation(op);
@@ -223,11 +223,11 @@ public class AutomationMigration {
             Column column = columnChanges.getNewColumn();
             if (column.isPrimaryKey()) {
                 AddPKConstraint constraint = new AddPKConstraint();
-                constraint.setCopyFromColumn(column);
+                constraint.copyFromColumn(column);
                 this.AddOperation(constraint);
             } else {
                 RemovePKConstraint constraint = new RemovePKConstraint();
-                constraint.setCopyFromColumn(column);
+                constraint.copyFromColumn(column);
                 this.AddOperation(constraint);
             }
         }
@@ -247,21 +247,21 @@ public class AutomationMigration {
         if (columnChanges.getNewColumn().isRequired()) {
             if (columnChanges.getOldColumn().isForeignKey()) {
                 AddNotNullConstraintFK op = new AddNotNullConstraintFK();
-                op.setCopyFromColumn(columnChanges.getNewColumn());
+                op.copyFromColumn(columnChanges.getNewColumn());
                 this.AddOperation(op);
             } else {
                 AddNotNullConstraint op = new AddNotNullConstraint();
-                op.setCopyFromColumn(columnChanges.getNewColumn());
+                op.copyFromColumn(columnChanges.getNewColumn());
                 this.AddOperation(op);
             }
         } else {
             if (columnChanges.getOldColumn().isForeignKey()) {
                 RemoveNotNullConstraintFK op = new RemoveNotNullConstraintFK();
-                op.setCopyFromColumn(columnChanges.getNewColumn());
+                op.copyFromColumn(columnChanges.getNewColumn());
                 this.AddOperation(op);
             } else {
                 RemoveNotNullConstraint op = new RemoveNotNullConstraint();
-                op.setCopyFromColumn(columnChanges.getNewColumn());
+                op.copyFromColumn(columnChanges.getNewColumn());
                 this.AddOperation(op);
             }
         }

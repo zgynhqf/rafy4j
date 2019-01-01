@@ -34,6 +34,10 @@ public class Column {
      * 列名
      */
     private String name;
+    /**
+     * 默认值。
+     */
+    private String defaultValue;
 
     /**
      * Initializes a new instance of the <see cref="Column"/> class.
@@ -136,6 +140,14 @@ public class Column {
 
     public final void setComment(String value) {
         comment = value;
+    }
+
+    public String getDefaultValue() {
+        return defaultValue;
+    }
+
+    public void setDefaultValue(String defaultValue) {
+        this.defaultValue = defaultValue;
     }
     //endregion
 

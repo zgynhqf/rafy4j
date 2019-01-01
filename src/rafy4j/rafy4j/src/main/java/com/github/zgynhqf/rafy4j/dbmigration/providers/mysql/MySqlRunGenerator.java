@@ -32,7 +32,7 @@ public final class MySqlRunGenerator extends SqlRunGenerator {
             sql.write(" MODIFY ");
 
             sql.plusIndent();
-            this.GenerateColumnDeclaration(sql, op.getColumnName(), op.getDbType(), op.getLength(), true, op.getIsForeignKey());
+            this.GenerateColumnDeclaration(sql, op.getColumnName(), op.getDbType(), op.getLength(), true, op.getIsForeignKey(), op.getDefaultValue());
 
             this.AddRun(sql);
         }
@@ -216,7 +216,7 @@ public final class MySqlRunGenerator extends SqlRunGenerator {
             sql.writeLine(this.Quote(op.getTableName()));
             sql.writeLine("(");
             sql.plusIndent();
-            this.GenerateColumnDeclaration(sql, op.getPKName(), op.getPKDbType(), op.getPKLength(), true, true);
+            this.GenerateColumnDeclaration(sql, op.getPKName(), op.getPKDbType(), op.getPKLength(), true, true, null);
             if (op.getPKIdentity()) {
                 sql.write(" auto_increment");
             }
@@ -244,7 +244,7 @@ public final class MySqlRunGenerator extends SqlRunGenerator {
             sql.plusIndent();
             sql.write("MODIFY ");
 
-            this.GenerateColumnDeclaration(sql, op.getColumnName(), op.getNewType(), op.getLength(), op.getIsRequired(), op.getIsForeignKey());
+            this.GenerateColumnDeclaration(sql, op.getColumnName(), op.getNewType(), op.getLength(), op.getIsRequired(), op.getIsForeignKey(), op.getDefaultValue());
 
             this.AddRun(sql);
         }
@@ -266,7 +266,7 @@ public final class MySqlRunGenerator extends SqlRunGenerator {
 
             sql.plusIndent();
             sql.write("ADD ");
-            this.GenerateColumnDeclaration(sql, op.getColumnName(), op.getDbType(), op.getLength(), false, op.getIsForeignKey());
+            this.GenerateColumnDeclaration(sql, op.getColumnName(), op.getDbType(), op.getLength(), false, op.getIsForeignKey(), op.getDefaultValue());
 
             this.AddRun(sql);
         }
@@ -286,7 +286,7 @@ public final class MySqlRunGenerator extends SqlRunGenerator {
 
             sql.plusIndent();
             sql.write("MODIFY ");
-            this.GenerateColumnDeclaration(sql, op.getColumnName(), op.getDbType(), op.getLength(), false, op.getIsForeignKey());
+            this.GenerateColumnDeclaration(sql, op.getColumnName(), op.getDbType(), op.getLength(), false, op.getIsForeignKey(), op.getDefaultValue());
 
             this.AddRun(sql);
         }

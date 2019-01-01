@@ -6,7 +6,7 @@ public class RemoveNotNullConstraintFK extends ColumnOperation
 	protected void Down()
 	{
 		AddNotNullConstraintFK tempVar = new AddNotNullConstraintFK();
-		tempVar.setCopyFrom(this);
+		tempVar.copyFrom(this);
 		this.AddOperation(tempVar);
 	}
 }

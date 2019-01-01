@@ -8,56 +8,68 @@ import java.sql.JDBCType;
 public abstract class ColumnOperation extends MigrationOperation
 {
 	private String privateTableName;
-	public final String getTableName()
-	{
-		return privateTableName;
-	}
-	public final void setTableName(String value)
-	{
-		privateTableName = value;
-	}
-
 	private String privateColumnName;
-	public final String getColumnName()
-	{
-		return privateColumnName;
-	}
-	public final void setColumnName(String value)
-	{
-		privateColumnName = value;
-	}
-
 	private JDBCType privateDbType;
-	public final JDBCType getDbType()
-	{
-		return privateDbType;
-	}
-	public final void setDbType(JDBCType value)
-	{
-		privateDbType = value;
-	}
-
 	private String privateLength;
-	public final String getLength()
-	{
-		return privateLength;
-	}
-	public final void setLength(String value)
-	{
-		privateLength = value;
-	}
-
 	private boolean privateIsForeignKey;
-	public final boolean getIsForeignKey()
-	{
-		return privateIsForeignKey;
-	}
+	private String defaultValue;
+
+    //region gs
+    public final String getTableName()
+    {
+        return privateTableName;
+    }
+    public final void setTableName(String value)
+    {
+        privateTableName = value;
+    }
+
+    public final String getColumnName()
+    {
+        return privateColumnName;
+    }
+    public final void setColumnName(String value)
+    {
+        privateColumnName = value;
+    }
+
+    public final JDBCType getDbType()
+    {
+        return privateDbType;
+    }
+    public final void setDbType(JDBCType value)
+    {
+        privateDbType = value;
+    }
+
+    public final String getLength()
+    {
+        return privateLength;
+    }
+    public final void setLength(String value)
+    {
+        privateLength = value;
+    }
+
+    public final boolean getIsForeignKey()
+    {
+        return privateIsForeignKey;
+    }
 	public final void setIsForeignKey(boolean value)
 	{
 		privateIsForeignKey = value;
 	}
 
-	public final void setCopyFromColumn(Column value)
+    public String getDefaultValue() {
+        return defaultValue;
+    }
+
+    public void setDefaultValue(String defaultValue) {
+        this.defaultValue = defaultValue;
+    }
+    //endregion
+
+	public final void copyFromColumn(Column value)
 	{
 		if (value != null)
 		{
@@ -66,10 +78,11 @@ public abstract class ColumnOperation extends MigrationOperation
 			this.setDbType(value.getDbType());
 			this.setLength(value.getLength());
 			this.setIsForeignKey(value.isForeignKey());
+			this.setDefaultValue(value.getDefaultValue());
 		}
 	}
 
-	public final void setCopyFrom(ColumnOperation value)
+	public final void copyFrom(ColumnOperation value)
 	{
 		if (value != null)
 		{
@@ -78,7 +91,8 @@ public abstract class ColumnOperation extends MigrationOperation
 			this.setDbType(value.getDbType());
 			this.setLength(value.getLength());
 			this.setIsForeignKey(value.getIsForeignKey());
-		}
+            this.setDefaultValue(value.getDefaultValue());
+        }
 	}
 
 	@Override

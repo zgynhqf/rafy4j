@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Configuration;
  **/
 @Configuration
 public class TestConfig {
-    public static final String MAIN_DBSETTING = "mybatis_dbupdater_test";
+    public static final String MAIN_DBSETTING = "test_rafy4j";
 
 //    @Bean
 //    public DbSettingRepository dbSettingRepository(){

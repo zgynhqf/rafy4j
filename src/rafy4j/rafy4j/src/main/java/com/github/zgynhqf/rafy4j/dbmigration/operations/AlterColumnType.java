@@ -26,7 +26,7 @@ public class AlterColumnType extends ColumnOperation {
     @Override
     protected void Down() {
         AlterColumnType tempVar = new AlterColumnType();
-        tempVar.setCopyFrom(this);
+        tempVar.copyFrom(this);
         tempVar.setIsRequired(this.getIsRequired());
         tempVar.setDbType(this.getNewType());
         tempVar.setNewType(this.getDbType());

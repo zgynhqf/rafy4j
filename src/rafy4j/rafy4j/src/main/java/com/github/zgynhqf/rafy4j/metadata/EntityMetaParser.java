@@ -45,7 +45,7 @@ public class EntityMetaParser {
             meta.setTableName(name);
         }
 
-        meta.setMapAllFieldsToColumn(annotation.mapAllPropertiesToColumn());
+        meta.setMapAllFieldsToColumn(annotation.mapAllFieldsToColumn());
 
         parseProperties(meta, type);
 
@@ -67,6 +67,11 @@ public class EntityMetaParser {
                 if (columnAnnotation != null) {
                     fieldMeta.setColumnName(columnAnnotation.name());
                     fieldMeta.setColumnLength(columnAnnotation.length());
+//                    fieldMeta.setColumnType(columnAnnotation.type());
+//                    fieldMeta.setIsNullable(columnAnnotation.isNullable());
+//                    fieldMeta.setIsPrimaryKey(columnAnnotation.isKey());
+//                    fieldMeta.setIsAutoIncrement(columnAnnotation.isAutoIncrement());
+                    fieldMeta.setDefaultValue(columnAnnotation.defaultValue());
                 }
 
                 if (StringUtils.isBlank(fieldMeta.getColumnName())) {

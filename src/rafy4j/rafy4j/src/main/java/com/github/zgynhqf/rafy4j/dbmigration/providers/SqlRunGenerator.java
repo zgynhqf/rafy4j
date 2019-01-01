@@ -182,8 +182,11 @@ public abstract class SqlRunGenerator extends RunGenerator {
      * @param length     The length.
      * @param isRequired if set to <c>true</c> [is required].
      * @param isPKorFK   在没有给出字段长度的情况下，如果这个字段是一个主键或外键，则需要自动限制它的长度。
+     * @param defaultValue 默认值。
      */
-    protected final void GenerateColumnDeclaration(IndentedTextWriter sql, String columnName, JDBCType dataType, String length, Boolean isRequired, boolean isPKorFK) {
+    protected final void GenerateColumnDeclaration(
+            IndentedTextWriter sql, String columnName, JDBCType dataType, String length, Boolean isRequired, boolean isPKorFK, String defaultValue
+    ) {
         if (StringUtils.isBlank(length)) {
             if (isPKorFK) {
                 //http://stackoverflow.com/questions/2863993/is-of-a-type-that-is-invalid-for-use-as-a-key-column-in-an-index
@@ -202,6 +205,11 @@ public abstract class SqlRunGenerator extends RunGenerator {
                 sql.write(" NOT");
             }
             sql.write(" NULL");
+        }
+
+        if (!StringUtils.isBlank(defaultValue)){
+            sql.write(" DEFAULT ");
+            sql.write(defaultValue);
         }
     }
 

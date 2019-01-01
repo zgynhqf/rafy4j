@@ -9,11 +9,9 @@ import lombok.Data;
  **/
 @Data
 @MappingTable
-//@Table(name = "user")
 public class User {
-//    @Column(name = "id", type = MySqlTypeConstant.BIGINT, length = 20, isKey = true, isAutoIncrement = true)
-    private int id;
-//    @Column(name = "name", type = MySqlTypeConstant.VARCHAR)
+    private long id;
     private String name;
-//    private String code;
+    private int age;
+    private boolean isRejected;
 }
