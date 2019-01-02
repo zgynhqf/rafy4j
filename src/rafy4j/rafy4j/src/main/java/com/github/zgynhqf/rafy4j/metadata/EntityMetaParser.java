@@ -17,9 +17,12 @@ import java.util.List;
  * @date: 2018-12-30 22:09
  **/
 public class EntityMetaParser {
+    /**
+     * 是否映射驼峰到下划线。
+     */
     private boolean mapCamelToUnderline = true;
 
-    //region properties
+    //region gs
     public boolean isMapCamelToUnderline() {
         return mapCamelToUnderline;
     }
@@ -29,6 +32,11 @@ public class EntityMetaParser {
     }
     //endregion
 
+    /**
+     * 通过反射，来解析指定的类型所对应的关键元数据。
+     * @param type
+     * @return
+     */
     public EntityMeta parse(Class<?> type) {
         EntityMeta meta = new EntityMeta();
 

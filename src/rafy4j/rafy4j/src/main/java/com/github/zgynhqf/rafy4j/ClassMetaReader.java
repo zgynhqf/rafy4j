@@ -23,7 +23,7 @@ import java.util.Set;
 /**
  * 从 Rafy 元数据中读取整个数据库的元数据。
  */
-public class ClassMetaReader implements IDestinationDatabaseReader {
+public class ClassMetaReader implements DestinationDatabaseReader {
     private DbSetting _dbSetting;
     /**
      * 需要忽略的表的表名的集合。

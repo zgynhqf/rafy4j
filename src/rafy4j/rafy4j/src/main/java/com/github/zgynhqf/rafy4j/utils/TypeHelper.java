@@ -10,6 +10,7 @@ import java.util.*;
 import java.util.function.Function;
 
 /**
+ * 反射辅助类型。
  * @author: huqingfang
  * @date: 2018-12-26 01:40
  **/

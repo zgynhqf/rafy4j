@@ -3,6 +3,7 @@ package com.github.zgynhqf.rafy4j.utils;
 import org.springframework.util.StringUtils;
 
 /**
+ * 命名工具类。
  * @author: huqingfang
  * @date: 2018-12-25 20:05
  **/
@@ -34,7 +35,6 @@ public class NameUtils {
         }
         return sb.toString();
     }
-
 
     /**
      * <p>

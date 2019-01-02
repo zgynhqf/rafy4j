@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * 实体元数据。
  * @author: huqingfang
  * @date: 2018-12-30 19:17
  **/
@@ -25,7 +26,6 @@ public class EntityMeta {
     public boolean isMappingTable() {
         return !StringUtils.isBlank(tableName);
     }
-
 
     //region gs
     public List<EntityFieldMeta> getFields() {

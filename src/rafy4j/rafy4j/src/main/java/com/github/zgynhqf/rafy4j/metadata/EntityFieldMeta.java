@@ -7,6 +7,7 @@ import java.lang.reflect.Field;
 import java.sql.JDBCType;
 
 /**
+ * 实体字段的元数据。
  * @author: huqingfang
  * @date: 2018-12-30 22:04
  **/

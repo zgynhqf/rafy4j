@@ -22,6 +22,12 @@ import java.util.jar.JarFile;
  * @date: 2018-12-25 16:48
  */
 public class TypesSearcher {
+    /**
+     * 通过指定的包，来获取其下的所有类型。
+     *
+     * @param packages
+     * @return
+     */
     public static Set<Class<?>> getClasses(String... packages) {
         Set<Class<?>> classes = new HashSet<>();
         for (int i = 0; i < packages.length; i++) {

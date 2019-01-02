@@ -18,6 +18,7 @@ public class AnnotationHelper {
      * @return
      */
     public static <A extends Annotation> A findAnnotation(AnnotatedElement annotatedElement, Class<A> annotationType) {
+        //目前通过 Spring 中自带的 AnnotationUtils 来实现。
         return AnnotationUtils.findAnnotation(annotatedElement, annotationType);
     }
 }
