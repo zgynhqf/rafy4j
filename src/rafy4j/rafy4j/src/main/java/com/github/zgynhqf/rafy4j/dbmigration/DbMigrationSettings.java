@@ -15,7 +15,7 @@ public final class DbMigrationSettings {
     public static String PKFKDbTypeLength = "40";
 
     /**
-     * 可设置所有一般字符串字段的默认长度。默认为 2000。
+     * 可设置所有一般字符串字段的默认长度。默认为 255。
      */
-    public static String StringColumnDbTypeLength = "2000";
+    public static String StringColumnDbTypeLength = "255";
 }

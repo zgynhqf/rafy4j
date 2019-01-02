@@ -15,9 +15,9 @@ public class EntityFieldMeta {
     private String columnName;
     private String columnType;
     private String columnLength;
-    private OptionalBoolean isNullable;
-    private OptionalBoolean isPrimaryKey;
-    private OptionalBoolean isAutoIncrement;
+    private OptionalBoolean isNullable = OptionalBoolean.ANY;
+    private OptionalBoolean isPrimaryKey = OptionalBoolean.ANY;
+    private OptionalBoolean isAutoIncrement = OptionalBoolean.ANY;
     private String defaultValue;
 
     /**

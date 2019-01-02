@@ -205,9 +205,9 @@ public final class MySqlRunGenerator extends SqlRunGenerator {
     @Override
     protected void Generate(CreateTable op) {
         if (StringUtils.isBlank(op.getPKName())) {
-            GenerationExceptionRun tempVar = new GenerationExceptionRun();
-            tempVar.setMessage("暂时不支持生成没有主键的表：" + op.getTableName());
-            this.AddRun(tempVar);
+            GenerationExceptionRun exceptionRun = new GenerationExceptionRun();
+            exceptionRun.setMessage("暂时不支持生成没有主键的表：" + op.getTableName());
+            this.AddRun(exceptionRun);
             return;
         }
 
@@ -217,7 +217,7 @@ public final class MySqlRunGenerator extends SqlRunGenerator {
             sql.writeLine("(");
             sql.plusIndent();
             this.GenerateColumnDeclaration(sql, op.getPKName(), op.getPKDbType(), op.getPKLength(), true, true, null);
-            if (op.getPKIdentity()) {
+            if (op.isPKAutoIncrement()) {
                 sql.write(" auto_increment");
             }
             sql.write(" primary key");
@@ -257,7 +257,7 @@ public final class MySqlRunGenerator extends SqlRunGenerator {
      */
     @Override
     protected void Generate(CreateNormalColumn op) {
-        if (op.getIsIdentity()) throw new NotImplementedException("mysql 数据库不支持创建自增列!");
+        if (op.isAutoIncrement()) throw new NotImplementedException("mysql 数据库不支持创建自增列!");
 
         try (IndentedTextWriter sql = this.Writer()) {
             sql.write("ALTER TABLE ");

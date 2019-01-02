@@ -1,6 +1,6 @@
 package com.github.zgynhqf.rafy4j.dbmigration.providers.mysql.run;
 
-import com.github.zgynhqf.rafy4j.data.IDbAccesser;
+import com.github.zgynhqf.rafy4j.data.DbAccesser;
 import com.github.zgynhqf.rafy4j.dbmigration.MigrationRun;
 
 /**
@@ -26,7 +26,7 @@ public final class MySqlChangeDbMigrationRun extends MigrationRun {
      * @param db 数据库访问对象
      */
     @Override
-    protected void RunCore(IDbAccesser db) {
+    protected void RunCore(DbAccesser db) {
         db.ExecuteText("USE " + this.getDatabase() + ";");
     }
 }

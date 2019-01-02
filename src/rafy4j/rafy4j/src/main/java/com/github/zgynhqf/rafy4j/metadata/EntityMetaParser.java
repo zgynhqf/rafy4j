@@ -68,9 +68,9 @@ public class EntityMetaParser {
                     fieldMeta.setColumnName(columnAnnotation.name());
                     fieldMeta.setColumnLength(columnAnnotation.length());
 //                    fieldMeta.setColumnType(columnAnnotation.type());
-//                    fieldMeta.setIsNullable(columnAnnotation.isNullable());
-//                    fieldMeta.setIsPrimaryKey(columnAnnotation.isKey());
-//                    fieldMeta.setIsAutoIncrement(columnAnnotation.isAutoIncrement());
+                    fieldMeta.setIsNullable(columnAnnotation.isNullable());
+                    fieldMeta.setIsPrimaryKey(columnAnnotation.isKey());
+                    fieldMeta.setIsAutoIncrement(columnAnnotation.isAutoIncrement());
                     fieldMeta.setDefaultValue(columnAnnotation.defaultValue());
                 }
 

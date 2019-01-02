@@ -8,7 +8,10 @@ public class MySqlIdentifierQuoter extends DbIdentifierQuoter {
     private MySqlIdentifierQuoter() {
     }
 
-    private static final int IDENTIFIER_MAX_LENGTH = 30;
+    /**
+     * https://blog.csdn.net/jiangzc86/article/details/16817589
+     */
+    private static final int IDENTIFIER_MAX_LENGTH = 64;
 
     @Override
     public char getQuoteStart() {

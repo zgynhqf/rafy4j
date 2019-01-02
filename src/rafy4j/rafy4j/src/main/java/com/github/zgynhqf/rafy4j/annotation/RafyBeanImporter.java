@@ -13,13 +13,13 @@ import org.springframework.core.type.AnnotationMetadata;
  * @author: huqingfang
  * @date: 2018-12-30 14:31
  **/
-public class RafyBeanImporter implements ImportBeanDefinitionRegistrar, BeanFactoryAware {
+class RafyBeanImporter implements ImportBeanDefinitionRegistrar, BeanFactoryAware {
     @Override
     public void registerBeanDefinitions(AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry) {
-        registry.registerBeanDefinition(RafyConfig.class.getName(), new GenericBeanDefinition(){{
+        registry.registerBeanDefinition(RafyConfig.class.getName(), new GenericBeanDefinition() {{
             setBeanClass(RafyConfig.class);
         }});
-        RafyEnvironment.setRegistry(registry);
+        RafyEnvironment.setBeanDefinitionRegistry(registry);
     }
 
     @Override

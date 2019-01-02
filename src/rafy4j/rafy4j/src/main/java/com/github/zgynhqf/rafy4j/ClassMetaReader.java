@@ -12,6 +12,7 @@ import com.github.zgynhqf.rafy4j.metadata.EntityMetaParser;
 import com.github.zgynhqf.rafy4j.utils.AnnotationHelper;
 import com.github.zgynhqf.rafy4j.utils.TypeHelper;
 import com.github.zgynhqf.rafy4j.utils.TypesSearcher;
+import com.sun.javafx.scene.control.behavior.OptionalBoolean;
 
 import java.lang.reflect.Modifier;
 import java.sql.JDBCType;
@@ -111,10 +112,10 @@ public class ClassMetaReader implements IDestinationDatabaseReader {
         if (tableEntityTypes.isEmpty()) {
             result.setRemoved(true);
         } else {
-            TypesMetaReader reader = new TypesMetaReader();
+            TypesMetaReader reader = this.createTypesMetaReader();
             reader._dbTypeConverter = DbMigrationProviderFactory.GetDbTypeConverter(_dbSetting.getDriverName());
-            reader.Database = result;
-            reader.Entities = tableEntityTypes;
+            reader.database = result;
+            reader.entities = tableEntityTypes;
 //            reader.setReadComment(this.getReadComment());
             reader.setIsGeneratingForeignKey(this.isGeneratingForeignKey());
 //            reader.setAdditionalPropertiesComments(this.getAdditionalPropertiesComments());
@@ -122,6 +123,10 @@ public class ClassMetaReader implements IDestinationDatabaseReader {
         }
 
         return result;
+    }
+
+    protected TypesMetaReader createTypesMetaReader() {
+        return new TypesMetaReader();
     }
 
     private List<EntityMeta> GetMappingEntityTypes() {
@@ -145,13 +150,13 @@ public class ClassMetaReader implements IDestinationDatabaseReader {
         return tableEntityTypes;
     }
 
-    private static class TypesMetaReader {
-        public DbTypeConverter _dbTypeConverter;
-        public DestinationDatabase Database;
-        public List<EntityMeta> Entities;
+    public static class TypesMetaReader {
+        private DbTypeConverter _dbTypeConverter;
+        private DestinationDatabase database;
+        private List<EntityMeta> entities;
         private boolean _isGeneratingForeignKey = true;
         /**
-         * 临时存储在这个列表中，最后再整合到 Database 中。
+         * 临时存储在这个列表中，最后再整合到 database 中。
          */
         private List<ForeignConstraintInfo> _foreigns = new ArrayList<>();
 
@@ -200,7 +205,7 @@ public class ClassMetaReader implements IDestinationDatabaseReader {
         public final void Read() {
 //            _commentFinder.setAdditionalPropertiesComments(this.getAdditionalPropertiesComments());
 
-            for (EntityMeta meta : Entities) {
+            for (EntityMeta meta : entities) {
                 this.BuildTable(meta);
             }
 
@@ -214,7 +219,7 @@ public class ClassMetaReader implements IDestinationDatabaseReader {
         private void BuildTable(EntityMeta em) {
             if (!em.isMappingTable()) return;
 
-            Table table = new Table(em.getTableName(), this.Database);
+            Table table = new Table(em.getTableName(), this.database);
 
 //            //读取实体的注释
 //            if (_readComment) {
@@ -252,7 +257,7 @@ public class ClassMetaReader implements IDestinationDatabaseReader {
 //                                if (refTableMeta != null) {
 //                                    //如果主键表已经被忽略，那么到这个表上的外键也不能建立了。
 //                                    //这是因为被忽略的表的结构是未知的，不一定是以这个字段为主键。
-//                                    if (!this.Database.IsIgnored(refTableMeta.TableName)) {
+//                                    if (!this.database.IsIgnored(refTableMeta.TableName)) {
 //                                        var id = refTypeMeta.Property(Entity.IdProperty);
 //                                        //有时一些表的 Id 只是自增长，但并不是主键，不能创建外键。
 //                                        if (id.ColumnMeta.IsPrimaryKey) {
@@ -292,18 +297,27 @@ public class ClassMetaReader implements IDestinationDatabaseReader {
 //                var dbType = columnMeta.DbType.GetValueOrDefault(_dbTypeConverter.FromClrType(dataType));
                 JDBCType dbType = _dbTypeConverter.FromClrType(dataType);
                 Column column = new Column(columnName, dbType, fieldMeta.getColumnLength(), table);
-//                if (columnMeta.IsRequired.HasValue) {
-//                    column.IsRequired = columnMeta.IsRequired.getValue();
+                if (fieldMeta.getIsNullable() != OptionalBoolean.ANY) {
+                    column.setRequired(fieldMeta.getIsNullable() == OptionalBoolean.FALSE);
 //                } else {
-                column.setRequired(!isNullableRef && !TypeHelper.IsNullable(fieldType));
-//                }
+//                    column.setRequired(!isNullableRef && !TypeHelper.IsNullable(fieldType));
+                }
                 //IsPrimaryKey 的设置放在 IsRequired 之后，可以防止在设置可空的同时把列调整为非主键。
-                column.setPrimaryKey(column.getName().equalsIgnoreCase(EntityConvention.IdColumnName));
-                column.setIdentity(column.getName().equalsIgnoreCase(EntityConvention.IdColumnName));
-//                column.IsPrimaryKey = columnMeta.IsPrimaryKey;
-//                column.IsIdentity = columnMeta.IsIdentity;
+                if (fieldMeta.getIsPrimaryKey() != OptionalBoolean.ANY) {
+                    column.setPrimaryKey(fieldMeta.getIsPrimaryKey() == OptionalBoolean.TRUE);
+                } else {
+                    column.setPrimaryKey(column.getName().equalsIgnoreCase(EntityConvention.IdColumnName));
+                }
+                if (fieldMeta.getIsAutoIncrement() != OptionalBoolean.ANY) {
+                    column.setAutoIncrement(fieldMeta.getIsAutoIncrement() == OptionalBoolean.TRUE);
+                } else {
+                    column.setAutoIncrement(column.getName().equalsIgnoreCase(EntityConvention.IdColumnName));
+                }
+                column.setDefaultValue(fieldMeta.getDefaultValue());
 
                 table.getColumns().add(column);
+
+                this.onColumnCreated(column, fieldMeta);
 
 //                //读取属性的注释。
 //                if (_readComment) {
@@ -323,12 +337,22 @@ public class ClassMetaReader implements IDestinationDatabaseReader {
         }
 
         /**
+         * 子类可在此方法中重写 column 默认值的一些逻辑。
+         *
+         * @param column
+         * @param fieldMeta
+         */
+        protected void onColumnCreated(Column column, EntityFieldMeta fieldMeta) {
+            //for sub classes
+        }
+
+        /**
          * 将表添加到数据库中，对于已经存在的表进行全并
          *
          * @param table
          */
         private void AddTable(Table table) {
-            Table existingTable = this.Database.FindTable(table.getName());
+            Table existingTable = this.database.FindTable(table.getName());
             if (existingTable != null) {
                 //由于有类的继承关系存在，合并两个表的所有字段。
                 for (Column column : table.getColumns()) {
@@ -336,12 +360,12 @@ public class ClassMetaReader implements IDestinationDatabaseReader {
                         Column newColumn = new Column(column.getName(), column.getDbType(), column.getLength(), existingTable);
                         newColumn.setRequired(column.isRequired());
                         newColumn.setPrimaryKey(column.isPrimaryKey());
-                        newColumn.setIdentity(column.isIdentity());
+                        newColumn.setAutoIncrement(column.isAutoIncrement());
                         existingTable.getColumns().add(newColumn);
                     }
                 }
             } else {
-                this.Database.getTables().add(table);
+                this.database.getTables().add(table);
             }
         }
 
@@ -351,10 +375,10 @@ public class ClassMetaReader implements IDestinationDatabaseReader {
         private void BuildFKRelations() {
             for (ForeignConstraintInfo foreign : this._foreigns) {
                 //外键表必须找到，否则这个外键不会加入到集合中。
-                Table fkTable = this.Database.FindTable(foreign.FkTableName);
+                Table fkTable = this.database.FindTable(foreign.FkTableName);
                 Column fkColumn = fkTable.FindColumn(foreign.FkColumn);
 
-                Table pkTable = this.Database.FindTable(foreign.PkTableName);
+                Table pkTable = this.database.FindTable(foreign.PkTableName);
                 //有可能这个引用的表并不在这个数据库中，此时不需要创建外键。
                 if (pkTable != null) {
                     //找到主键列，创建引用关系

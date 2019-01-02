@@ -14,16 +14,16 @@ import java.util.stream.Collectors;
 public abstract class DbMetaReader implements IMetadataReader {
     private DbSetting _dbSetting;
 
-    private IDbAccesser _db;
+    private DbAccesser _db;
 
     public DbMetaReader(DbSetting dbSetting) {
         Objects.requireNonNull(dbSetting);
 
         this._dbSetting = dbSetting;
-        this._db = new DbAccessor(dbSetting);
+        this._db = new SimpleDbAccessor(dbSetting);
     }
 
-    public final IDbAccesser getDb() {
+    public final DbAccesser getDb() {
         return this._db;
     }
 

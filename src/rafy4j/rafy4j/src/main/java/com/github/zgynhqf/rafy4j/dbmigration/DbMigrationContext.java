@@ -1,9 +1,9 @@
 package com.github.zgynhqf.rafy4j.dbmigration;
 
 
-import com.github.zgynhqf.rafy4j.data.DbAccessor;
+import com.github.zgynhqf.rafy4j.data.SimpleDbAccessor;
 import com.github.zgynhqf.rafy4j.data.DbSetting;
-import com.github.zgynhqf.rafy4j.data.IDbAccesser;
+import com.github.zgynhqf.rafy4j.data.DbAccesser;
 import com.github.zgynhqf.rafy4j.dbmigration.model.*;
 import com.github.zgynhqf.rafy4j.dbmigration.model.differ.DatabaseChanges;
 import com.github.zgynhqf.rafy4j.dbmigration.model.differ.ModelDiffer;
@@ -46,7 +46,7 @@ public class DbMigrationContext implements Closeable {
     //    private IDbBackuper _DbBackuper;
 //    private DbVersionProvider _DbVersionProvider;
     private DbMigrationProvider _dbProvider;
-    private IDbAccesser _dba;
+    private DbAccesser _dba;
     private SqlRunGenerator _runGenerator;
     //endregion
 
@@ -591,7 +591,7 @@ public class DbMigrationContext implements Closeable {
      * @return
      */
     public final boolean DatabaseExists() {
-        IDbAccesser dba = this.getDBA();
+        DbAccesser dba = this.getDBA();
         try {
             Connection connection = dba.startConnection();
 
@@ -635,9 +635,9 @@ public class DbMigrationContext implements Closeable {
 
     //region MigrateCore
 
-    private IDbAccesser getDBA() {
+    private DbAccesser getDBA() {
         if (this._dba == null) {
-            this._dba = new DbAccessor(this.getDbSetting());
+            this._dba = new SimpleDbAccessor(this.getDbSetting());
         }
 
         return this._dba;
@@ -697,7 +697,7 @@ public class DbMigrationContext implements Closeable {
         if (runList.isEmpty()) return;
 
         this.ExecuteWithoutDebug(() -> {
-            IDbAccesser dba = this.getDBA();
+            DbAccesser dba = this.getDBA();
             if (runList.size() > 1) {
                 /*********************** 代码块解释 *********************************
                  *
@@ -720,7 +720,7 @@ public class DbMigrationContext implements Closeable {
                 }
             } else {
                 MigrationRun singleRun = runList.get(0);
-                this._currentRun = (SqlMigrationRun) singleRun;
+                this._currentRun = (SqlMigrationRun) (singleRun instanceof SqlMigrationRun ? singleRun : null);
                 singleRun.Run(dba);
             }
             return null;
@@ -733,7 +733,10 @@ public class DbMigrationContext implements Closeable {
         try {
             action.get();
         } catch (Exception ex) {
-            String error = DbMigrationExceptionMessageFormatter.FormatMessage((SQLException) ex, _currentRun);
+            String error = ex.getMessage();
+            if (ex instanceof SQLException) {
+                error = DbMigrationExceptionMessageFormatter.FormatMessage((SQLException) ex, _currentRun);
+            }
             throw new DbMigrationException(error, ex);
         }
     }

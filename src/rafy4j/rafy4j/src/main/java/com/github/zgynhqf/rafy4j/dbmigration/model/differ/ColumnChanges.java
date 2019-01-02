@@ -54,8 +54,7 @@ public class ColumnChanges {
         return this.getCoreColumn().getName();
     }
 
-    ///////////////////gs
-
+    //region gs
     public final Column getOldColumn() {
         return oldColumn;
     }
@@ -110,5 +109,11 @@ public class ColumnChanges {
 
     public final void setForeignRelationChangeType(ChangeType value) {
         foreignRelationChangeType = value;
+    }
+    //endregion
+
+    @Override
+    public String toString() {
+        return String.format("%s -> %s", getName(), changeType);
     }
 }

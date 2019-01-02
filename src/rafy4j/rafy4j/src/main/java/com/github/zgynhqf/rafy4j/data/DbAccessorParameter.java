@@ -18,7 +18,7 @@ import java.sql.JDBCType;
  * 所以为了避免在Sql查询中由于条件字段类型不匹配而导致表扫描，记得以后在创建SqlParameter时声明SqlDbType就解决问题了。
  * ）
  */
-public class DbAccesserParameter {
+public class DbAccessorParameter {
     /**
      * 所对应的数据库中的类型。
      */
@@ -35,11 +35,12 @@ public class DbAccesserParameter {
      * @param value  The value.
      * @param dbType Type of the database.
      */
-    public DbAccesserParameter(Object value, JDBCType dbType) {
+    public DbAccessorParameter(Object value, JDBCType dbType) {
         this.setDbType(dbType);
         this.setValue(value);
     }
 
+    //region ps
     public final JDBCType getDbType() {
         return dbType;
     }
@@ -55,4 +56,5 @@ public class DbAccesserParameter {
     public final void setValue(Object value) {
         this.value = value;
     }
+    //endregion
 }

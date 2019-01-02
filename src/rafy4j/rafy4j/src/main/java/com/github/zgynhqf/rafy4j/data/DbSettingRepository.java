@@ -9,14 +9,22 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
+ * 管理 DbSetting 的仓库
  * @author: huqingfang
  * @date: 2018-12-29 22:34
  **/
 public class DbSettingRepository {
+    /**
+     * 默认使用的 MySql Driver
+     */
     public static final String DRIVER_MYSQL = "com.mysql.cj.jdbc.Driver";
 
     private Map<String, DbSetting> store = new HashMap<>();
 
+    /**
+     * 向仓库中添加一项
+     * @param dbSetting
+     */
     public void add(DbSetting dbSetting) {
         Objects.requireNonNull(dbSetting);
         if (StringUtils.isBlank(dbSetting.getName())) throw new NullPointerException();
@@ -39,6 +47,11 @@ public class DbSettingRepository {
         store.put(dbSetting.getName(), dbSetting);
     }
 
+    /**
+     * 通过配置名查找指定的配置项。
+     * @param dbSettingName
+     * @return
+     */
     public DbSetting FindOrCreate(String dbSettingName) {
         DbSetting res = store.get(dbSettingName);
         if (res != null) return res;

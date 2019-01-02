@@ -4,6 +4,7 @@ import lombok.var;
 import org.apache.commons.lang3.StringUtils;
 
 import java.sql.JDBCType;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -32,7 +33,7 @@ public class Table {
         if (StringUtils.isBlank(name)) throw new IllegalArgumentException("name");
         if (dataBase == null) throw new IllegalArgumentException("dataBase");
 
-        this.setColumns(new java.util.ArrayList<Column>());
+        columns = new ArrayList<>();
         this.setName(name);
         this.setDataBase(dataBase);
     }
@@ -42,7 +43,7 @@ public class Table {
         return name;
     }
 
-    private void setName(String value) {
+    public void setName(String value) {
         name = value;
     }
 
@@ -58,16 +59,12 @@ public class Table {
         return dataBase;
     }
 
-    private void setDataBase(Database value) {
+    public void setDataBase(Database value) {
         dataBase = value;
     }
 
     public final List<Column> getColumns() {
         return columns;
-    }
-
-    private void setColumns(List<Column> value) {
-        columns = value;
     }
     //endregion
 
@@ -159,5 +156,10 @@ public class Table {
 
     public final void sortColumns() {
         columns.sort((c1, c2) -> c1.getName().compareTo(c2.getName()));
+    }
+
+    @Override
+    public String toString() {
+        return String.format("%s - (columns:%s)", name, columns.size());
     }
 }

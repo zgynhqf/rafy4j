@@ -1,7 +1,7 @@
 package com.github.zgynhqf.rafy4j.dbmigration.run;
 
 import com.github.zgynhqf.rafy4j.data.FormattedSql;
-import com.github.zgynhqf.rafy4j.data.IDbAccesser;
+import com.github.zgynhqf.rafy4j.data.DbAccesser;
 import com.github.zgynhqf.rafy4j.dbmigration.MigrationRun;
 
 public class FormattedSqlMigrationRun extends MigrationRun {
@@ -16,7 +16,7 @@ public class FormattedSqlMigrationRun extends MigrationRun {
     }
 
     @Override
-    protected void RunCore(IDbAccesser db) {
+    protected void RunCore(DbAccesser db) {
         db.ExecuteText(sql);
     }
 }

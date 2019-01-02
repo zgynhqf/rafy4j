@@ -7,6 +7,6 @@ import org.springframework.context.annotation.Configuration;
  * @date: 2018-12-30 14:22
  **/
 @Configuration
-public class RafyConfig {
+class RafyConfig {
 
 }

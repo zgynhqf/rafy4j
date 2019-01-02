@@ -80,7 +80,7 @@ package com.github.zgynhqf.rafy4j.dbmigration;//package Rafy.dbmigration;
 //        tempVar.setPKName(pkName);
 //        tempVar.setPKDbType(pkDbType);
 //        tempVar.setPKLength(length);
-//        tempVar.setPKIdentity(isPkIdentity);
+//        tempVar.setPKAutoIncrement(isPkIdentity);
 //        this.AddOperation(tempVar);
 //    }
 //
@@ -90,31 +90,31 @@ package com.github.zgynhqf.rafy4j.dbmigration;//package Rafy.dbmigration;
 //        tempVar.setPKName(pkName);
 //        tempVar.setPKDbType(pkDbType);
 //        tempVar.setPKLength(length);
-//        tempVar.setPKIdentity(isPkIdentity);
+//        tempVar.setPKAutoIncrement(isPkIdentity);
 //        this.AddOperation(tempVar);
 //    }
 //
-//    //ORIGINAL LINE: protected void CreateNormalColumn(string tableName, string columnName, DbType dataType, string length = null, bool isPrimaryKey = false, bool isIdentity = false)
-//    protected final void CreateNormalColumn(String tableName, String columnName, JDBCType dataType, String length, boolean isPrimaryKey, boolean isIdentity) {
+//    //ORIGINAL LINE: protected void CreateNormalColumn(string tableName, string columnName, DbType dataType, string length = null, bool isPrimaryKey = false, bool isAutoIncrement = false)
+//    protected final void CreateNormalColumn(String tableName, String columnName, JDBCType dataType, String length, boolean isPrimaryKey, boolean isAutoIncrement) {
 //        CreateNormalColumn tempVar = new CreateNormalColumn();
 //        tempVar.setTableName(tableName);
 //        tempVar.setColumnName(columnName);
 //        tempVar.setDbType(dataType);
 //        tempVar.setLength(length);
-//        tempVar.setIsPrimaryKey(isPrimaryKey);
-//        tempVar.setIsIdentity(isIdentity);
+//        tempVar.setPrimaryKey(isPrimaryKey);
+//        tempVar.setAutoIncrement(isAutoIncrement);
 //        this.AddOperation(tempVar);
 //    }
 //
-//    //ORIGINAL LINE: protected void DropNormalColumn(string tableName, string columnName, DbType dataType, string length = null, bool isPrimaryKey = false, bool isIdentity = false)
-//    protected final void DropNormalColumn(String tableName, String columnName, JDBCType dataType, String length, boolean isPrimaryKey, boolean isIdentity) {
+//    //ORIGINAL LINE: protected void DropNormalColumn(string tableName, string columnName, DbType dataType, string length = null, bool isPrimaryKey = false, bool isAutoIncrement = false)
+//    protected final void DropNormalColumn(String tableName, String columnName, JDBCType dataType, String length, boolean isPrimaryKey, boolean isAutoIncrement) {
 //        DropNormalColumn tempVar = new DropNormalColumn();
 //        tempVar.setTableName(tableName);
 //        tempVar.setColumnName(columnName);
 //        tempVar.setDbType(dataType);
 //        tempVar.setLength(length);
-//        tempVar.setIsPrimaryKey(isPrimaryKey);
-//        tempVar.setIsIdentity(isIdentity);
+//        tempVar.setPrimaryKey(isPrimaryKey);
+//        tempVar.setAutoIncrement(isAutoIncrement);
 //        this.AddOperation(tempVar);
 //    }
 //

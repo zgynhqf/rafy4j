@@ -5,6 +5,8 @@ import org.springframework.context.annotation.Import;
 import java.lang.annotation.*;
 
 /**
+ * 表明此 SpringBoot 应用程序是一个 Rafy 应用程序。
+ *
  * @author: huqingfang
  * @date: 2018-12-30 14:21
  **/

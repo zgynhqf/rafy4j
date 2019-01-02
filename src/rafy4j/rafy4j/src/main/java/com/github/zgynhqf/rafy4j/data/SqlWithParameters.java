@@ -15,6 +15,7 @@ class SqlWithParameters {
         this.parameters = parameters;
     }
 
+    //region gs
     public String getSql() {
         return sql;
     }
@@ -30,4 +31,5 @@ class SqlWithParameters {
     public void setParameters(Object[] parameters) {
         this.parameters = parameters;
     }
+    //endregion
 }

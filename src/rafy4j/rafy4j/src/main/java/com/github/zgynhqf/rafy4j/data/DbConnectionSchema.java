@@ -1,4 +1,5 @@
-package com.github.zgynhqf.rafy4j.data;//package Rafy.data;
+//package com.github.zgynhqf.rafy4j.data;
+//package Rafy.data;
 //
 //
 //import jdk.nashorn.internal.runtime.regexp.joni.Regex;

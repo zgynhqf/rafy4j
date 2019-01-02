@@ -13,7 +13,7 @@ import org.springframework.beans.factory.support.GenericBeanDefinition;
 public abstract class RafyEnvironment {
     private static BeanFactory beanFactory;
 
-    private static BeanDefinitionRegistry registry;
+    private static BeanDefinitionRegistry beanDefinitionRegistry;
 
     public static void setBeanFactory(BeanFactory beanFactory) {
         Validate.notNull(beanFactory);
@@ -25,12 +25,12 @@ public abstract class RafyEnvironment {
         return beanFactory;
     }
 
-    public static BeanDefinitionRegistry getRegistry() {
-        return registry;
+    public static BeanDefinitionRegistry getBeanDefinitionRegistry() {
+        return beanDefinitionRegistry;
     }
 
-    public static void setRegistry(BeanDefinitionRegistry registry) {
-        RafyEnvironment.registry = registry;
+    public static void setBeanDefinitionRegistry(BeanDefinitionRegistry beanDefinitionRegistry) {
+        RafyEnvironment.beanDefinitionRegistry = beanDefinitionRegistry;
     }
 
     private static DbSettingRepository dbSettingRepository;
@@ -39,7 +39,7 @@ public abstract class RafyEnvironment {
         if (dbSettingRepository == null) {
             //如果开发者没有注册 DbSettingRepository，则手工注册一个默认的。
             if(!beanFactory.containsBean(DbSettingRepository.class.getName())){
-                registry.registerBeanDefinition(DbSettingRepository.class.getName(), new GenericBeanDefinition(){{
+                beanDefinitionRegistry.registerBeanDefinition(DbSettingRepository.class.getName(), new GenericBeanDefinition(){{
                     setBeanClass(DbSettingRepository.class);
                     setScope(SCOPE_SINGLETON);
                 }});

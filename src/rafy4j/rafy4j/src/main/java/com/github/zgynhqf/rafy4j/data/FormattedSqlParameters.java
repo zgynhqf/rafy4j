@@ -4,20 +4,21 @@ import org.springframework.util.StringUtils;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * FormattedSql 中的参数列表封装
  */
 public class FormattedSqlParameters {
-    private List<Object> parameters = new java.util.ArrayList<Object>();
+    private List<Object> parameters = new ArrayList<>();
 
     /**
      * 添加一个参数，并返回该参数应该使用的索引号
      * <p>
      * 当在 Sql 中直接写入 {0} 时，可以使用本方法直接添加一个参数到参数列表中。
      *
-     * @param value object or <see cref="DbAccesserParameter"/>
+     * @param value object or a instance of DbAccesserParameter
      * @return
      */
     public final int add(Object value) {

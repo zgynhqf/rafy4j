@@ -14,7 +14,7 @@ package com.github.zgynhqf.rafy4j.dbmigration;
 //******************************************************
 
 
-import com.github.zgynhqf.rafy4j.data.IDbAccesser;
+import com.github.zgynhqf.rafy4j.data.DbAccesser;
 
 /**
  代表每一个数据库升级执行项
@@ -27,10 +27,10 @@ public abstract class MigrationRun
 	 
 	 @param db
 	*/
-	public final void Run(IDbAccesser db)
+	public final void Run(DbAccesser db)
 	{
 		this.RunCore(db);
 	}
 
-	protected abstract void RunCore(IDbAccesser db);
+	protected abstract void RunCore(DbAccesser db);
 }

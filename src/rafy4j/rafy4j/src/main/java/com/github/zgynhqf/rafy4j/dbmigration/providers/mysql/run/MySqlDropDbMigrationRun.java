@@ -28,7 +28,7 @@ public final class MySqlDropDbMigrationRun extends MigrationRun {
      * @param db 数据库操作对象
      */
     @Override
-    protected void RunCore(IDbAccesser db) {
+    protected void RunCore(DbAccesser db) {
         throw new NotImplementedException("drop database operation is not supportted.");
         //var mysqlInstance = new MySqlConnectionStringBuilder(db.Connection.ConnectionString);
         //MySqlConnection.ClearPool(db.Connection as MySqlConnection);

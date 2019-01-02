@@ -3,6 +3,7 @@ package com.github.zgynhqf.rafy4j.data;
 import javax.sql.DataSource;
 
 /**
+ * DbSetting 简单实现
  * @author: huqingfang
  * @date: 2018-12-29 22:30
  **/

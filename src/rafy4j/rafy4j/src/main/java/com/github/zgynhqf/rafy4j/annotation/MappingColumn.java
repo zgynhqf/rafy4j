@@ -1,5 +1,7 @@
 package com.github.zgynhqf.rafy4j.annotation;
 
+import com.sun.javafx.scene.control.behavior.OptionalBoolean;
+
 import java.lang.annotation.*;
 
 /**
@@ -31,21 +33,21 @@ public @interface MappingColumn {
 //     * 如果未设置，则根据字段的类型来通过规则生成。
 //     */
 //    public String type() default "";
-//
-//    /**
-//     * 是否可空列
-//     */
-//    public OptionalBoolean isNullable() default OptionalBoolean.ANY;
 
-//    /**
-//     * 是否是主键
-//     */
-//    public OptionalBoolean isKey() default OptionalBoolean.ANY;
-//
-//    /**
-//     * 是否自动递增，只有主键才能使用
-//     */
-//    public OptionalBoolean isAutoIncrement() default OptionalBoolean.ANY;
+    /**
+     * 是否可空列
+     */
+    public OptionalBoolean isNullable() default OptionalBoolean.ANY;
+
+    /**
+     * 是否是主键
+     */
+    public OptionalBoolean isKey() default OptionalBoolean.ANY;
+
+    /**
+     * 是否自动递增，只有主键才能使用
+     */
+    public OptionalBoolean isAutoIncrement() default OptionalBoolean.ANY;
 
     /**
      * 默认值

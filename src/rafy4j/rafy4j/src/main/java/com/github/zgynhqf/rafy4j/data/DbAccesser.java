@@ -6,10 +6,11 @@ import org.springframework.jdbc.core.ResultSetExtractor;
 import java.io.Closeable;
 
 /**
+ * 数据库访问器。
  * @author: huqingfang
  * @date: 2018-12-25 21:21
  **/
-public interface IDbAccesser extends Closeable, ControllableConnection {
+public interface DbAccesser extends Closeable, ControllableConnection {
     JdbcOperations getJdbcOperations();
 
     /**

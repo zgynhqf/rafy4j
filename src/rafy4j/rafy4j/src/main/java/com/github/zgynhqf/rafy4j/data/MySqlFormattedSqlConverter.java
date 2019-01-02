@@ -13,7 +13,7 @@ import java.util.regex.Matcher;
  * @author: huqingfang
  * @date: 2018-12-25 21:38
  **/
-public class MySqlFormattedSqlConverter implements FormattedSqlConverter {
+class MySqlFormattedSqlConverter implements FormattedSqlConverter {
     @Override
     public SqlWithParameters convert(FormattedSql formattedSql) {
         FormattedSqlParameters formattedSqlParameters = formattedSql.getParameters();
@@ -44,7 +44,7 @@ public class MySqlFormattedSqlConverter implements FormattedSqlConverter {
                         break;
                     }
                 }
-                if (!found) throw new IllegalArgumentException(String.format("未找到名为 %1 的 SqlParameterValue。", pName));
+                if (!found) throw new IllegalArgumentException(String.format("未找到名为 %s 的 SqlParameterValue。", pName));
             }
         }
 

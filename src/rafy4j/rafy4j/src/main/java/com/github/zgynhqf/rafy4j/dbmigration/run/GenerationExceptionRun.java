@@ -19,7 +19,7 @@ public class GenerationExceptionRun extends MigrationRun {
     }
 
     @Override
-    protected void RunCore(IDbAccesser db) {
+    protected void RunCore(DbAccesser db) {
         throw new DbMigrationException(this.getMessage());
     }
 }

@@ -4,7 +4,7 @@ import java.lang.annotation.*;
 
 
 /**
- * 创建表时的表名
+ * 若某个实体需要映射数据库表，需要添加此注解。
  *
  * @author huqingfang
  * @date: 2018-12-30 14:22

@@ -156,14 +156,14 @@ public class AutomationMigration {
     }
 
     private void AddColumn(Column column) {
-        CreateNormalColumn tempVar = new CreateNormalColumn();
-        tempVar.copyFromColumn(column);
-        tempVar.setIsPrimaryKey(column.isPrimaryKey());
-        tempVar.setIsIdentity(column.isIdentity());
-        this.AddOperation(tempVar);
+        CreateNormalColumn op = new CreateNormalColumn();
+        op.copyFromColumn(column);
+        op.setPrimaryKey(column.isPrimaryKey());
+        op.setAutoIncrement(column.isAutoIncrement());
+        this.AddOperation(op);
 
         //自增列必然是不可空的，在创建列时已经同时把不可空约束给创建好了，所以这里不需要重复添加了。
-        if (column.isRequired() && !column.isIdentity()) {
+        if (column.isRequired() && !column.isAutoIncrement()) {
             AddNotNullConstraint constraint = new AddNotNullConstraint();
             constraint.copyFromColumn(column);
             this.AddOperation(constraint);
@@ -202,8 +202,8 @@ public class AutomationMigration {
 
             DropNormalColumn tempVar3 = new DropNormalColumn();
             tempVar3.copyFromColumn(column);
-            tempVar3.setIsPrimaryKey(column.isPrimaryKey());
-            tempVar3.setIsIdentity(column.isIdentity());
+            tempVar3.setPrimaryKey(column.isPrimaryKey());
+            tempVar3.setAutoIncrement(column.isAutoIncrement());
             this.AddOperation(tempVar3);
         }
     }

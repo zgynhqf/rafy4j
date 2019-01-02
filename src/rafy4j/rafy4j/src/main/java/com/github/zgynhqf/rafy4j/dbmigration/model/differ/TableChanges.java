@@ -1,6 +1,7 @@
 package com.github.zgynhqf.rafy4j.dbmigration.model.differ;
 
 import com.github.zgynhqf.rafy4j.dbmigration.model.Table;
+import com.github.zgynhqf.rafy4j.utils.NameUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -67,5 +68,10 @@ public class TableChanges {
         }
 
         return this.getNewTable();
+    }
+
+    @Override
+    public String toString() {
+        return String.format("%s - %s", getName(), changeType);
     }
 }

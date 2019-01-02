@@ -7,57 +7,57 @@ import java.sql.JDBCType;
 
 public abstract class ColumnOperation extends MigrationOperation
 {
-	private String privateTableName;
-	private String privateColumnName;
-	private JDBCType privateDbType;
-	private String privateLength;
-	private boolean privateIsForeignKey;
+	private String tableName;
+	private String columnName;
+	private JDBCType dbType;
+	private String length;
+	private boolean isForeignKey;
 	private String defaultValue;
 
     //region gs
     public final String getTableName()
     {
-        return privateTableName;
+        return tableName;
     }
     public final void setTableName(String value)
     {
-        privateTableName = value;
+        tableName = value;
     }
 
     public final String getColumnName()
     {
-        return privateColumnName;
+        return columnName;
     }
     public final void setColumnName(String value)
     {
-        privateColumnName = value;
+        columnName = value;
     }
 
     public final JDBCType getDbType()
     {
-        return privateDbType;
+        return dbType;
     }
     public final void setDbType(JDBCType value)
     {
-        privateDbType = value;
+        dbType = value;
     }
 
     public final String getLength()
     {
-        return privateLength;
+        return length;
     }
     public final void setLength(String value)
     {
-        privateLength = value;
+        length = value;
     }
 
     public final boolean getIsForeignKey()
     {
-        return privateIsForeignKey;
+        return isForeignKey;
     }
 	public final void setIsForeignKey(boolean value)
 	{
-		privateIsForeignKey = value;
+		isForeignKey = value;
 	}
 
     public String getDefaultValue() {

@@ -1,6 +1,6 @@
 package com.github.zgynhqf.rafy4j.dbmigration.operations;
 
-import com.github.zgynhqf.rafy4j.data.IDbAccesser;
+import com.github.zgynhqf.rafy4j.data.DbAccesser;
 import com.github.zgynhqf.rafy4j.dbmigration.MigrationOperation;
 
 import java.util.function.Consumer;
@@ -23,13 +23,13 @@ import java.util.function.Consumer;
  * 操作执行某个具体的代码段
  */
 public class RunAction extends MigrationOperation {
-    private Consumer<IDbAccesser> privateAction;
+    private Consumer<DbAccesser> privateAction;
 
-    public final Consumer<IDbAccesser> getAction() {
+    public final Consumer<DbAccesser> getAction() {
         return privateAction;
     }
 
-    public final void setAction(Consumer<IDbAccesser> value) {
+    public final void setAction(Consumer<DbAccesser> value) {
         privateAction = value;
     }
 

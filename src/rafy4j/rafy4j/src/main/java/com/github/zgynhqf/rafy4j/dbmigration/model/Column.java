@@ -11,7 +11,7 @@ public class Column {
     /**
      * 表示这个主键列是否为自增列。
      */
-    private boolean isIdentity;
+    private boolean autoIncrement;
     /**
      * 列的注释。
      */
@@ -126,12 +126,12 @@ public class Column {
         }
     }
 
-    public final boolean isIdentity() {
-        return isIdentity;
+    public final boolean isAutoIncrement() {
+        return autoIncrement;
     }
 
-    public final void setIdentity(boolean value) {
-        isIdentity = value;
+    public final void setAutoIncrement(boolean value) {
+        autoIncrement = value;
     }
 
     public final String getComment() {
@@ -171,5 +171,10 @@ public class Column {
         if (value != null) {
             value.Init(this);
         }
+    }
+
+    @Override
+    public String toString() {
+        return name;
     }
 }

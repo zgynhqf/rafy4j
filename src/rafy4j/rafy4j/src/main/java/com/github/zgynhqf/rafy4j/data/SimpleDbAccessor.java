@@ -15,18 +15,18 @@ import java.sql.SQLException;
  * @author: huqingfang
  * @date: 2018-12-25 21:33
  **/
-public class DbAccessor implements IDbAccesser {
+public class SimpleDbAccessor implements DbAccesser {
     private ControllableDataSource dataSource;
     private JdbcTemplate jdbc;
     private FormattedSqlConverter fsProvider;
 
-    public DbAccessor(DbSetting dbSetting) {
+    public SimpleDbAccessor(DbSetting dbSetting) {
         dataSource = new ControllableDataSource(dbSetting.getDataSource());
         jdbc = new JdbcTemplate(dataSource);
         this.fsProvider = FormattedSqlConverterFactory.createSqlConverter(dbSetting.getDriverName());
     }
 
-    public DbAccessor(DataSource dataSource, FormattedSqlConverter formattedSqlProvider) {
+    public SimpleDbAccessor(DataSource dataSource, FormattedSqlConverter formattedSqlProvider) {
         this.dataSource = new ControllableDataSource(dataSource);
         jdbc = new JdbcTemplate(this.dataSource);
         this.fsProvider = formattedSqlProvider;
@@ -86,19 +86,10 @@ public class DbAccessor implements IDbAccesser {
         return jdbc.query(sqlWithParameters.getSql(), sqlWithParameters.getParameters(), rse);
     }
 
-    static final EmptyResultSetExtractor rseSingleton = new EmptyResultSetExtractor();
-
     @Override
     public void close() throws IOException {
         if (dataSource.isControlling()) {
             dataSource.endConnection();
-        }
-    }
-
-    private static class EmptyResultSetExtractor implements ResultSetExtractor<ResultSet> {
-        @Override
-        public ResultSet extractData(ResultSet rs) throws SQLException, DataAccessException {
-            return rs;
         }
     }
 }

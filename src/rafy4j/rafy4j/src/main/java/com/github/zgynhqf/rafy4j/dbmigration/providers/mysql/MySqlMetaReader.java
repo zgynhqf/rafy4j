@@ -86,7 +86,7 @@ public final class MySqlMetaReader extends DbMetaReader {
                 Column column = new Column(columnName, dbType, null, currentTable);
 
                 column.setRequired((new String("NO")).equalsIgnoreCase(columnsReader.getString("IS_NULLABLE")));
-                column.setIdentity(columnsReader.getString("EXTRA").toLowerCase().contains("auto_increment"));
+                column.setAutoIncrement(columnsReader.getString("EXTRA").toLowerCase().contains("auto_increment"));
 
                 currentTable.getColumns().add(column);
             }
