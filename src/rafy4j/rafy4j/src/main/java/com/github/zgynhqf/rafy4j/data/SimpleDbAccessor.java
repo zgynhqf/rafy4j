@@ -1,6 +1,5 @@
 package com.github.zgynhqf.rafy4j.data;
 
-import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.ResultSetExtractor;
@@ -8,14 +7,13 @@ import org.springframework.jdbc.core.ResultSetExtractor;
 import javax.sql.DataSource;
 import java.io.IOException;
 import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
  * @author: huqingfang
  * @date: 2018-12-25 21:33
  **/
-public class SimpleDbAccessor implements DbAccesser {
+public class SimpleDbAccessor implements DbAccessor {
     private ControllableDataSource dataSource;
     private JdbcTemplate jdbc;
     private FormattedSqlConverter fsProvider;

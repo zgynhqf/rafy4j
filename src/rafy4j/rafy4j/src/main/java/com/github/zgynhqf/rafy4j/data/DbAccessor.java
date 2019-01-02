@@ -10,7 +10,7 @@ import java.io.Closeable;
  * @author: huqingfang
  * @date: 2018-12-25 21:21
  **/
-public interface DbAccesser extends Closeable, ControllableConnection {
+public interface DbAccessor extends Closeable, ControllableConnection {
     JdbcOperations getJdbcOperations();
 
     /**

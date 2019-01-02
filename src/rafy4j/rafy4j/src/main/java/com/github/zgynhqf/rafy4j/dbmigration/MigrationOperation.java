@@ -11,12 +11,12 @@ import java.time.Instant;
  * 同时，所有的 MigrationOperation 作为迁移对象时，表示自动迁移。
  */
 public abstract class MigrationOperation extends DbMigration {
+    private Instant runtimeTimeId = Instant.MIN;
+
     @Override
     public MigrationType GetMigrationType() {
-        return MigrationType.AutoMigration;
+        return MigrationType.AUTO_MIGRATION;
     }
-
-    private Instant runtimeTimeId = Instant.MIN;
 
     public final Instant getRuntimeTimeId() {
         return runtimeTimeId;

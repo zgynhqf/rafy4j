@@ -4,18 +4,18 @@ import com.github.zgynhqf.rafy4j.data.*;
 import com.github.zgynhqf.rafy4j.dbmigration.MigrationRun;
 
 public class SqlMigrationRun extends MigrationRun {
-    private String privateSql;
+    private String sql;
 
     public final String getSql() {
-        return privateSql;
+        return sql;
     }
 
     public final void setSql(String value) {
-        privateSql = value;
+        sql = value;
     }
 
     @Override
-    protected void RunCore(DbAccesser db) {
+    protected void RunCore(DbAccessor db) {
         db.ExecuteText(this.getSql());
     }
 }

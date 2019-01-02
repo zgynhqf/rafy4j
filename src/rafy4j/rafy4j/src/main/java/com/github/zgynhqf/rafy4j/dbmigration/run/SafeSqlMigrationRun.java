@@ -4,7 +4,7 @@ import com.github.zgynhqf.rafy4j.data.*;
 
 public class SafeSqlMigrationRun extends SqlMigrationRun {
     @Override
-    protected void RunCore(DbAccesser db) {
+    protected void RunCore(DbAccessor db) {
         try {
             super.RunCore(db);
         } catch (Exception e) {

@@ -12,23 +12,23 @@ import java.util.stream.Collectors;
  * 数据库的元数据读取器
  */
 public abstract class DbMetaReader implements MetadataReader {
-    private DbSetting _dbSetting;
+    private DbSetting dbSetting;
 
-    private DbAccesser _db;
+    private DbAccessor db;
 
     public DbMetaReader(DbSetting dbSetting) {
         Objects.requireNonNull(dbSetting);
 
-        this._dbSetting = dbSetting;
-        this._db = new SimpleDbAccessor(dbSetting);
+        this.dbSetting = dbSetting;
+        this.db = new SimpleDbAccessor(dbSetting);
     }
 
-    public final DbAccesser getDb() {
-        return this._db;
+    public final DbAccessor getDb() {
+        return this.db;
     }
 
     public final Database Read() {
-        Database database = new Database(this._dbSetting.getDatabase());
+        Database database = new Database(this.dbSetting.getDatabase());
 
         try {
             this.LoadAllTables(database);

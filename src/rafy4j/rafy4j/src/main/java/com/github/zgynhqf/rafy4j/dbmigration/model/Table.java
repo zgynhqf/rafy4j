@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * 表示数据库表的 Schema 定义
+ * 表示数据库表的 SCHEMA 定义
  */
 public class Table {
     /**
@@ -21,7 +21,7 @@ public class Table {
      */
     private String comment;
     /**
-     * 所在的数据库 Schema
+     * 所在的数据库 SCHEMA
      */
     private Database dataBase;
     /**

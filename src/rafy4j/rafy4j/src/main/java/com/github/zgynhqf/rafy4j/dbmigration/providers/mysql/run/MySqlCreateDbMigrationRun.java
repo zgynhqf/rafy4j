@@ -1,6 +1,6 @@
 package com.github.zgynhqf.rafy4j.dbmigration.providers.mysql.run;
 
-import com.github.zgynhqf.rafy4j.data.DbAccesser;
+import com.github.zgynhqf.rafy4j.data.DbAccessor;
 import com.github.zgynhqf.rafy4j.dbmigration.MigrationRun;
 import org.apache.commons.lang3.NotImplementedException;
 
@@ -27,7 +27,7 @@ public final class MySqlCreateDbMigrationRun extends MigrationRun {
      * @param db 数据库访问对象
      */
     @Override
-    protected void RunCore(DbAccesser db) {
+    protected void RunCore(DbAccessor db) {
         throw new NotImplementedException("create database operation is not supportted.");
 //        String dbConnString = db.ConnectionSchema.ConnectionString;
 //        db.Connection.ConnectionString = dbConnString.replace(db.Connection.Database, "mysql");

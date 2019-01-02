@@ -3,6 +3,8 @@ package com.github.zgynhqf.rafy4j.dbmigration;
 import com.github.zgynhqf.rafy4j.dbmigration.model.MetadataReader;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 表示一个可升级、可回滚的数据库升级项。
@@ -10,7 +12,9 @@ import java.time.Instant;
  * 该类及该类的子类需要支持 Xml 序列化，以支持存储到历史库中。
  */
 public abstract class DbMigration {
-    private java.util.ArrayList<MigrationOperation> _operations = new java.util.ArrayList<MigrationOperation>();
+    private List<MigrationOperation> operations = new ArrayList<>();
+
+    private MetadataReader databaseMetaReader;
 
     /**
      * 本次迁移对应的时间点。
@@ -31,13 +35,13 @@ public abstract class DbMigration {
     public abstract String getDescription();
 
     public final void GenerateUpOperations() {
-        this._operations.clear();
+        this.operations.clear();
 
         this.Up();
     }
 
     public final void GenerateDownOperations() {
-        this._operations.clear();
+        this.operations.clear();
 
         this.Down();
     }
@@ -47,8 +51,6 @@ public abstract class DbMigration {
      */
     public abstract MigrationType GetMigrationType();
 
-    private MetadataReader databaseMetaReader;
-
     public final MetadataReader getDatabaseMetaReader() {
         return databaseMetaReader;
     }
@@ -57,8 +59,8 @@ public abstract class DbMigration {
         databaseMetaReader = value;
     }
 
-    public final java.util.List<MigrationOperation> getOperations() {
-        return this._operations;
+    public final List<MigrationOperation> getOperations() {
+        return this.operations;
     }
 
     /**
@@ -87,6 +89,6 @@ public abstract class DbMigration {
      * @param operation
      */
     protected final void AddOperation(MigrationOperation operation) {
-        this._operations.add(operation);
+        this.operations.add(operation);
     }
 }

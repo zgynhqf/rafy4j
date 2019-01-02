@@ -68,9 +68,9 @@ public class MySqlDbTypeConverter extends DbTypeConverter {
     }
 
     /**
-     * 将从数据库 Schema Meta 中读取出来的列的类型名称，转换为其对应的 DbType。
+     * 将从数据库 SCHEMA Meta 中读取出来的列的类型名称，转换为其对应的 DbType。
      *
-     * @param dbTypeName 从数据库 Schema Meta 中读取出来的列的类型名称。
+     * @param dbTypeName 从数据库 SCHEMA Meta 中读取出来的列的类型名称。
      * @return
      */
     @Override

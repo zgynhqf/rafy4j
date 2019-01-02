@@ -6,6 +6,8 @@ import com.github.zgynhqf.rafy4j.dbmigration.run.SqlMigrationRun;
 import org.apache.commons.lang3.NotImplementedException;
 
 import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 数据库执行项 MigrationRun 的生成器
@@ -13,16 +15,16 @@ import java.io.StringWriter;
  * 子类继承此类以实现不同类型数据库对指定数据库操作的执行项生成。
  */
 public abstract class RunGenerator {
-    private java.util.ArrayList<MigrationRun> _runList = new java.util.ArrayList<MigrationRun>();
+    private List<MigrationRun> runList = new ArrayList<>();
 
-    public final java.util.List<MigrationRun> Generate(Iterable<MigrationOperation> operations) {
-        this._runList.clear();
+    public final List<MigrationRun> Generate(Iterable<MigrationOperation> operations) {
+        this.runList.clear();
 
         for (MigrationOperation op : operations) {
             this.Distribute(op);
         }
 
-        return this._runList;
+        return this.runList;
     }
 
     /**
@@ -115,15 +117,15 @@ public abstract class RunGenerator {
     //直接实现的两个子类：RunSql、RunAction
 
     protected void Generate(RunSql op) {
-        SqlMigrationRun tempVar = new SqlMigrationRun();
-        tempVar.setSql(op.getSql());
-        this.AddRun(tempVar);
+        SqlMigrationRun run = new SqlMigrationRun();
+        run.setSql(op.getSql());
+        this.AddRun(run);
     }
 
     protected void Generate(RunAction op) {
-        ActionMigrationRun tempVar = new ActionMigrationRun();
-        tempVar.setAction(op.getAction());
-        this.AddRun(tempVar);
+        ActionMigrationRun run = new ActionMigrationRun();
+        run.setAction(op.getAction());
+        this.AddRun(run);
     }
 
     /**
@@ -141,9 +143,9 @@ public abstract class RunGenerator {
      * @param sql
      */
     protected final void AddRun(IndentedTextWriter sql) {
-        SqlMigrationRun tempVar = new SqlMigrationRun();
-        tempVar.setSql(sql.toString());
-        this.AddRun(tempVar);
+        SqlMigrationRun op = new SqlMigrationRun();
+        op.setSql(sql.toString());
+        this.AddRun(op);
     }
 
     /**
@@ -152,6 +154,6 @@ public abstract class RunGenerator {
      * @param run
      */
     protected final void AddRun(MigrationRun run) {
-        this._runList.add(run);
+        this.runList.add(run);
     }
 }

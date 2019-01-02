@@ -19,18 +19,18 @@ import java.util.stream.Collectors;
  * 职责：通过数据库变更记录来生成迁移操作列表
  */
 public class AutomationMigration {
-    private List<MigrationOperation> _operations = new ArrayList<>();
+    private List<MigrationOperation> operations = new ArrayList<>();
 
     DbMigrationContext Context;
 
-    private List<Supplier> _relationActions = new ArrayList<>();
+    private List<Supplier> relationActions = new ArrayList<>();
 
     public final List<MigrationOperation> getOperations() {
-        return this._operations;
+        return this.operations;
     }
 
     public final void GenerateOpertions(DatabaseChanges dbChanges) {
-        this._operations.clear();
+        this.operations.clear();
 
         switch (dbChanges.getChangeType()) {
             case ADDED:
@@ -61,11 +61,11 @@ public class AutomationMigration {
                 break;
         }
 
-        for (Supplier action : this._relationActions) {
+        for (Supplier action : this.relationActions) {
             action.get();
         }
 
-        this._relationActions.clear();
+        this.relationActions.clear();
     }
 
     private void GenerateOpertions(TableChanges tableChanges) {
@@ -297,11 +297,11 @@ public class AutomationMigration {
     //region 私有方法
 
     private void AddOperation(MigrationOperation operation) {
-        this._operations.add(operation);
+        this.operations.add(operation);
     }
 
     private void AddRelationAction(Supplier action) {
-        this._relationActions.add(action);
+        this.relationActions.add(action);
     }
 
     //endregion

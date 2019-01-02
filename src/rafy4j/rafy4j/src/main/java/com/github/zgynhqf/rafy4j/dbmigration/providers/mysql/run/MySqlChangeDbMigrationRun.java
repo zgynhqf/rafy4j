@@ -1,6 +1,6 @@
 package com.github.zgynhqf.rafy4j.dbmigration.providers.mysql.run;
 
-import com.github.zgynhqf.rafy4j.data.DbAccesser;
+import com.github.zgynhqf.rafy4j.data.DbAccessor;
 import com.github.zgynhqf.rafy4j.dbmigration.MigrationRun;
 
 /**
@@ -10,14 +10,14 @@ public final class MySqlChangeDbMigrationRun extends MigrationRun {
     /**
      * 获取或者设置当前要操作的数据库
      */
-    private String privateDatabase;
+    private String database;
 
     public String getDatabase() {
-        return privateDatabase;
+        return database;
     }
 
     public void setDatabase(String value) {
-        privateDatabase = value;
+        database = value;
     }
 
     /**
@@ -26,7 +26,7 @@ public final class MySqlChangeDbMigrationRun extends MigrationRun {
      * @param db 数据库访问对象
      */
     @Override
-    protected void RunCore(DbAccesser db) {
+    protected void RunCore(DbAccessor db) {
         db.ExecuteText("USE " + this.getDatabase() + ";");
     }
 }

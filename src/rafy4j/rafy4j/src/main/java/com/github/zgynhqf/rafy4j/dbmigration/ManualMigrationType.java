@@ -7,18 +7,10 @@ public enum ManualMigrationType {
     /**
      * 手动结构升级
      */
-    Schema,
+    SCHEMA,
 
     /**
      * 手动数据升级
      */
-    Data;
-
-    public int getValue() {
-        return this.ordinal();
-    }
-
-    public static ManualMigrationType forValue(int value) {
-        return values()[value];
-    }
+    DATA
 }

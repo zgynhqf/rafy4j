@@ -32,9 +32,9 @@ public abstract class DbTypeConverter {
     public abstract String ConvertToDatabaseTypeName(JDBCType fieldType, String length);
 
     /**
-     * 将从数据库 Schema Meta 中读取出来的列的类型名称，转换为其对应的 JDBCType。
+     * 将从数据库 SCHEMA Meta 中读取出来的列的类型名称，转换为其对应的 JDBCType。
      *
-     * @param databaseTypeName 从数据库 Schema Meta 中读取出来的列的类型名称。
+     * @param databaseTypeName 从数据库 SCHEMA Meta 中读取出来的列的类型名称。
      * @return
      */
     public abstract JDBCType ConvertToDbType(String databaseTypeName);

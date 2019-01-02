@@ -74,7 +74,7 @@
 //
 //        //System.data.OracleClient 解析不出这个值，需要特殊处理。
 //        if (String.IsNullOrWhiteSpace(database) && IsOracleProvider(this)) {
-//            //Oracle 中，把用户名（Schema）认为数据库名。
+//            //Oracle 中，把用户名（SCHEMA）认为数据库名。
 //            database = GetOracleUserId(this);
 //        }
 //

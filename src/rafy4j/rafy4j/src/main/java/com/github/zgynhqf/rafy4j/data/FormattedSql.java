@@ -1,5 +1,6 @@
 package com.github.zgynhqf.rafy4j.data;
 
+import com.github.zgynhqf.rafy4j.Consts;
 import org.springframework.jdbc.core.SqlParameterValue;
 
 import java.sql.JDBCType;
@@ -167,7 +168,7 @@ public class FormattedSql {
      * @return
      */
     public final FormattedSql AppendLine() {
-        this.sql.append("\r\n");
+        this.sql.append(Consts.NEW_LINE);
         return this;
     }
 

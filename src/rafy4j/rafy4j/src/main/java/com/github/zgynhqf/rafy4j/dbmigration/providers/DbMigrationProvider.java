@@ -13,14 +13,14 @@ public abstract class DbMigrationProvider {
     /**
      * 该提供器可用的数据库信息
      */
-    private DbSetting privateDbSetting;
+    private DbSetting dbSetting;
 
     public final DbSetting getDbSetting() {
-        return privateDbSetting;
+        return dbSetting;
     }
 
     public final void setDbSetting(DbSetting value) {
-        privateDbSetting = value;
+        dbSetting = value;
     }
 
     /**

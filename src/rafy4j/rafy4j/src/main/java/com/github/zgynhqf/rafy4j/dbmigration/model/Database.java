@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 表示一个数据库的 Schema 定义
+ * 表示一个数据库的 SCHEMA 定义
  */
 public class Database {
     /**

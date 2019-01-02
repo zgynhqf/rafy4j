@@ -3,7 +3,7 @@ package com.github.zgynhqf.rafy4j.dbmigration;
 
 import com.github.zgynhqf.rafy4j.data.SimpleDbAccessor;
 import com.github.zgynhqf.rafy4j.data.DbSetting;
-import com.github.zgynhqf.rafy4j.data.DbAccesser;
+import com.github.zgynhqf.rafy4j.data.DbAccessor;
 import com.github.zgynhqf.rafy4j.dbmigration.model.*;
 import com.github.zgynhqf.rafy4j.dbmigration.model.differ.DatabaseChanges;
 import com.github.zgynhqf.rafy4j.dbmigration.model.differ.ModelDiffer;
@@ -29,7 +29,7 @@ import java.util.function.Supplier;
 
 /**
  * 支持功能：
- * 根据目标 Schema 自动升级
+ * 根据目标 SCHEMA 自动升级
  * 此时可配置是否考虑数据丢失。
  * 手工更新
  * 升级历史日志功能
@@ -45,9 +45,9 @@ public class DbMigrationContext implements Closeable {
 //    private ManualMigrationsContainer _ManualMigrations;
     //    private IDbBackuper _DbBackuper;
 //    private DbVersionProvider _DbVersionProvider;
-    private DbMigrationProvider _dbProvider;
-    private DbAccesser _dba;
-    private SqlRunGenerator _runGenerator;
+    private DbMigrationProvider dbProvider;
+    private DbAccessor dba;
+    private SqlRunGenerator runGenerator;
     //endregion
 
     //region database settings
@@ -86,10 +86,10 @@ public class DbMigrationContext implements Closeable {
 
         this.setRunDataLossOperation(DataLossOperation.None);
 
-        this._dbProvider = DbMigrationProviderFactory.GetProvider(dbSetting);
+        this.dbProvider = DbMigrationProviderFactory.GetProvider(dbSetting);
 
-        this._runGenerator = (SqlRunGenerator) this._dbProvider.CreateRunGenerator();
-        this.setDatabaseMetaReader(this._dbProvider.CreateSchemaReader());
+        this.runGenerator = (SqlRunGenerator) this.dbProvider.CreateRunGenerator();
+        this.setDatabaseMetaReader(this.dbProvider.CreateSchemaReader());
     }
 
     //region Components
@@ -133,7 +133,7 @@ public class DbMigrationContext implements Closeable {
 //     */
 //    public final IDbBackuper getDbBackuper() {
 //        if (this._DbBackuper == null) {
-//            this._DbBackuper = this._dbProvider.CreateDbBackuper();
+//            this._DbBackuper = this.dbProvider.CreateDbBackuper();
 //        }
 //
 //        return this._DbBackuper;
@@ -228,13 +228,13 @@ public class DbMigrationContext implements Closeable {
 //        }
 //
 //        java.util.ArrayList<ManualDbMigration> manualPendings = this.GetManualPendings();
-//        var schemaPending = manualPendings.Where(m = > m.Type == ManualMigrationType.Schema).ToList();
+//        var schemaPending = manualPendings.Where(m = > m.Type == ManualMigrationType.SCHEMA).ToList();
 //        var dataPending = manualPendings.Where(m = > m.Type == ManualMigrationType.data).ToList();
 
         Database dbMeta = this.getDatabaseMetaReader().Read();
 
-        ModelDiffer differ = new ModelDiffer(_runGenerator.getDbTypeCoverter());
-        differ.IDbIdentifierProvider = _runGenerator.getIdentifierQuoter();
+        ModelDiffer differ = new ModelDiffer(runGenerator.getDbTypeCoverter());
+        differ.IDbIdentifierProvider = runGenerator.getIdentifierQuoter();
         DatabaseChanges changeSet = differ.Distinguish(dbMeta, destination);
 
         //判断是否正处于升级阶段。（或者是处于创建阶段。）
@@ -282,7 +282,7 @@ public class DbMigrationContext implements Closeable {
     /**
      * 保证 TimeId 之间的间隔在 10ms 以上
      */
-    private static final long TimeIdSpan = 10;
+    private static final long TIME_ID_SPAN = 10;
 
     private Result AutoMigrate(DatabaseChanges changeSet) {
         return this.AutoMigrate(changeSet, null);
@@ -317,14 +317,14 @@ public class DbMigrationContext implements Closeable {
         if (maxTime != null) {
             Instant timeId = maxTime;
             for (int i = autoMigrations.size() - 1; i >= 0; i--) {
-                timeId = timeId.plusMillis(-TimeIdSpan);
+                timeId = timeId.plusMillis(-TIME_ID_SPAN);
                 autoMigrations.get(i).setRuntimeTimeId(timeId);
             }
         } else {
             Instant timeId = Instant.now();
             for (MigrationOperation m : autoMigrations) {
                 m.setRuntimeTimeId(timeId);
-                timeId = timeId.plusMillis(TimeIdSpan);
+                timeId = timeId.plusMillis(TIME_ID_SPAN);
             }
         }
     }
@@ -471,7 +471,7 @@ public class DbMigrationContext implements Closeable {
 //                    if (!(migration instanceof CreateDatabase)) {
 //                        this.MigrateDown(migration);
 //
-//                        var version = migration.getTimeId().AddMilliseconds(-TimeIdSpan / 2);
+//                        var version = migration.getTimeId().AddMilliseconds(-TIME_ID_SPAN / 2);
 //                        Must(this.getDbVersionProvider().SetDbVersion(version));
 //
 //                        if (rollbackAction == RollbackAction.DeleteHistory) {
@@ -591,7 +591,7 @@ public class DbMigrationContext implements Closeable {
      * @return
      */
     public final boolean DatabaseExists() {
-        DbAccesser dba = this.getDBA();
+        DbAccessor dba = this.getDBA();
         try {
             Connection connection = dba.startConnection();
 
@@ -635,12 +635,12 @@ public class DbMigrationContext implements Closeable {
 
     //region MigrateCore
 
-    private DbAccesser getDBA() {
-        if (this._dba == null) {
-            this._dba = new SimpleDbAccessor(this.getDbSetting());
+    private DbAccessor getDBA() {
+        if (this.dba == null) {
+            this.dba = new SimpleDbAccessor(this.getDbSetting());
         }
 
-        return this._dba;
+        return this.dba;
     }
 
     //ORIGINAL LINE: private Result MigrateUpBatch(IEnumerable<dbmigration> migrations, bool addByDeveloperHistory = false)
@@ -697,7 +697,7 @@ public class DbMigrationContext implements Closeable {
         if (runList.isEmpty()) return;
 
         this.ExecuteWithoutDebug(() -> {
-            DbAccesser dba = this.getDBA();
+            DbAccessor dba = this.getDBA();
             if (runList.size() > 1) {
                 /*********************** 代码块解释 *********************************
                  *
@@ -709,7 +709,7 @@ public class DbMigrationContext implements Closeable {
                 try {
                     dba.startTransaction();
                     for (MigrationRun item : runList) {
-                        this._currentRun = (SqlMigrationRun) ((item instanceof SqlMigrationRun) ? item : null);
+                        this.currentRun = (SqlMigrationRun) ((item instanceof SqlMigrationRun) ? item : null);
                         item.Run(dba);
                     }
                     dba.commit();
@@ -720,14 +720,14 @@ public class DbMigrationContext implements Closeable {
                 }
             } else {
                 MigrationRun singleRun = runList.get(0);
-                this._currentRun = (SqlMigrationRun) (singleRun instanceof SqlMigrationRun ? singleRun : null);
+                this.currentRun = (SqlMigrationRun) (singleRun instanceof SqlMigrationRun ? singleRun : null);
                 singleRun.Run(dba);
             }
             return null;
         });
     }
 
-    private SqlMigrationRun _currentRun;
+    private SqlMigrationRun currentRun;
 
     private void ExecuteWithoutDebug(Supplier<Void> action) {
         try {
@@ -735,7 +735,7 @@ public class DbMigrationContext implements Closeable {
         } catch (Exception ex) {
             String error = ex.getMessage();
             if (ex instanceof SQLException) {
-                error = DbMigrationExceptionMessageFormatter.FormatMessage((SQLException) ex, _currentRun);
+                error = DbMigrationExceptionMessageFormatter.FormatMessage((SQLException) ex, currentRun);
             }
             throw new DbMigrationException(error, ex);
         }
@@ -750,7 +750,7 @@ public class DbMigrationContext implements Closeable {
             migration.GenerateDownOperations();
         }
 
-        List<MigrationRun> runList = _runGenerator.Generate(migration.getOperations());
+        List<MigrationRun> runList = runGenerator.Generate(migration.getOperations());
 
         return runList;
     }
@@ -759,8 +759,8 @@ public class DbMigrationContext implements Closeable {
      * 释放资源。
      */
     public void close() throws IOException {
-        if (this._dba != null) {
-            this._dba.close();
+        if (this.dba != null) {
+            this.dba.close();
         }
     }
 

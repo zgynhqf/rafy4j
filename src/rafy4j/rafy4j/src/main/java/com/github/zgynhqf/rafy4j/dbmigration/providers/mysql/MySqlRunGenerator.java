@@ -97,9 +97,11 @@ public final class MySqlRunGenerator extends SqlRunGenerator {
         try (IndentedTextWriter sql = this.Writer()) {
             sql.write("ALTER TABLE ");
             sql.write(this.Quote(op.getDependentTable()));
-            sql.write("" + "\r\n" + "    ADD CONSTRAINT ");
+            sql.writeLine();
+            sql.write("    ADD CONSTRAINT ");
             sql.write(this.Quote(op.getConstraintName()));
-            sql.write("" + "\r\n" + "    FOREIGN KEY ");
+            sql.writeLine();
+            sql.write("    FOREIGN KEY ");
             sql.write(this.Quote(op.getDependentTable()));
             sql.write(" (");
             sql.write(this.Quote(op.getDependentTableColumn()));
@@ -127,7 +129,8 @@ public final class MySqlRunGenerator extends SqlRunGenerator {
         try (IndentedTextWriter sql = this.Writer()) {
             sql.write("ALTER TABLE ");
             sql.write(this.Quote(op.getDependentTable()));
-            sql.write("" + "\r\n" + "    DROP FOREIGN KEY ");
+            sql.writeLine();
+            sql.write("    DROP FOREIGN KEY ");
             sql.write(this.Quote(op.getConstraintName()));
 
             this.AddRun(sql);

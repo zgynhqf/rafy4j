@@ -7,7 +7,7 @@ public enum MigrationType {
     /**
      * 自动生成的更新项
      */
-    AutoMigration,
+    AUTO_MIGRATION,
 //
 //    /**
 //     * 手工更新项

@@ -24,7 +24,7 @@ import java.util.Set;
  * 从 Rafy 元数据中读取整个数据库的元数据。
  */
 public class ClassMetaReader implements DestinationDatabaseReader {
-    private DbSetting _dbSetting;
+    private DbSetting dbSetting;
     /**
      * 需要忽略的表的表名的集合。
      */
@@ -35,12 +35,12 @@ public class ClassMetaReader implements DestinationDatabaseReader {
 //     * 当需要生成的数据库的配置名与实体集合的数据库配置名不一致时，可以摄者此属性来指定实体集合对应的数据库配置名称。
 //     */
 //    private String entityDbSettingName;
-    private boolean _isGeneratingForeignKey = true;
+    private boolean isGeneratingForeignKey = true;
     private String entityPackage;
     private EntityMetaParser metaParser = new EntityMetaParser();
 
     public ClassMetaReader(String entityPackage, DbSetting dbSetting) {
-        _dbSetting = dbSetting;
+        this.dbSetting = dbSetting;
         ignoreTables = new ArrayList<>();
 
 //        entityDbSettingName = dbSetting.getName();
@@ -56,7 +56,7 @@ public class ClassMetaReader implements DestinationDatabaseReader {
      * 是否生成外键，默认true
      */
     public final boolean isGeneratingForeignKey() {
-        return _isGeneratingForeignKey;
+        return isGeneratingForeignKey;
     }
 
     public boolean isMapCamelToUnderline() {
@@ -105,7 +105,7 @@ public class ClassMetaReader implements DestinationDatabaseReader {
     public final DestinationDatabase Read() {
         List<EntityMeta> tableEntityTypes = this.GetMappingEntityTypes();
 
-        DestinationDatabase result = new DestinationDatabase(_dbSetting.getDatabase());
+        DestinationDatabase result = new DestinationDatabase(dbSetting.getDatabase());
 
         result.getIgnoreTables().addAll(ignoreTables);
 
@@ -113,7 +113,7 @@ public class ClassMetaReader implements DestinationDatabaseReader {
             result.setRemoved(true);
         } else {
             TypesMetaReader reader = this.createTypesMetaReader();
-            reader._dbTypeConverter = DbMigrationProviderFactory.GetDbTypeConverter(_dbSetting.getDriverName());
+            reader.dbTypeConverter = DbMigrationProviderFactory.GetDbTypeConverter(dbSetting.getDriverName());
             reader.database = result;
             reader.entities = tableEntityTypes;
 //            reader.setReadComment(this.getReadComment());
@@ -151,14 +151,14 @@ public class ClassMetaReader implements DestinationDatabaseReader {
     }
 
     public static class TypesMetaReader {
-        private DbTypeConverter _dbTypeConverter;
+        private DbTypeConverter dbTypeConverter;
         private DestinationDatabase database;
         private List<EntityMeta> entities;
-        private boolean _isGeneratingForeignKey = true;
+        private boolean isGeneratingForeignKey = true;
         /**
          * 临时存储在这个列表中，最后再整合到 database 中。
          */
-        private List<ForeignConstraintInfo> _foreigns = new ArrayList<>();
+        private List<ForeignConstraintInfo> foreigns = new ArrayList<>();
 
         //region ignore
         //        private boolean _readComment;
@@ -194,11 +194,11 @@ public class ClassMetaReader implements DestinationDatabaseReader {
          * 是否生成外键，默认true
          */
         public final boolean getIsGeneratingForeignKey() {
-            return _isGeneratingForeignKey;
+            return isGeneratingForeignKey;
         }
 
         public final void setIsGeneratingForeignKey(boolean value) {
-            _isGeneratingForeignKey = value;
+            isGeneratingForeignKey = value;
         }
         //endregion
 
@@ -267,7 +267,7 @@ public class ClassMetaReader implements DestinationDatabaseReader {
 //                                            tempVar.FkColumn = columnName;
 //                                            tempVar.PkColumn = id.ColumnMeta.ColumnName;
 //                                            tempVar.NeedDeleteCascade = refProperty.ReferenceType == ReferenceType.Parent;
-//                                            this._foreigns.add(tempVar);
+//                                            this.foreigns.add(tempVar);
 //                                        }
 //                                    }
 //                                }
@@ -283,7 +283,7 @@ public class ClassMetaReader implements DestinationDatabaseReader {
 //                            tempVar2.FkColumn = columnName;
 //                            tempVar2.PkColumn = id.ColumnMeta.ColumnName;
 //                            tempVar2.NeedDeleteCascade = false;
-//                            this._foreigns.add(tempVar2);
+//                            this.foreigns.add(tempVar2);
 //                        }
 //                    }
 //                }
@@ -294,8 +294,8 @@ public class ClassMetaReader implements DestinationDatabaseReader {
 //                if (mp == Entity.IdProperty || mp == Entity.TreePIdProperty) {
 //                    dataType = em.IdType;
 //                }
-//                var dbType = columnMeta.DbType.GetValueOrDefault(_dbTypeConverter.FromClrType(dataType));
-                JDBCType dbType = _dbTypeConverter.FromClrType(dataType);
+//                var dbType = columnMeta.DbType.GetValueOrDefault(dbTypeConverter.FromClrType(dataType));
+                JDBCType dbType = dbTypeConverter.FromClrType(dataType);
                 Column column = new Column(columnName, dbType, fieldMeta.getColumnLength(), table);
                 if (fieldMeta.getIsNullable() != OptionalBoolean.ANY) {
                     column.setRequired(fieldMeta.getIsNullable() == OptionalBoolean.FALSE);
@@ -373,7 +373,7 @@ public class ClassMetaReader implements DestinationDatabaseReader {
          * 构造外键的描述，并创建好与数据库、表、列的相关依赖关系
          */
         private void BuildFKRelations() {
-            for (ForeignConstraintInfo foreign : this._foreigns) {
+            for (ForeignConstraintInfo foreign : this.foreigns) {
                 //外键表必须找到，否则这个外键不会加入到集合中。
                 Table fkTable = this.database.FindTable(foreign.FkTableName);
                 Column fkColumn = fkTable.FindColumn(foreign.FkColumn);
