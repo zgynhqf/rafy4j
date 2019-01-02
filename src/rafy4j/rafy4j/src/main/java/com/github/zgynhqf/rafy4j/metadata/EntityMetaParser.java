@@ -1,5 +1,6 @@
 package com.github.zgynhqf.rafy4j.metadata;
 
+import com.github.zgynhqf.rafy4j.annotation.IgnoreMapping;
 import com.github.zgynhqf.rafy4j.annotation.MappingColumn;
 import com.github.zgynhqf.rafy4j.annotation.MappingTable;
 import com.github.zgynhqf.rafy4j.utils.AnnotationHelper;
@@ -69,7 +70,7 @@ public class EntityMetaParser {
             fieldMeta.setField(field);
 
             MappingColumn columnAnnotation = AnnotationHelper.findAnnotation(field, MappingColumn.class);
-            com.github.zgynhqf.rafy4j.annotation.IgnoreColumn ignoreColumnAnnotation = AnnotationHelper.findAnnotation(field, com.github.zgynhqf.rafy4j.annotation.IgnoreColumn.class);
+            IgnoreMapping ignoreColumnAnnotation = AnnotationHelper.findAnnotation(field, IgnoreMapping.class);
             boolean isMappingColumn = (columnAnnotation != null || meta.isMapAllFieldsToColumn()) && ignoreColumnAnnotation == null;
             if (isMappingColumn) {
                 if (columnAnnotation != null) {
