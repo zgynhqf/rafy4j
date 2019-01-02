@@ -5,8 +5,8 @@ public class DropDatabase extends DatabaseOperation
 	@Override
 	protected void Down()
 	{
-		CreateDatabase tempVar = new CreateDatabase();
-		tempVar.setDatabase(this.getDatabase());
-		this.AddOperation(tempVar);
+		CreateDatabase op = new CreateDatabase();
+		op.setDatabase(this.getDatabase());
+		this.AddOperation(op);
 	}
 }

@@ -5,8 +5,8 @@ public class CreateTable extends TableOperation
 	@Override
 	protected void Down()
 	{
-		DropTable tempVar = new DropTable();
-		tempVar.setCopyFrom(this);
-		this.AddOperation(tempVar);
+		DropTable op = new DropTable();
+		op.setCopyFrom(this);
+		this.AddOperation(op);
 	}
 }

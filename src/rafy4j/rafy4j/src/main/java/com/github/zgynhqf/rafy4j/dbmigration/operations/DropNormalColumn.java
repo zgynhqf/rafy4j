@@ -24,10 +24,10 @@ public class DropNormalColumn extends ColumnOperation {
 
     @Override
     protected void Down() {
-        CreateNormalColumn tempVar = new CreateNormalColumn();
-        tempVar.copyFrom(this);
-        tempVar.setPrimaryKey(this.isPrimaryKey());
-        tempVar.setAutoIncrement(this.isAutoIncrement());
-        this.AddOperation(tempVar);
+        CreateNormalColumn op = new CreateNormalColumn();
+        op.copyFrom(this);
+        op.setPrimaryKey(this.isPrimaryKey());
+        op.setAutoIncrement(this.isAutoIncrement());
+        this.AddOperation(op);
     }
 }

@@ -214,7 +214,7 @@ public class AutomationMigration {
             AlterColumnType op = new AlterColumnType();
             op.copyFromColumn(columnChanges.getOldColumn());
             op.setNewType(columnChanges.getNewColumn().getDbType());
-            op.setIsRequired(columnChanges.getOldColumn().isRequired());
+            op.setRequired(columnChanges.getOldColumn().isRequired());
             this.AddOperation(op);
         }
 

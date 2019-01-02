@@ -5,8 +5,8 @@ public class AddNotNullConstraint extends ColumnOperation
 	@Override
 	protected void Down()
 	{
-		RemoveNotNullConstraint tempVar = new RemoveNotNullConstraint();
-		tempVar.copyFrom(this);
-		this.AddOperation(tempVar);
+		RemoveNotNullConstraint op = new RemoveNotNullConstraint();
+		op.copyFrom(this);
+		this.AddOperation(op);
 	}
 }

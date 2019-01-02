@@ -6,14 +6,14 @@ import com.github.zgynhqf.rafy4j.dbmigration.MigrationOperation;
  * 该操作需要执行某个特定的 SQL
  */
 public class RunSql extends MigrationOperation {
-    private String privateSql;
+    private String sql;
 
     public final String getSql() {
-        return privateSql;
+        return sql;
     }
 
     public final void setSql(String value) {
-        privateSql = value;
+        sql = value;
     }
 
     @Override

@@ -5,8 +5,8 @@ public class RemoveFKConstraint extends FKConstraintOperation
 	@Override
 	protected void Down()
 	{
-		AddFKConstraint tempVar = new AddFKConstraint();
-		tempVar.setCopyFrom(this);
-		this.AddOperation(tempVar);
+		AddFKConstraint op = new AddFKConstraint();
+		op.setCopyFrom(this);
+		this.AddOperation(op);
 	}
 }

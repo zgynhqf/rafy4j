@@ -3,31 +3,32 @@ package com.github.zgynhqf.rafy4j.dbmigration.operations;
 import java.sql.JDBCType;
 
 public class AlterColumnType extends ColumnOperation {
-    private JDBCType privateNewType;
+    private JDBCType newType;
+    private boolean required;
 
+    //region gs
     public final JDBCType getNewType() {
-        return privateNewType;
+        return newType;
     }
 
     public final void setNewType(JDBCType value) {
-        privateNewType = value;
+        newType = value;
     }
 
-    private boolean privateIsRequired;
-
-    public final boolean getIsRequired() {
-        return privateIsRequired;
+    public final boolean isRequired() {
+        return required;
     }
 
-    public final void setIsRequired(boolean value) {
-        privateIsRequired = value;
+    public final void setRequired(boolean value) {
+        required = value;
     }
+    //endregion
 
     @Override
     protected void Down() {
         AlterColumnType tempVar = new AlterColumnType();
         tempVar.copyFrom(this);
-        tempVar.setIsRequired(this.getIsRequired());
+        tempVar.setRequired(this.isRequired());
         tempVar.setDbType(this.getNewType());
         tempVar.setNewType(this.getDbType());
         this.AddOperation(tempVar);

@@ -3,131 +3,103 @@ package com.github.zgynhqf.rafy4j.dbmigration.operations;
 import com.github.zgynhqf.rafy4j.dbmigration.MigrationOperation;
 import com.github.zgynhqf.rafy4j.dbmigration.model.ForeignConstraint;
 
-//******************************************************
-// * 
-// * 作者：胡庆访
-// * 创建时间：20110109
-// * 说明：所有外键相关的操作。
-// * 运行环境：.NET 4.0
-// * 版本号：1.0.0
-// * 
-// * 历史记录：
-// * 创建文件 胡庆访 20110109
-// * 
-//******************************************************
+public abstract class FKConstraintOperation extends MigrationOperation {
+    private String constraintName;
+    /**
+     * 外键表
+     */
+    private String dependentTable;
+    /**
+     * 外键表的字段
+     */
+    private String dependentTableColumn;
+    /**
+     * 主键表
+     */
+    private String principleTable;
+    /**
+     * 主键表的字段
+     */
+    private String principleTableColumn;
+    /**
+     * 是否需要级联删除
+     */
+    private boolean needDeleteCascade;
 
+    //region gs
+    public final String getConstraintName() {
+        return constraintName;
+    }
 
-public abstract class FKConstraintOperation extends MigrationOperation
-{
-	private String privateConstraintName;
-	public final String getConstraintName()
-	{
-		return privateConstraintName;
-	}
-	public final void setConstraintName(String value)
-	{
-		privateConstraintName = value;
-	}
+    public final void setConstraintName(String value) {
+        constraintName = value;
+    }
 
-	/** 
-	 外键表
-	 
-	*/
-	private String privateDependentTable;
-	public final String getDependentTable()
-	{
-		return privateDependentTable;
-	}
-	public final void setDependentTable(String value)
-	{
-		privateDependentTable = value;
-	}
+    public final String getDependentTable() {
+        return dependentTable;
+    }
 
-	/** 
-	 外键表的字段
-	 
-	*/
-	private String privateDependentTableColumn;
-	public final String getDependentTableColumn()
-	{
-		return privateDependentTableColumn;
-	}
-	public final void setDependentTableColumn(String value)
-	{
-		privateDependentTableColumn = value;
-	}
+    public final void setDependentTable(String value) {
+        dependentTable = value;
+    }
 
-	/** 
-	 主键表
-	 
-	*/
-	private String privatePrincipleTable;
-	public final String getPrincipleTable()
-	{
-		return privatePrincipleTable;
-	}
-	public final void setPrincipleTable(String value)
-	{
-		privatePrincipleTable = value;
-	}
+    public final String getDependentTableColumn() {
+        return dependentTableColumn;
+    }
 
-	/** 
-	 主键表的字段
-	 
-	*/
-	private String privatePrincipleTableColumn;
-	public final String getPrincipleTableColumn()
-	{
-		return privatePrincipleTableColumn;
-	}
-	public final void setPrincipleTableColumn(String value)
-	{
-		privatePrincipleTableColumn = value;
-	}
+    public final void setDependentTableColumn(String value) {
+        dependentTableColumn = value;
+    }
 
-	/** 
-	 是否需要级联删除
-	 
-	*/
-	private boolean privateNeedDeleteCascade;
-	public final boolean getNeedDeleteCascade()
-	{
-		return privateNeedDeleteCascade;
-	}
-	public final void setNeedDeleteCascade(boolean value)
-	{
-		privateNeedDeleteCascade = value;
-	}
+    public final String getPrincipleTable() {
+        return principleTable;
+    }
 
-	public final void setCopyFromConstraint(ForeignConstraint value)
-	{
-		if (value != null)
-		{
-			this.setDependentTable(value.getFKColumn().getTable().getName());
-			this.setDependentTableColumn(value.getFKColumn().getName());
-			this.setPrincipleTable(value.getPKColumn().getTable().getName());
-			this.setPrincipleTableColumn(value.getPKColumn().getName());
-			this.setNeedDeleteCascade(value.getNeedDeleteCascade());
-			this.setConstraintName(value.getConstraintName());
-		}
-	}
+    public final void setPrincipleTable(String value) {
+        principleTable = value;
+    }
 
-	public final void setCopyFrom(FKConstraintOperation value)
-	{
-		if (value != null)
-		{
-			this.setDependentTable(value.getDependentTable());
-			this.setDependentTableColumn(value.getDependentTableColumn());
-			this.setPrincipleTable(value.getPrincipleTable());
-			this.setPrincipleTableColumn(value.getPrincipleTableColumn());
-			this.setNeedDeleteCascade(value.getNeedDeleteCascade());
-			this.setConstraintName(value.getConstraintName());
-		}
-	}
+    public final String getPrincipleTableColumn() {
+        return principleTableColumn;
+    }
 
-	@Override
-	public String getDescription()
-	{
-		return String.format("%1$s: %2$s", super.getDescription(), this.getConstraintName());
-	}
+    public final void setPrincipleTableColumn(String value) {
+        principleTableColumn = value;
+    }
+
+    public final boolean getNeedDeleteCascade() {
+        return needDeleteCascade;
+    }
+
+    public final void setNeedDeleteCascade(boolean value) {
+        needDeleteCascade = value;
+    }
+    //endregion
+
+    public final void setCopyFromConstraint(ForeignConstraint value) {
+        if (value != null) {
+            this.setDependentTable(value.getFKColumn().getTable().getName());
+            this.setDependentTableColumn(value.getFKColumn().getName());
+            this.setPrincipleTable(value.getPKColumn().getTable().getName());
+            this.setPrincipleTableColumn(value.getPKColumn().getName());
+            this.setNeedDeleteCascade(value.getNeedDeleteCascade());
+            this.setConstraintName(value.getConstraintName());
+        }
+    }
+
+    public final void setCopyFrom(FKConstraintOperation value) {
+        if (value != null) {
+            this.setDependentTable(value.getDependentTable());
+            this.setDependentTableColumn(value.getDependentTableColumn());
+            this.setPrincipleTable(value.getPrincipleTable());
+            this.setPrincipleTableColumn(value.getPrincipleTableColumn());
+            this.setNeedDeleteCascade(value.getNeedDeleteCascade());
+            this.setConstraintName(value.getConstraintName());
+        }
+    }
+
+    @Override
+    public String getDescription() {
+        return String.format("%1$s: %2$s", super.getDescription(), this.getConstraintName());
+    }
 }

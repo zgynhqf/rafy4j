@@ -32,7 +32,7 @@ public final class MySqlRunGenerator extends SqlRunGenerator {
             sql.write(" MODIFY ");
 
             sql.plusIndent();
-            this.GenerateColumnDeclaration(sql, op.getColumnName(), op.getDbType(), op.getLength(), true, op.getIsForeignKey(), op.getDefaultValue());
+            this.GenerateColumnDeclaration(sql, op.getColumnName(), op.getDbType(), op.getLength(), true, op.isForeignKey(), op.getDefaultValue());
 
             this.AddRun(sql);
         }
@@ -244,7 +244,7 @@ public final class MySqlRunGenerator extends SqlRunGenerator {
             sql.plusIndent();
             sql.write("MODIFY ");
 
-            this.GenerateColumnDeclaration(sql, op.getColumnName(), op.getNewType(), op.getLength(), op.getIsRequired(), op.getIsForeignKey(), op.getDefaultValue());
+            this.GenerateColumnDeclaration(sql, op.getColumnName(), op.getNewType(), op.getLength(), op.isRequired(), op.isForeignKey(), op.getDefaultValue());
 
             this.AddRun(sql);
         }
@@ -266,7 +266,7 @@ public final class MySqlRunGenerator extends SqlRunGenerator {
 
             sql.plusIndent();
             sql.write("ADD ");
-            this.GenerateColumnDeclaration(sql, op.getColumnName(), op.getDbType(), op.getLength(), false, op.getIsForeignKey(), op.getDefaultValue());
+            this.GenerateColumnDeclaration(sql, op.getColumnName(), op.getDbType(), op.getLength(), false, op.isForeignKey(), op.getDefaultValue());
 
             this.AddRun(sql);
         }
@@ -286,7 +286,7 @@ public final class MySqlRunGenerator extends SqlRunGenerator {
 
             sql.plusIndent();
             sql.write("MODIFY ");
-            this.GenerateColumnDeclaration(sql, op.getColumnName(), op.getDbType(), op.getLength(), false, op.getIsForeignKey(), op.getDefaultValue());
+            this.GenerateColumnDeclaration(sql, op.getColumnName(), op.getDbType(), op.getLength(), false, op.isForeignKey(), op.getDefaultValue());
 
             this.AddRun(sql);
         }
