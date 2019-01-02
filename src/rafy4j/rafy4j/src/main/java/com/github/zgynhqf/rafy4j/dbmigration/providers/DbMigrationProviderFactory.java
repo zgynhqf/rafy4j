@@ -42,7 +42,7 @@ public final class DbMigrationProviderFactory {
         return provider;
     }
 
-    public static DbIdentifierQuoter GetIdentifierProvider(String driverName) {
+    public static BaseDbIdentifierQuoter GetIdentifierProvider(String driverName) {
         return MySqlIdentifierQuoter.Instance;
 
         //        driverName = driverName.toLowerCase();

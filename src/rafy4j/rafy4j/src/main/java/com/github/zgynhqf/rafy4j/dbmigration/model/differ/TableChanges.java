@@ -1,7 +1,6 @@
 package com.github.zgynhqf.rafy4j.dbmigration.model.differ;
 
 import com.github.zgynhqf.rafy4j.dbmigration.model.Table;
-import com.github.zgynhqf.rafy4j.utils.NameUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +16,7 @@ public class TableChanges {
      * 当表的字段被增/删/改了，则这个值为Changed。
      * 其它则是表示表被删除/增加。
      */
-    private ChangeType changeType = ChangeType.UnChanged;
+    private ChangeType changeType = ChangeType.UNCHANGED;
 
     public TableChanges(Table oldTable, Table newTable, ChangeType changeType) {
         this.setOldTable(oldTable);
@@ -63,7 +62,7 @@ public class TableChanges {
     }
 
     private Table GetCoreTable() {
-        if (this.getChangeType() == ChangeType.Removed) {
+        if (this.getChangeType() == ChangeType.REMOVED) {
             return this.getOldTable();
         }
 

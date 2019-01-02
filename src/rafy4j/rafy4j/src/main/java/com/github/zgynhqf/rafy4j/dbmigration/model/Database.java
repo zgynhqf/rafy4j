@@ -31,6 +31,7 @@ public class Database {
         this.setTables(new ArrayList<Table>());
     }
 
+    //region gs
     public final String getName() {
         return name;
     }
@@ -54,6 +55,7 @@ public class Database {
     private void setTables(List<Table> value) {
         tables = value;
     }
+    //endregion
 
     /**
      * 通过表名找到对应的表。

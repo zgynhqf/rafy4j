@@ -14,7 +14,7 @@ public class ColumnChanges {
      * 新列
      */
     private Column newColumn;
-    private ChangeType changeType = ChangeType.UnChanged;
+    private ChangeType changeType = ChangeType.UNCHANGED;
     /**
      * 是否更新了是否为空的设定
      */
@@ -30,7 +30,7 @@ public class ColumnChanges {
     /**
      * 添加/删除/修改了 外键关系
      */
-    private ChangeType foreignRelationChangeType = ChangeType.UnChanged;
+    private ChangeType foreignRelationChangeType = ChangeType.UNCHANGED;
 
     public ColumnChanges(Column oldColumn, Column newColumn, ChangeType changeType) {
         this.setOldColumn(oldColumn);
@@ -39,7 +39,7 @@ public class ColumnChanges {
     }
 
     private Column getCoreColumn() {
-        if (this.getChangeType() == ChangeType.Removed) {
+        if (this.getChangeType() == ChangeType.REMOVED) {
             return this.getOldColumn();
         }
 

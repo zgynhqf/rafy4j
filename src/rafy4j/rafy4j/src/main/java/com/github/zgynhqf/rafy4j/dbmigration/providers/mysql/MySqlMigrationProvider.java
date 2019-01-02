@@ -1,7 +1,7 @@
 package com.github.zgynhqf.rafy4j.dbmigration.providers.mysql;
 
 
-import com.github.zgynhqf.rafy4j.dbmigration.model.IMetadataReader;
+import com.github.zgynhqf.rafy4j.dbmigration.model.MetadataReader;
 import com.github.zgynhqf.rafy4j.dbmigration.providers.DbMigrationProvider;
 import com.github.zgynhqf.rafy4j.dbmigration.RunGenerator;
 
@@ -35,7 +35,7 @@ public final class MySqlMigrationProvider extends DbMigrationProvider {
      * @return 返回MySqlMetaReader的实例对象
      */
     @Override
-    public IMetadataReader CreateSchemaReader() {
+    public MetadataReader CreateSchemaReader() {
         return new MySqlMetaReader(this.getDbSetting());
     }
 }

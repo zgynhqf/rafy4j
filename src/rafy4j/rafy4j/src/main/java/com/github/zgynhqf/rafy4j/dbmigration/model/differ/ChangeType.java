@@ -18,8 +18,8 @@ package com.github.zgynhqf.rafy4j.dbmigration.model.differ;
  * 更改类型
  */
 public enum ChangeType {
-    UnChanged,
-    Added,
-    Removed,
-    Modified
+    UNCHANGED,
+    ADDED,
+    REMOVED,
+    MODIFIED
 }

@@ -43,6 +43,7 @@ public class ForeignConstraint {
         }
     }
 
+    //region gs
     public final String getConstraintName() {
         return constraintName;
     }
@@ -74,6 +75,7 @@ public class ForeignConstraint {
     public final void setNeedDeleteCascade(boolean value) {
         needDeleteCascade = value;
     }
+    //endregion
 
     /**
      * 这个外键对应的主键表

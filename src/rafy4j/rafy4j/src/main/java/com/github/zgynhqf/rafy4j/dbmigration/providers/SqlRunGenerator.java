@@ -29,13 +29,13 @@ import java.sql.JDBCType;
  * SQL 生成器的基类
  */
 public abstract class SqlRunGenerator extends RunGenerator {
-    private DbIdentifierQuoter privateIdentifierQuoter;
+    private BaseDbIdentifierQuoter privateIdentifierQuoter;
 
-    public final DbIdentifierQuoter getIdentifierQuoter() {
+    public final BaseDbIdentifierQuoter getIdentifierQuoter() {
         return privateIdentifierQuoter;
     }
 
-    protected final void setIdentifierQuoter(DbIdentifierQuoter value) {
+    protected final void setIdentifierQuoter(BaseDbIdentifierQuoter value) {
         privateIdentifierQuoter = value;
     }
 

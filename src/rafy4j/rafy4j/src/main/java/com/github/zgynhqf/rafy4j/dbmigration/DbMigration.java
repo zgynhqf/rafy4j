@@ -1,6 +1,6 @@
 package com.github.zgynhqf.rafy4j.dbmigration;
 
-import com.github.zgynhqf.rafy4j.dbmigration.model.IMetadataReader;
+import com.github.zgynhqf.rafy4j.dbmigration.model.MetadataReader;
 
 import java.time.Instant;
 
@@ -47,13 +47,13 @@ public abstract class DbMigration {
      */
     public abstract MigrationType GetMigrationType();
 
-    private IMetadataReader databaseMetaReader;
+    private MetadataReader databaseMetaReader;
 
-    public final IMetadataReader getDatabaseMetaReader() {
+    public final MetadataReader getDatabaseMetaReader() {
         return databaseMetaReader;
     }
 
-    public final void setDatabaseMetaReader(IMetadataReader value) {
+    public final void setDatabaseMetaReader(MetadataReader value) {
         databaseMetaReader = value;
     }
 

@@ -118,13 +118,13 @@ public class DbMigrationContext implements Closeable {
     /**
      * 数据库元数据读取器。
      */
-    private IMetadataReader metadataReader;
+    private MetadataReader metadataReader;
 
-    public final IMetadataReader getDatabaseMetaReader() {
+    public final MetadataReader getDatabaseMetaReader() {
         return metadataReader;
     }
 
-    private void setDatabaseMetaReader(IMetadataReader value) {
+    private void setDatabaseMetaReader(MetadataReader value) {
         metadataReader = value;
     }
 
@@ -239,10 +239,10 @@ public class DbMigrationContext implements Closeable {
 
         //判断是否正处于升级阶段。（或者是处于创建阶段。）
         //不能直接用 dbMeta.Tables.Count > 0 来判断，这是因为里面可能有 IgnoreTables 中指定表。
-//        boolean updating = changeSet.getChangeType() == ChangeType.Removed ||
-//                changeSet.getChangeType() == ChangeType.Modified &&
+//        boolean updating = changeSet.getChangeType() == ChangeType.REMOVED ||
+//                changeSet.getChangeType() == ChangeType.MODIFIED &&
 //                        destination.getTables().size() > changeSet.getTablesChanged()
-//                                .stream().filter(t -> t.getChangeType() == ChangeType.Added).count();
+//                                .stream().filter(t -> t.getChangeType() == ChangeType.ADDED).count();
 //        if (updating) {
 //            Must(this.MigrateUpBatch(schemaPending));
 

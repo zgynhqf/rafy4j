@@ -11,33 +11,34 @@ import java.util.List;
 public class DatabaseChanges {
     private List<TableChanges> allRecords;
     private DestinationDatabase newDatabase;
-    private ChangeType changeType = ChangeType.UnChanged;
+    private ChangeType changeType = ChangeType.UNCHANGED;
     private Database oldDatabase;
 
     public DatabaseChanges(Database oldDatabase, DestinationDatabase newDatabase, List<TableChanges> tableChanges) {
         this.setOldDatabase(oldDatabase);
         this.setNewDatabase(newDatabase);
-        this.setChangeType(ChangeType.UnChanged);
+        this.setChangeType(ChangeType.UNCHANGED);
 
         if (!oldDatabase.getRemoved() || !newDatabase.getRemoved()) {
             if (oldDatabase.getRemoved()) {
-                this.setChangeType(ChangeType.Added);
+                this.setChangeType(ChangeType.ADDED);
                 return;
             }
 
             if (newDatabase.getRemoved()) {
-                this.setChangeType(ChangeType.Removed);
+                this.setChangeType(ChangeType.REMOVED);
                 return;
             }
 
             if (tableChanges != null && tableChanges.size() > 0) {
-                this.setChangeType(ChangeType.Modified);
+                this.setChangeType(ChangeType.MODIFIED);
 
                 this.allRecords = tableChanges;
             }
         }
     }
 
+    //region gs
     public final Database getOldDatabase() {
         return oldDatabase;
     }
@@ -69,19 +70,21 @@ public class DatabaseChanges {
     public final TableChanges FindTable(String tableName) {
         return allRecords.stream().filter(t -> tableName.equalsIgnoreCase(t.getName())).findFirst().orElse(null);
     }
+    //endregion
 
-    protected final String getDebuggerDisplay() {
+    @Override
+    public String toString() {
         switch (this.getChangeType()) {
-            case Added:
-                return this.getNewDatabase().getName() + " Added!";
-            case Removed:
-                return this.getOldDatabase().getName() + " Removed!";
-            case Modified:
-                return String.format("All:%1$s, Added:%2$s, Removed:%3$s, Changed:%4$s",
+            case ADDED:
+                return this.getNewDatabase().getName() + " ADDED!";
+            case REMOVED:
+                return this.getOldDatabase().getName() + " REMOVED!";
+            case MODIFIED:
+                return String.format("All:%1$s, ADDED:%2$s, REMOVED:%3$s, Changed:%4$s",
                         this.allRecords.size(),
-                        this.allRecords.stream().filter(r -> r.getChangeType() == ChangeType.Added).count(),
-                        this.allRecords.stream().filter(r -> r.getChangeType() == ChangeType.Removed).count(),
-                        this.allRecords.stream().filter(r -> r.getChangeType() == ChangeType.Modified).count()
+                        this.allRecords.stream().filter(r -> r.getChangeType() == ChangeType.ADDED).count(),
+                        this.allRecords.stream().filter(r -> r.getChangeType() == ChangeType.REMOVED).count(),
+                        this.allRecords.stream().filter(r -> r.getChangeType() == ChangeType.MODIFIED).count()
                 );
             default:
                 return "";

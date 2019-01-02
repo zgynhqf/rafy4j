@@ -33,26 +33,26 @@ public class AutomationMigration {
         this._operations.clear();
 
         switch (dbChanges.getChangeType()) {
-            case Added:
+            case ADDED:
                 this.CreateDatabase(dbChanges);
                 break;
-            case Removed:
+            case REMOVED:
                 this.DropDatabase(dbChanges);
                 break;
-            case Modified:
+            case MODIFIED:
                 //为了保证外键的变化与表的变化不冲突，按照以下顺序生成操作：添加的表、修改的表（外键）、删除的表。
                 List<TableChanges> addedTables = dbChanges.getTablesChanged().stream()
-                        .filter(t -> t.getChangeType() == ChangeType.Added).collect(Collectors.toList());
+                        .filter(t -> t.getChangeType() == ChangeType.ADDED).collect(Collectors.toList());
                 for (TableChanges item : addedTables) {
                     this.GenerateOpertions(item);
                 }
                 List<TableChanges> modifiedTables = dbChanges.getTablesChanged().stream()
-                        .filter(t -> t.getChangeType() == ChangeType.Modified).collect(Collectors.toList());
+                        .filter(t -> t.getChangeType() == ChangeType.MODIFIED).collect(Collectors.toList());
                 for (TableChanges item : modifiedTables) {
                     this.GenerateOpertions(item);
                 }
                 List<TableChanges> removedTables = dbChanges.getTablesChanged().stream()
-                        .filter(t -> t.getChangeType() == ChangeType.Removed).collect(Collectors.toList());
+                        .filter(t -> t.getChangeType() == ChangeType.REMOVED).collect(Collectors.toList());
                 for (TableChanges item : removedTables) {
                     this.GenerateOpertions(item);
                 }
@@ -70,13 +70,13 @@ public class AutomationMigration {
 
     private void GenerateOpertions(TableChanges tableChanges) {
         switch (tableChanges.getChangeType()) {
-            case Added:
+            case ADDED:
                 this.AddTable(tableChanges.getNewTable());
                 break;
-            case Removed:
+            case REMOVED:
                 this.RemoveTable(tableChanges.getOldTable());
                 break;
-            case Modified:
+            case MODIFIED:
                 for (ColumnChanges column : tableChanges.getColumnsChanged()) {
                     this.GenerateOpertions(column);
                 }
@@ -88,13 +88,13 @@ public class AutomationMigration {
 
     private void GenerateOpertions(ColumnChanges columnChanges) {
         switch (columnChanges.getChangeType()) {
-            case Added:
+            case ADDED:
                 this.AddColumn(columnChanges.getNewColumn());
                 break;
-            case Removed:
+            case REMOVED:
                 this.RemoveColumn(columnChanges.getOldColumn());
                 break;
-            case Modified:
+            case MODIFIED:
                 this.ModifyColumn(columnChanges);
                 break;
             default:
@@ -238,7 +238,7 @@ public class AutomationMigration {
         }
 
         //外键
-        if (columnChanges.getForeignRelationChangeType() != ChangeType.UnChanged) {
+        if (columnChanges.getForeignRelationChangeType() != ChangeType.UNCHANGED) {
             this.ModifyColumnForeignConstraint(columnChanges);
         }
     }
@@ -270,17 +270,17 @@ public class AutomationMigration {
     private void ModifyColumnForeignConstraint(ColumnChanges columnChanges) {
         ChangeType value = columnChanges.getForeignRelationChangeType();
         switch (value) {
-            case Added:
+            case ADDED:
                 AddFKConstraint op = new AddFKConstraint();
                 op.setCopyFromConstraint(columnChanges.getNewColumn().getForeignConstraint());
                 this.AddOperation(op);
                 break;
-            case Removed:
+            case REMOVED:
                 RemoveFKConstraint constraint = new RemoveFKConstraint();
                 constraint.setCopyFromConstraint(columnChanges.getOldColumn().getForeignConstraint());
                 this.AddOperation(constraint);
                 break;
-            case Modified:
+            case MODIFIED:
                 //throw new NotSupportedException("暂时不支持外键修改。");
                 RemoveFKConstraint removeFKConstraint = new RemoveFKConstraint();
                 removeFKConstraint.setCopyFromConstraint(columnChanges.getOldColumn().getForeignConstraint());

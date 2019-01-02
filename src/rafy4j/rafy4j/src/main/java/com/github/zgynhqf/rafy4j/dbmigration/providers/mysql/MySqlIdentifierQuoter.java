@@ -1,8 +1,8 @@
 package com.github.zgynhqf.rafy4j.dbmigration.providers.mysql;
 
-import com.github.zgynhqf.rafy4j.dbmigration.providers.DbIdentifierQuoter;
+import com.github.zgynhqf.rafy4j.dbmigration.providers.BaseDbIdentifierQuoter;
 
-public class MySqlIdentifierQuoter extends DbIdentifierQuoter {
+public class MySqlIdentifierQuoter extends BaseDbIdentifierQuoter {
     public static final MySqlIdentifierQuoter Instance = new MySqlIdentifierQuoter();
 
     private MySqlIdentifierQuoter() {

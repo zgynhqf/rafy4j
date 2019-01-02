@@ -1,7 +1,7 @@
 package com.github.zgynhqf.rafy4j.dbmigration.providers;
 
 import com.github.zgynhqf.rafy4j.data.DbSetting;
-import com.github.zgynhqf.rafy4j.dbmigration.model.IMetadataReader;
+import com.github.zgynhqf.rafy4j.dbmigration.model.MetadataReader;
 import com.github.zgynhqf.rafy4j.dbmigration.RunGenerator;
 
 /**
@@ -28,7 +28,7 @@ public abstract class DbMigrationProvider {
      *
      * @return
      */
-    public abstract IMetadataReader CreateSchemaReader();
+    public abstract MetadataReader CreateSchemaReader();
 
     /**
      * 创建一个执行生成器

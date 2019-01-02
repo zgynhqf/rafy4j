@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 /**
  * 数据库的元数据读取器
  */
-public abstract class DbMetaReader implements IMetadataReader {
+public abstract class DbMetaReader implements MetadataReader {
     private DbSetting _dbSetting;
 
     private DbAccesser _db;

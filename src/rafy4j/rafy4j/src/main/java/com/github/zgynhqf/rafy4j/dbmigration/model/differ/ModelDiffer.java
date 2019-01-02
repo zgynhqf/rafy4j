@@ -2,12 +2,12 @@ package com.github.zgynhqf.rafy4j.dbmigration.model.differ;
 
 import com.github.zgynhqf.rafy4j.dbmigration.model.*;
 import com.github.zgynhqf.rafy4j.dbmigration.providers.DbTypeConverter;
-import com.github.zgynhqf.rafy4j.dbmigration.providers.IDbIdentifierQuoter;
+import com.github.zgynhqf.rafy4j.dbmigration.providers.DbIdentifierQuoter;
 
 import java.util.List;
 
 public class ModelDiffer {
-    public IDbIdentifierQuoter IDbIdentifierProvider;
+    public DbIdentifierQuoter IDbIdentifierProvider;
 
     private DbTypeConverter dbTypeConverter;
 
@@ -38,7 +38,7 @@ public class ModelDiffer {
             for (int i = tables.size() - 1; i >= 0; i--) {
                 Table oldTable = tables.get(i);
                 if (FindTable(newDatabase, oldTable.getName()) == null && !newDatabase.IsIgnored(oldTable.getName())) {
-                    result.add(new TableChanges(oldTable, null, ChangeType.Removed));
+                    result.add(new TableChanges(oldTable, null, ChangeType.REMOVED));
                 }
             }
 
@@ -47,7 +47,7 @@ public class ModelDiffer {
                     Table oldTable = FindTable(oldDatabase, newTable.getName());
                     //如果没有找到旧表，说明这个表是新加的。
                     if (oldTable == null) {
-                        result.add(new TableChanges(null, newTable, ChangeType.Added));
+                        result.add(new TableChanges(null, newTable, ChangeType.ADDED));
                     } else {
                         //即不是新表，也不是旧表，计算两个表的区别
                         TableChanges record = Distinguish(oldTable, newTable);
@@ -76,12 +76,12 @@ public class ModelDiffer {
         //if (oldTable == null) throw new ArgumentNullException("oldTable");
         //if (newTable.Name != oldTable.Name) throw new InvalidOperationException("newTable.Name != oldTable.Name must be false.");
 
-        TableChanges record = new TableChanges(oldTable, newTable, ChangeType.Modified);
+        TableChanges record = new TableChanges(oldTable, newTable, ChangeType.MODIFIED);
 
         //先找到已经删除的列
         for (Column oldColumn : oldTable.getColumns()) {
             if (FindColumn(newTable, oldColumn.getName()) == null) {
-                record.getColumnsChanged().add(new ColumnChanges(oldColumn, null, ChangeType.Removed));
+                record.getColumnsChanged().add(new ColumnChanges(oldColumn, null, ChangeType.REMOVED));
             }
         }
 
@@ -90,7 +90,7 @@ public class ModelDiffer {
             Column oldColumn = FindColumn(oldTable, column.getName());
 
             if (oldColumn == null) {
-                ColumnChanges columnChanged = new ColumnChanges(null, column, ChangeType.Added);
+                ColumnChanges columnChanged = new ColumnChanges(null, column, ChangeType.ADDED);
                 record.getColumnsChanged().add(columnChanged);
             } else {
                 ColumnChanges columnChanged = Distinguish(oldColumn, column);
@@ -116,7 +116,7 @@ public class ModelDiffer {
 
         ColumnChanges columnChanged = null;
         if (!equals(newColumn, oldColumn)) {
-            columnChanged = new ColumnChanges(oldColumn, newColumn, ChangeType.Modified);
+            columnChanged = new ColumnChanges(oldColumn, newColumn, ChangeType.MODIFIED);
 
             if (newColumn.isRequired() != oldColumn.isRequired()) {
                 columnChanged.setIsRequiredChanged(true);
@@ -131,14 +131,14 @@ public class ModelDiffer {
             }
 
             //ForeignRelationChangeType
-            columnChanged.setForeignRelationChangeType(ChangeType.UnChanged);
+            columnChanged.setForeignRelationChangeType(ChangeType.UNCHANGED);
             if (!newColumn.isForeignKey() && oldColumn.isForeignKey()) {
-                columnChanged.setForeignRelationChangeType(ChangeType.Removed);
+                columnChanged.setForeignRelationChangeType(ChangeType.REMOVED);
             } else if (newColumn.isForeignKey() && !oldColumn.isForeignKey()) {
-                columnChanged.setForeignRelationChangeType(ChangeType.Added);
+                columnChanged.setForeignRelationChangeType(ChangeType.ADDED);
             } else if (newColumn.isForeignKey() && oldColumn.isForeignKey()) {
                 if (!equals(newColumn.getForeignConstraint(), oldColumn.getForeignConstraint())) {
-                    columnChanged.setForeignRelationChangeType(ChangeType.Modified);
+                    columnChanged.setForeignRelationChangeType(ChangeType.MODIFIED);
                 }
             }
         }
