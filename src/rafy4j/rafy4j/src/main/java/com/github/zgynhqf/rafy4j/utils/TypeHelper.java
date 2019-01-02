@@ -83,12 +83,12 @@ public class TypeHelper {
         return false;
     }
 
-    /// <summary>
-    /// 获取继承层次列表，从子类到基类
-    /// </summary>
-    /// <param name="from">From.</param>
-    /// <param name="exceptTypes">The except types.</param>
-    /// <returns></returns>
+    /**
+     * 获取继承层次列表，从子类到基类
+     * @param from
+     * @param exceptTypes
+     * @return
+     */
     public static Iterable<Class<?>> getHierarchy(Class<?> from, Class<?>... exceptTypes) {
         boolean needExcept = exceptTypes.length > 0;
 
@@ -121,12 +121,12 @@ public class TypeHelper {
         return false;
     }
 
-    /// <summary>
-    /// 如果是 Nullable 泛型类型，则返回内部的真实类型。
-    /// </summary>
-    /// <param name="targetType"></param>
-    /// <returns></returns>
-    public static Class<?> IgnoreNullable(Class<?> targetType) {
+    /**
+     * 如果是 Optional 泛型类型，则返回内部的真实类型。
+     * @param targetType
+     * @return
+     */
+    public static Class<?> ignoreOptional(Class<?> targetType) {
         if (targetType == OptionalBoolean.class) return boolean.class;
         if (targetType == OptionalInt.class) return int.class;
         if (targetType == OptionalDouble.class) return double.class;
@@ -135,12 +135,12 @@ public class TypeHelper {
         return targetType;
     }
 
-    /// <summary>
-    /// 判断某个类型是否为 Nullable 泛型类型。
-    /// </summary>
-    /// <param name="targetType">需要判断的目标类型。</param>
-    /// <returns></returns>
-    public static boolean IsNullable(Class<?> targetType) {
+    /**
+     * 判断某个类型是否为 Nullable 泛型类型。
+     * @param targetType 需要判断的目标类型。
+     * @return
+     */
+    public static boolean isOptional(Class<?> targetType) {
         return targetType == Optional.class ||
                 targetType == OptionalBoolean.class ||
                 targetType == OptionalInt.class ||
@@ -156,13 +156,13 @@ public class TypeHelper {
      * @param <T>
      * @return
      */
-    public static <T> T CoerceValue(Class<?> desiredType, Object value) {
-        if (value == null) return (T) GetDefaultValue(desiredType);
+    public static <T> T coerceValue(Class<?> desiredType, Object value) {
+        if (value == null) return (T) getDefaultValue(desiredType);
 
-        return (T) CoerceValueCore(desiredType, value);
+        return (T) coerceValueCore(desiredType, value);
     }
 
-    private static Object CoerceValueCore(Class<?> desiredType, Object value) {
+    private static Object coerceValueCore(Class<?> desiredType, Object value) {
         Class<?> valueClass = value.getClass();
 
         //类型匹配时，直接返回值。
@@ -172,8 +172,8 @@ public class TypeHelper {
         if (desiredType == String.class) return value.toString();
 
         //处理 Optional 类型。
-        if (IsNullable(desiredType) && desiredType != Optional.class) {
-            desiredType = IgnoreNullable(desiredType);
+        if (isOptional(desiredType) && desiredType != Optional.class) {
+            desiredType = ignoreOptional(desiredType);
         }
 
         //处理枚举类型
@@ -191,7 +191,7 @@ public class TypeHelper {
 
         //处理数字类型。（空字符串转换为数字 0）
         boolean isEmptyString = value instanceof String && StringUtils.isBlank((String) value);
-        if (isEmptyString && isPrimitiveTypeOrClass(desiredType)) return GetDefaultValue(desiredType);
+        if (isEmptyString && isPrimitiveTypeOrClass(desiredType)) return getDefaultValue(desiredType);
 
         //处理 UUID
         if (desiredType == UUID.class && value instanceof String && !isEmptyString) {
@@ -222,7 +222,7 @@ public class TypeHelper {
      * @param targetType Type of the target.
      * @return
      */
-    public static Object GetDefaultValue(Class targetType) {
+    public static Object getDefaultValue(Class targetType) {
         PrimitiveType primitiveType = getPrimitiveType(targetType);
         if (primitiveType != null) {
             switch (primitiveType) {

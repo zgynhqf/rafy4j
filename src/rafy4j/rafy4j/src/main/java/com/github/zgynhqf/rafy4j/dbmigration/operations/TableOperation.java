@@ -79,7 +79,7 @@ public abstract class TableOperation extends MigrationOperation {
     public final void setCopyFromTable(Table value) {
         if (value != null) {
             this.setTableName(value.getName());
-            Column pk = value.FindPrimaryColumn();
+            Column pk = value.findPrimaryColumn();
             if (pk != null) {
                 this.setPKName(pk.getName());
                 this.setPKDbType(pk.getDbType());

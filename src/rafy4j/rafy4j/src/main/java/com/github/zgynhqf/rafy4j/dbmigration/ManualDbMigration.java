@@ -65,13 +65,13 @@ package com.github.zgynhqf.rafy4j.dbmigration;//package Rafy.dbmigration;
 //    protected final void RunSql(String sql) {
 //        RunSql tempVar = new RunSql();
 //        tempVar.setSql(sql);
-//        this.AddOperation(tempVar);
+//        this.addOperation(tempVar);
 //    }
 //
 //    protected final void RunCode(Consumer<IDbAccesser> action) {
 //        RunAction tempVar = new RunAction();
 //        tempVar.setAction(action);
-//        this.AddOperation(tempVar);
+//        this.addOperation(tempVar);
 //    }
 //
 //    protected final void CreateTable(String tableName, String pkName, JDBCType pkDbType, String length, boolean isPkIdentity) {
@@ -81,7 +81,7 @@ package com.github.zgynhqf.rafy4j.dbmigration;//package Rafy.dbmigration;
 //        tempVar.setPKDbType(pkDbType);
 //        tempVar.setPKLength(length);
 //        tempVar.setPKAutoIncrement(isPkIdentity);
-//        this.AddOperation(tempVar);
+//        this.addOperation(tempVar);
 //    }
 //
 //    protected final void DropTable(String tableName, String pkName, JDBCType pkDbType, String length, boolean isPkIdentity) {
@@ -91,7 +91,7 @@ package com.github.zgynhqf.rafy4j.dbmigration;//package Rafy.dbmigration;
 //        tempVar.setPKDbType(pkDbType);
 //        tempVar.setPKLength(length);
 //        tempVar.setPKAutoIncrement(isPkIdentity);
-//        this.AddOperation(tempVar);
+//        this.addOperation(tempVar);
 //    }
 //
 //    //ORIGINAL LINE: protected void CreateNormalColumn(string tableName, string columnName, DbType dataType, string length = null, bool isPrimaryKey = false, bool isAutoIncrement = false)
@@ -103,7 +103,7 @@ package com.github.zgynhqf.rafy4j.dbmigration;//package Rafy.dbmigration;
 //        tempVar.setLength(length);
 //        tempVar.setPrimaryKey(isPrimaryKey);
 //        tempVar.setAutoIncrement(isAutoIncrement);
-//        this.AddOperation(tempVar);
+//        this.addOperation(tempVar);
 //    }
 //
 //    //ORIGINAL LINE: protected void DropNormalColumn(string tableName, string columnName, DbType dataType, string length = null, bool isPrimaryKey = false, bool isAutoIncrement = false)
@@ -115,7 +115,7 @@ package com.github.zgynhqf.rafy4j.dbmigration;//package Rafy.dbmigration;
 //        tempVar.setLength(length);
 //        tempVar.setPrimaryKey(isPrimaryKey);
 //        tempVar.setAutoIncrement(isAutoIncrement);
-//        this.AddOperation(tempVar);
+//        this.addOperation(tempVar);
 //    }
 //
 //    protected final void AddPKConstraint(String tableName, String pkName, JDBCType pkDbType, String pkLength) {
@@ -124,7 +124,7 @@ package com.github.zgynhqf.rafy4j.dbmigration;//package Rafy.dbmigration;
 //        tempVar.setColumnName(pkName);
 //        tempVar.setDbType(pkDbType);
 //        tempVar.setLength(pkLength);
-//        this.AddOperation(tempVar);
+//        this.addOperation(tempVar);
 //    }
 //
 //    protected final void RemovePKConstraint(String tableName, String pkName, JDBCType pkDbType, String pkLength) {
@@ -133,7 +133,7 @@ package com.github.zgynhqf.rafy4j.dbmigration;//package Rafy.dbmigration;
 //        tempVar.setColumnName(pkName);
 //        tempVar.setDbType(pkDbType);
 //        tempVar.setLength(pkLength);
-//        this.AddOperation(tempVar);
+//        this.addOperation(tempVar);
 //    }
 //
 //    //endregion

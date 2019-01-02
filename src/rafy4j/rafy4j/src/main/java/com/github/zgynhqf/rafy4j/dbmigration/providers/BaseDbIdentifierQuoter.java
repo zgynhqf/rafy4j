@@ -21,15 +21,15 @@ public abstract class BaseDbIdentifierQuoter implements DbIdentifierQuoter {
 
     /**
      * 对于最终生成好的关键标识，在其外围添加相应的引用符。
-     * 它与 IDbIdentifierQuoter.Prepare(string) 方法的区别在于，后者可以对一个标识符中的某一部分使用。
-     * 例如：PK_Table_Id 中的 Table、Id 都需要调用 Prepare，而最终的 PK_Table_Id 则只需要调用 Quote。
+     * 它与 IDbIdentifierQuoter.prepare(string) 方法的区别在于，后者可以对一个标识符中的某一部分使用。
+     * 例如：PK_Table_Id 中的 Table、Id 都需要调用 prepare，而最终的 PK_Table_Id 则只需要调用 quote。
      *
      * @param identifier The identifier.
      * @return
-     * @see DbIdentifierQuoter#Prepare(String)
+     * @see DbIdentifierQuoter#prepare(String)
      */
-    public final String Quote(String identifier) {
-        identifier = this.Prepare(identifier);
+    public final String quote(String identifier) {
+        identifier = this.prepare(identifier);
 
         if (this.getQuoteStart() != Character.MIN_VALUE) {
             return this.getQuoteStart() + identifier + this.getQuoteEnd();
@@ -44,12 +44,12 @@ public abstract class BaseDbIdentifierQuoter implements DbIdentifierQuoter {
      * @param identifier
      * @return
      */
-    public String Prepare(String identifier) {
+    public String prepare(String identifier) {
         return identifier;
     }
 
-    public static String LimitIdentifier(String identifier) {
-        return LimitIdentifier(identifier, 30);
+    public static String limitIdentifier(String identifier) {
+        return limitIdentifier(identifier, 30);
     }
 
     /**
@@ -60,7 +60,7 @@ public abstract class BaseDbIdentifierQuoter implements DbIdentifierQuoter {
      * @param length     The length.
      * @return
      */
-    public static String LimitIdentifier(String identifier, int length) {
+    public static String limitIdentifier(String identifier, int length) {
         if (identifier.length() > length) {
             //var toCut = identifier.Length - length;
 

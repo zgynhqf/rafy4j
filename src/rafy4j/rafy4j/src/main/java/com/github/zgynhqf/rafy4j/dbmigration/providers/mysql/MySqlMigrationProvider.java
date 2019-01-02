@@ -25,7 +25,7 @@ public final class MySqlMigrationProvider extends DbMigrationProvider {
      * @return 返回MySqlRunGenerator的实例对象
      */
     @Override
-    public RunGenerator CreateRunGenerator() {
+    public RunGenerator createRunGenerator() {
         return new MySqlRunGenerator();
     }
 
@@ -35,7 +35,7 @@ public final class MySqlMigrationProvider extends DbMigrationProvider {
      * @return 返回MySqlMetaReader的实例对象
      */
     @Override
-    public MetadataReader CreateSchemaReader() {
+    public MetadataReader createSchemaReader() {
         return new MySqlMetaReader(this.getDbSetting());
     }
 }

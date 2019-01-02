@@ -16,7 +16,7 @@ public class FormattedSqlMigrationRun extends MigrationRun {
     }
 
     @Override
-    protected void RunCore(DbAccessor db) {
-        db.ExecuteText(sql);
+    protected void runCore(DbAccessor db) {
+        db.executeText(sql);
     }
 }

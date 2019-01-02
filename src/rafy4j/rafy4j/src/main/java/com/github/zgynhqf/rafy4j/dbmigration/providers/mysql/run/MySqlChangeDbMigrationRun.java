@@ -26,7 +26,7 @@ public final class MySqlChangeDbMigrationRun extends MigrationRun {
      * @param db 数据库访问对象
      */
     @Override
-    protected void RunCore(DbAccessor db) {
-        db.ExecuteText("USE " + this.getDatabase() + ";");
+    protected void runCore(DbAccessor db) {
+        db.executeText("USE " + this.getDatabase() + ";");
     }
 }

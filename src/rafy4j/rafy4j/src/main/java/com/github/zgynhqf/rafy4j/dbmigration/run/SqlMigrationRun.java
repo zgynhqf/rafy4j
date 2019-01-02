@@ -15,7 +15,7 @@ public class SqlMigrationRun extends MigrationRun {
     }
 
     @Override
-    protected void RunCore(DbAccessor db) {
-        db.ExecuteText(this.getSql());
+    protected void runCore(DbAccessor db) {
+        db.executeText(this.getSql());
     }
 }

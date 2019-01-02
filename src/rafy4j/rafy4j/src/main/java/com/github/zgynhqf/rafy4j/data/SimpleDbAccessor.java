@@ -61,24 +61,24 @@ public class SimpleDbAccessor implements DbAccessor {
     }
 
     @Override
-    public int ExecuteText(FormattedSql formattedSql) {
+    public int executeText(FormattedSql formattedSql) {
         SqlWithParameters sqlWithParameters = fsProvider.convert(formattedSql);
 
         return jdbc.update(sqlWithParameters.getSql(), sqlWithParameters.getParameters());
     }
 
     @Override
-    public int ExecuteText(String sql) {
+    public int executeText(String sql) {
         return jdbc.update(sql);
     }
 
     @Override
-    public <T> T QueryDataReader(String sql, ResultSetExtractor<T> rse) {
+    public <T> T queryDataReader(String sql, ResultSetExtractor<T> rse) {
         return jdbc.query(sql, rse);
     }
 
     @Override
-    public <T> T QueryDataReader(FormattedSql sql, ResultSetExtractor<T> rse) {
+    public <T> T queryDataReader(FormattedSql sql, ResultSetExtractor<T> rse) {
         SqlWithParameters sqlWithParameters = fsProvider.convert(sql);
 
         return jdbc.query(sqlWithParameters.getSql(), sqlWithParameters.getParameters(), rse);

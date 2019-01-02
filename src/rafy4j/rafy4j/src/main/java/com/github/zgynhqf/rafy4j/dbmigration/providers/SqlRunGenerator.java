@@ -16,8 +16,9 @@ import java.sql.JDBCType;
  */
 public abstract class SqlRunGenerator extends RunGenerator {
     private BaseDbIdentifierQuoter identifierQuoter;
-    private DbTypeConverter dbTypeCoverter;
+    private DbTypeConverter dbTypeConverter;
 
+    //region gs
     public final BaseDbIdentifierQuoter getIdentifierQuoter() {
         return identifierQuoter;
     }
@@ -26,139 +27,140 @@ public abstract class SqlRunGenerator extends RunGenerator {
         identifierQuoter = value;
     }
 
-    public final DbTypeConverter getDbTypeCoverter() {
-        return dbTypeCoverter;
+    public final DbTypeConverter getDbTypeConverter() {
+        return dbTypeConverter;
     }
 
-    protected final void setDbTypeCoverter(DbTypeConverter value) {
-        dbTypeCoverter = value;
+    protected final void setDbTypeConverter(DbTypeConverter value) {
+        dbTypeConverter = value;
     }
+    //endregion
 
     @Override
-    protected void Generate(DropTable op) {
-        try (IndentedTextWriter sql = this.Writer()) {
+    protected void generate(DropTable op) {
+        try (IndentedTextWriter sql = this.writer()) {
             sql.write("DROP TABLE ");
-            sql.write(this.Quote(op.getTableName()));
+            sql.write(this.quote(op.getTableName()));
 
-            this.AddRun(sql);
+            this.addRun(sql);
         }
     }
 
     @Override
-    protected void Generate(DropNormalColumn op) {
-        try (IndentedTextWriter sql = this.Writer()) {
+    protected void generate(DropNormalColumn op) {
+        try (IndentedTextWriter sql = this.writer()) {
             sql.write("ALTER TABLE ");
-            sql.write(this.Quote(op.getTableName()));
+            sql.write(this.quote(op.getTableName()));
             sql.writeLine();
 
             sql.plusIndent();
             sql.write("DROP COLUMN ");
-            sql.write(this.Quote(op.getColumnName()));
+            sql.write(this.quote(op.getColumnName()));
 
-            this.AddRun(sql);
+            this.addRun(sql);
         }
     }
 
     @Override
-    protected void Generate(AddPKConstraint op) {
-        try (IndentedTextWriter sql = this.Writer()) {
-            this.GenerateAddPKConstraint(sql, op.getTableName(), op.getColumnName());
+    protected void generate(AddPKConstraint op) {
+        try (IndentedTextWriter sql = this.writer()) {
+            this.generateAddPKConstraint(sql, op.getTableName(), op.getColumnName());
 
-            this.AddRun(sql);
+            this.addRun(sql);
         }
     }
 
-    protected void GenerateAddPKConstraint(IndentedTextWriter sql, String tableName, String columnName) {
-        String pkName = String.format("PK_%1$s_%2$s", this.Prepare(tableName), this.Prepare(columnName));
+    protected void generateAddPKConstraint(IndentedTextWriter sql, String tableName, String columnName) {
+        String pkName = String.format("PK_%1$s_%2$s", this.prepare(tableName), this.prepare(columnName));
 
         sql.write("" + Consts.NEW_LINE + "ALTER TABLE ");
-        sql.write(this.Quote(tableName));
+        sql.write(this.quote(tableName));
         sql.write("" + Consts.NEW_LINE + "    ADD CONSTRAINT ");
-        sql.write(this.Quote(pkName));
+        sql.write(this.quote(pkName));
         sql.write("" + Consts.NEW_LINE + "    PRIMARY KEY (");
-        sql.write(this.Quote(columnName));
+        sql.write(this.quote(columnName));
         sql.write(")");
     }
 
     @Override
-    protected void Generate(RemovePKConstraint op) {
-        try (IndentedTextWriter sql = this.Writer()) {
+    protected void generate(RemovePKConstraint op) {
+        try (IndentedTextWriter sql = this.writer()) {
             sql.write("" + Consts.NEW_LINE + "ALTER TABLE ");
-            sql.write(this.Quote(op.getTableName()));
+            sql.write(this.quote(op.getTableName()));
             sql.write("" + Consts.NEW_LINE + "    DROP CONSTRAINT ");
-            sql.write(this.Quote(String.format("PK_%1$s_%2$s", this.Prepare(op.getTableName()), this.Prepare(op.getColumnName()))));
+            sql.write(this.quote(String.format("PK_%1$s_%2$s", this.prepare(op.getTableName()), this.prepare(op.getColumnName()))));
 
-            this.AddRun(sql);
+            this.addRun(sql);
         }
     }
 
     @Override
-    protected void Generate(AddNotNullConstraint op) {
-        String sqlString = String.format("UPDATE %1$s SET %2$s = %3$s WHERE %2$s IS NULL", this.Quote(op.getTableName()), this.Quote(op.getColumnName()), "{0}");
+    protected void generate(AddNotNullConstraint op) {
+        String sqlString = String.format("UPDATE %1$s SET %2$s = %3$s WHERE %2$s IS NULL", this.quote(op.getTableName()), this.quote(op.getColumnName()), "{0}");
         FormattedSql sql = new FormattedSql(sqlString);
-        sql.getParameters().add(this.getDbTypeCoverter().GetDefaultValue(op.getDbType()));
+        sql.getParameters().add(this.getDbTypeConverter().getDefaultValue(op.getDbType()));
 
         FormattedSqlMigrationRun tempVar = new FormattedSqlMigrationRun();
         tempVar.setSql(sql);
-        this.AddRun(tempVar);
+        this.addRun(tempVar);
 
-        this.AddNotNullConstraint(op);
+        this.addNotNullConstraint(op);
     }
 
     @Override
-    protected void Generate(AddNotNullConstraintFK op) {
-        this.AddNotNullConstraint(op);
+    protected void generate(AddNotNullConstraintFK op) {
+        this.addNotNullConstraint(op);
     }
 
-    protected abstract void AddNotNullConstraint(ColumnOperation op);
+    protected abstract void addNotNullConstraint(ColumnOperation op);
 
     @Override
-    protected void Generate(RemoveNotNullConstraint op) {
-        this.RemoveNotNullConstraint(op);
+    protected void generate(RemoveNotNullConstraint op) {
+        this.removeNotNullConstraint(op);
     }
 
     @Override
-    protected void Generate(RemoveNotNullConstraintFK op) {
-        this.RemoveNotNullConstraint(op);
+    protected void generate(RemoveNotNullConstraintFK op) {
+        this.removeNotNullConstraint(op);
     }
 
-    protected abstract void RemoveNotNullConstraint(ColumnOperation op);
+    protected abstract void removeNotNullConstraint(ColumnOperation op);
 
     @Override
-    protected void Generate(AddFKConstraint op) {
-        try (IndentedTextWriter sql = this.Writer()) {
+    protected void generate(AddFKConstraint op) {
+        try (IndentedTextWriter sql = this.writer()) {
             sql.write("ALTER TABLE ");
-            sql.write(this.Quote(op.getDependentTable()));
+            sql.write(this.quote(op.getDependentTable()));
             sql.writeLine();
             sql.write("    ADD CONSTRAINT ");
-            sql.write(this.Quote(op.getConstraintName()));
+            sql.write(this.quote(op.getConstraintName()));
             sql.writeLine();
             sql.write("    FOREIGN KEY (");
-            sql.write(this.Quote(op.getDependentTableColumn()));
+            sql.write(this.quote(op.getDependentTableColumn()));
             sql.write(") REFERENCES ");
-            sql.write(this.Quote(op.getPrincipleTable()));
+            sql.write(this.quote(op.getPrincipleTable()));
             sql.write("(");
-            sql.write(this.Quote(op.getPrincipleTableColumn()));
+            sql.write(this.quote(op.getPrincipleTableColumn()));
             sql.write(")");
 
             if (op.getNeedDeleteCascade()) {
                 sql.write(" ON DELETE CASCADE");
             }
 
-            this.AddRun(sql);
+            this.addRun(sql);
         }
     }
 
     @Override
-    protected void Generate(RemoveFKConstraint op) {
-        try (IndentedTextWriter sql = this.Writer()) {
+    protected void generate(RemoveFKConstraint op) {
+        try (IndentedTextWriter sql = this.writer()) {
             sql.write("ALTER TABLE ");
-            sql.write(this.Quote(op.getDependentTable()));
+            sql.write(this.quote(op.getDependentTable()));
             sql.writeLine();
             sql.write("    DROP CONSTRAINT ");
-            sql.write(this.Quote(op.getConstraintName()));
+            sql.write(this.quote(op.getConstraintName()));
 
-            this.AddRun(sql);
+            this.addRun(sql);
         }
     }
 
@@ -173,7 +175,7 @@ public abstract class SqlRunGenerator extends RunGenerator {
      * @param isPKorFK     在没有给出字段长度的情况下，如果这个字段是一个主键或外键，则需要自动限制它的长度。
      * @param defaultValue 默认值。
      */
-    protected final void GenerateColumnDeclaration(
+    protected final void generateColumnDeclaration(
             IndentedTextWriter sql, String columnName, JDBCType dataType, String length, Boolean isRequired, boolean isPKorFK, String defaultValue
     ) {
         if (StringUtils.isBlank(length)) {
@@ -185,9 +187,9 @@ public abstract class SqlRunGenerator extends RunGenerator {
             }
         }
 
-        sql.write(this.Quote(columnName));
+        sql.write(this.quote(columnName));
         sql.write(" ");
-        sql.write(this.getDbTypeCoverter().ConvertToDatabaseTypeName(dataType, length));
+        sql.write(this.getDbTypeConverter().convertToDatabaseTypeName(dataType, length));
 
         if (isRequired != null) {
             if (isRequired) {
@@ -202,11 +204,11 @@ public abstract class SqlRunGenerator extends RunGenerator {
         }
     }
 
-    protected final String Quote(String identifier) {
-        return this.getIdentifierQuoter().Quote(identifier);
+    protected final String quote(String identifier) {
+        return this.getIdentifierQuoter().quote(identifier);
     }
 
-    protected final String Prepare(String identifier) {
-        return this.getIdentifierQuoter().Prepare(identifier);
+    protected final String prepare(String identifier) {
+        return this.getIdentifierQuoter().prepare(identifier);
     }
 }

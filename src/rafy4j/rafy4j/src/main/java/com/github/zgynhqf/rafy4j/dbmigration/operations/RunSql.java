@@ -17,6 +17,6 @@ public class RunSql extends MigrationOperation {
     }
 
     @Override
-    protected void Down() {
+    protected void down() {
     }
 }

@@ -10,7 +10,7 @@ public interface DbIdentifierQuoter {
      * @param identifier
      * @return
      */
-    String Prepare(String identifier);
+    String prepare(String identifier);
 
     /**
      * 标识符被引用时的起始字符

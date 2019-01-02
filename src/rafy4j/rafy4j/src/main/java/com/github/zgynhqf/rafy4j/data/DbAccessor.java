@@ -18,11 +18,11 @@ public interface DbAccessor extends Closeable, ControllableConnection {
      * @param sql a FormattedSql
      * @return
      */
-    int ExecuteText(FormattedSql sql);
+    int executeText(FormattedSql sql);
 
-    int ExecuteText(String sql);
+    int executeText(String sql);
 
-    <T> T QueryDataReader(String sql, ResultSetExtractor<T> rse);
+    <T> T queryDataReader(String sql, ResultSetExtractor<T> rse);
 
-    <T> T QueryDataReader(FormattedSql sql, ResultSetExtractor<T> rse);
+    <T> T queryDataReader(FormattedSql sql, ResultSetExtractor<T> rse);
 }

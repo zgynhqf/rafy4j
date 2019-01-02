@@ -34,7 +34,7 @@ public class DestinationDatabase extends Database {
      * @param tableName
      * @return
      */
-    public final boolean IsIgnored(String tableName) {
+    public final boolean isIgnored(String tableName) {
         return ignoreTables.stream().anyMatch(t -> t.equalsIgnoreCase(tableName));
     }
 }

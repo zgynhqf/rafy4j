@@ -64,7 +64,7 @@ public class Database {
      * @param tableNameIgnoreCase
      * @return
      */
-    public final Table FindTable(String tableNameIgnoreCase) {
+    public final Table findTable(String tableNameIgnoreCase) {
         List<Table> tables = this.getTables();
 
         for (int i = 0, c = tables.size(); i < c; i++) {
@@ -81,13 +81,13 @@ public class Database {
      * 根据外键关系为表排序
      * 有外键关系的表放在后面，没有关系的表放在前面。（被引用的表放在引用表的前面。）
      */
-    public final void OrderByRelations() {
+    public final void orderByRelations() {
         int count = 0;
 
         List<Table> tables = this.getTables();
         for (int i = 0, l = tables.size(); i < l; i++) {
             var left = tables.get(i);
-            var foreignTables = left.GetForeignTables();
+            var foreignTables = left.getForeignTables();
             for (int j = i + 1; j < l; j++) {
                 var right = tables.get(j);
                 if (foreignTables.contains(right)) {

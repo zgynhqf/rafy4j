@@ -9,7 +9,7 @@ import com.github.zgynhqf.rafy4j.dbmigration.providers.mysql.MySqlMigrationProvi
  * <see cref="DbMigrationProvider"/>、<see cref="DbIdentifierQuoter"/> 的工厂类型。
  */
 public final class DbMigrationProviderFactory {
-    public static DbMigrationProvider GetProvider(DbSetting dbSetting) {
+    public static DbMigrationProvider getProvider(DbSetting dbSetting) {
         DbMigrationProvider provider = null;
 
         String driverName = dbSetting.getDriverName().toLowerCase();
@@ -42,7 +42,7 @@ public final class DbMigrationProviderFactory {
         return provider;
     }
 
-    public static BaseDbIdentifierQuoter GetIdentifierProvider(String driverName) {
+    public static BaseDbIdentifierQuoter getIdentifierProvider(String driverName) {
         return MySqlIdentifierQuoter.Instance;
 
         //        driverName = driverName.toLowerCase();
@@ -66,7 +66,7 @@ public final class DbMigrationProviderFactory {
 //        }
     }
 
-    public static DbTypeConverter GetDbTypeConverter(String driverName) {
+    public static DbTypeConverter getDbTypeConverter(String driverName) {
         return MySqlDbTypeConverter.Instance;
         //        if (providerName.equals(DbConnectionSchema.Provider_SqlClient)) {
 //            return SqlServerDbTypeConverter.Instance;

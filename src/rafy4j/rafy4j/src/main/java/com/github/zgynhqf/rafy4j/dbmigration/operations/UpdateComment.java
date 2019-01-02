@@ -64,12 +64,12 @@ public class UpdateComment extends MigrationOperation {
     //endregion
 
     @Override
-    protected void Down() {
+    protected void down() {
         UpdateComment tempVar = new UpdateComment();
         tempVar.setTableName(this.getTableName());
         tempVar.setColumnName(this.getColumnName());
         tempVar.setColumnDbType(this.getColumnDbType());
         tempVar.setComment("");
-        this.AddOperation(tempVar);
+        this.addOperation(tempVar);
     }
 }

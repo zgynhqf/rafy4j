@@ -31,18 +31,18 @@ public class Rafy4jTestApplicationTests {
 
     @Test
     public void useDestinationDatabase() throws IOException {
-        DbSetting dbSetting = RafyEnvironment.getDbSettingRepository().FindOrCreate(TestConfig.MAIN_DBSETTING);
+        DbSetting dbSetting = RafyEnvironment.getDbSettingRepository().findOrCreate(TestConfig.MAIN_DBSETTING);
         try (DbMigrationContext context = new DbMigrationContext(dbSetting)) {
             context.setRunDataLossOperation(DataLossOperation.All);
 
             DestinationDatabase destination = new DestinationDatabase(TestConfig.MAIN_DBSETTING) {{
                 List<Table> tables = getTables();
                 tables.add(new Table("newTable", this) {{
-                    this.AddColumn("id", JDBCType.INTEGER, "4", true, true, null);
+                    this.addColumn("id", JDBCType.INTEGER, "4", true, true, null);
                 }});
             }};
 
-            context.MigrateTo(destination);
+            context.migrateTo(destination);
         }
     }
 
@@ -54,20 +54,20 @@ public class Rafy4jTestApplicationTests {
     }
 
     private void Test(Consumer<Database> action, Consumer<Database> assertAction) throws IOException {
-        DbSetting dbSetting = RafyEnvironment.getDbSettingRepository().FindOrCreate(TestConfig.MAIN_DBSETTING);
+        DbSetting dbSetting = RafyEnvironment.getDbSettingRepository().findOrCreate(TestConfig.MAIN_DBSETTING);
         try (DbMigrationContext context = new DbMigrationContext(dbSetting)) {
 //            context.HistoryRepository = new DbHistoryRepository();
             context.setRunDataLossOperation(DataLossOperation.All);
 
             ClassMetaReader classMetaReader = new ClassMetaReader(User.class.getPackage().getName(), dbSetting);
-            DestinationDatabase destination = classMetaReader.Read();
+            DestinationDatabase destination = classMetaReader.read();
 
             action.accept(destination);
 
             try {
-                context.MigrateTo(destination);
+                context.migrateTo(destination);
 
-                var result = context.getDatabaseMetaReader().Read();
+                var result = context.getDatabaseMetaReader().read();
                 assertAction.accept(result);
             } finally {
             }

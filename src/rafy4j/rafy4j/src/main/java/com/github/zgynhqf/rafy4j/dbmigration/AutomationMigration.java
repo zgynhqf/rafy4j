@@ -29,32 +29,32 @@ public class AutomationMigration {
         return this.operations;
     }
 
-    public final void GenerateOpertions(DatabaseChanges dbChanges) {
+    public final void generateOperations(DatabaseChanges dbChanges) {
         this.operations.clear();
 
         switch (dbChanges.getChangeType()) {
             case ADDED:
-                this.CreateDatabase(dbChanges);
+                this.createDatabase(dbChanges);
                 break;
             case REMOVED:
-                this.DropDatabase(dbChanges);
+                this.dropDatabase(dbChanges);
                 break;
             case MODIFIED:
                 //为了保证外键的变化与表的变化不冲突，按照以下顺序生成操作：添加的表、修改的表（外键）、删除的表。
                 List<TableChanges> addedTables = dbChanges.getTablesChanged().stream()
                         .filter(t -> t.getChangeType() == ChangeType.ADDED).collect(Collectors.toList());
                 for (TableChanges item : addedTables) {
-                    this.GenerateOpertions(item);
+                    this.generateOperations(item);
                 }
                 List<TableChanges> modifiedTables = dbChanges.getTablesChanged().stream()
                         .filter(t -> t.getChangeType() == ChangeType.MODIFIED).collect(Collectors.toList());
                 for (TableChanges item : modifiedTables) {
-                    this.GenerateOpertions(item);
+                    this.generateOperations(item);
                 }
                 List<TableChanges> removedTables = dbChanges.getTablesChanged().stream()
                         .filter(t -> t.getChangeType() == ChangeType.REMOVED).collect(Collectors.toList());
                 for (TableChanges item : removedTables) {
-                    this.GenerateOpertions(item);
+                    this.generateOperations(item);
                 }
                 break;
             default:
@@ -68,17 +68,17 @@ public class AutomationMigration {
         this.relationActions.clear();
     }
 
-    private void GenerateOpertions(TableChanges tableChanges) {
+    private void generateOperations(TableChanges tableChanges) {
         switch (tableChanges.getChangeType()) {
             case ADDED:
-                this.AddTable(tableChanges.getNewTable());
+                this.addTable(tableChanges.getNewTable());
                 break;
             case REMOVED:
-                this.RemoveTable(tableChanges.getOldTable());
+                this.removeTable(tableChanges.getOldTable());
                 break;
             case MODIFIED:
                 for (ColumnChanges column : tableChanges.getColumnsChanged()) {
-                    this.GenerateOpertions(column);
+                    this.generateOperations(column);
                 }
                 break;
             default:
@@ -86,136 +86,136 @@ public class AutomationMigration {
         }
     }
 
-    private void GenerateOpertions(ColumnChanges columnChanges) {
+    private void generateOperations(ColumnChanges columnChanges) {
         switch (columnChanges.getChangeType()) {
             case ADDED:
-                this.AddColumn(columnChanges.getNewColumn());
+                this.addColumn(columnChanges.getNewColumn());
                 break;
             case REMOVED:
-                this.RemoveColumn(columnChanges.getOldColumn());
+                this.removeColumn(columnChanges.getOldColumn());
                 break;
             case MODIFIED:
-                this.ModifyColumn(columnChanges);
+                this.modifyColumn(columnChanges);
                 break;
             default:
                 break;
         }
     }
 
-    private void CreateDatabase(DatabaseChanges dbChanges) {
+    private void createDatabase(DatabaseChanges dbChanges) {
         CreateDatabase tempVar = new CreateDatabase();
         tempVar.setDatabase(dbChanges.getNewDatabase().getName());
-        this.AddOperation(tempVar);
+        this.addOperation(tempVar);
 
         for (Table table : dbChanges.getNewDatabase().getTables()) {
-            if (!dbChanges.getNewDatabase().IsIgnored(table.getName())) {
-                this.AddTable(table);
+            if (!dbChanges.getNewDatabase().isIgnored(table.getName())) {
+                this.addTable(table);
             }
         }
     }
 
-    private void DropDatabase(DatabaseChanges dbChanges) {
+    private void dropDatabase(DatabaseChanges dbChanges) {
         //反向按表间的引用关系删除表。
         List<Table> tables = dbChanges.getOldDatabase().getTables();
         for (int i = tables.size() - 1; i >= 0; i--) {
-            if (!dbChanges.getNewDatabase().IsIgnored(tables.get(i).getName())) {
-                this.RemoveTable(tables.get(i));
+            if (!dbChanges.getNewDatabase().isIgnored(tables.get(i).getName())) {
+                this.removeTable(tables.get(i));
             }
         }
 //
-//        //当版本号嵌入到当前数据库中时，也不支持自动 DropDatabase。
+//        //当版本号嵌入到当前数据库中时，也不支持自动 dropDatabase。
 //        if (!Context.getDbVersionProvider().IsEmbaded()) {
-//            DropDatabase tempVar = new DropDatabase();
+//            dropDatabase tempVar = new dropDatabase();
 //            tempVar.setDatabase(dbChanges.getOldDatabase().getName());
-//            this.AddOperation(tempVar);
+//            this.addOperation(tempVar);
 //        }
     }
 
-    private void AddTable(Table table) {
+    private void addTable(Table table) {
         CreateTable op = new CreateTable();
         op.setCopyFromTable(table);
-        this.AddOperation(op);
+        this.addOperation(op);
 
-        for (Column column : table.FindNormalColumns()) {
-            this.AddColumn(column);
+        for (Column column : table.findNormalColumns()) {
+            this.addColumn(column);
         }
     }
 
-    private void RemoveTable(Table table) {
+    private void removeTable(Table table) {
         if (Context.getRunDataLossOperation().hasValue(DataLossOperation.DropTable)) {
-            Context.NotifyDataLoss("删除表");
+            Context.notifyDataLoss("删除表");
 
-            for (Column column : table.FindNormalColumns()) {
-                this.RemoveColumn(column);
+            for (Column column : table.findNormalColumns()) {
+                this.removeColumn(column);
             }
 
             DropTable tempVar = new DropTable();
             tempVar.setCopyFromTable(table);
-            this.AddOperation(tempVar);
+            this.addOperation(tempVar);
         }
     }
 
-    private void AddColumn(Column column) {
+    private void addColumn(Column column) {
         CreateNormalColumn op = new CreateNormalColumn();
         op.copyFromColumn(column);
         op.setPrimaryKey(column.isPrimaryKey());
         op.setAutoIncrement(column.isAutoIncrement());
-        this.AddOperation(op);
+        this.addOperation(op);
 
         //自增列必然是不可空的，在创建列时已经同时把不可空约束给创建好了，所以这里不需要重复添加了。
         if (column.isRequired() && !column.isAutoIncrement()) {
             AddNotNullConstraint constraint = new AddNotNullConstraint();
             constraint.copyFromColumn(column);
-            this.AddOperation(constraint);
+            this.addOperation(constraint);
         }
 
         if (column.isForeignKey()) {
-            this.AddRelationAction(() -> {
+            this.addRelationAction(() -> {
                 AddFKConstraint fkConstraint = new AddFKConstraint();
                 fkConstraint.setCopyFromConstraint(column.getForeignConstraint());
-                this.AddOperation(fkConstraint);
+                this.addOperation(fkConstraint);
                 return null;
             });
         }
     }
 
-    private void RemoveColumn(Column column) {
+    private void removeColumn(Column column) {
         if (Context.getRunDataLossOperation().hasValue(DataLossOperation.DropColumn)) {
-            Context.NotifyDataLoss("删除列");
+            Context.notifyDataLoss("删除列");
 
             if (column.isForeignKey()) {
                 RemoveFKConstraint tempVar = new RemoveFKConstraint();
                 tempVar.setCopyFromConstraint(column.getForeignConstraint());
-                this.AddOperation(tempVar);
+                this.addOperation(tempVar);
             }
 
             //加上列名称不等于id的判断原因如下：
             //rafy 现在的删除表的逻辑是先删除主键之外的列，如果列的属性为 not null 的，需要先讲 not null 修改成 null，
             //在 rafy 的实体中 id 都是自增长，not null 的，
             //如果表的主键不是 id ，那么在删除 id 列的时候，将 id 属性的 not null 修改为 null 就会有问题，因为 id 是自增长的，
-            //所以当表的主键名称不是 id 的时候不能走 RemoveNotNullConstraint 这个方法。
+            //所以当表的主键名称不是 id 的时候不能走 removeNotNullConstraint 这个方法。
             if (column.isRequired() && !column.getName().equalsIgnoreCase(EntityConvention.IdColumnName)) {
                 RemoveNotNullConstraint tempVar2 = new RemoveNotNullConstraint();
                 tempVar2.copyFromColumn(column);
-                this.AddOperation(tempVar2);
+                this.addOperation(tempVar2);
             }
 
             DropNormalColumn tempVar3 = new DropNormalColumn();
             tempVar3.copyFromColumn(column);
             tempVar3.setPrimaryKey(column.isPrimaryKey());
             tempVar3.setAutoIncrement(column.isAutoIncrement());
-            this.AddOperation(tempVar3);
+            this.addOperation(tempVar3);
         }
     }
 
-    private void ModifyColumn(ColumnChanges columnChanges) {
+    private void modifyColumn(ColumnChanges columnChanges) {
         //数据类型
         if (columnChanges.getIsDbTypeChanged()) {
             AlterColumnType op = new AlterColumnType();
             op.copyFromColumn(columnChanges.getOldColumn());
             op.setNewType(columnChanges.getNewColumn().getDbType());
             op.setRequired(columnChanges.getOldColumn().isRequired());
-            this.AddOperation(op);
+            this.addOperation(op);
         }
 
         //是否主键
@@ -224,70 +224,70 @@ public class AutomationMigration {
             if (column.isPrimaryKey()) {
                 AddPKConstraint constraint = new AddPKConstraint();
                 constraint.copyFromColumn(column);
-                this.AddOperation(constraint);
+                this.addOperation(constraint);
             } else {
                 RemovePKConstraint constraint = new RemovePKConstraint();
                 constraint.copyFromColumn(column);
-                this.AddOperation(constraint);
+                this.addOperation(constraint);
             }
         }
 
         //可空性
         if (columnChanges.getIsRequiredChanged()) {
-            this.ModifyColumnRequired(columnChanges);
+            this.modifyColumnRequired(columnChanges);
         }
 
         //外键
         if (columnChanges.getForeignRelationChangeType() != ChangeType.UNCHANGED) {
-            this.ModifyColumnForeignConstraint(columnChanges);
+            this.modifyColumnForeignConstraint(columnChanges);
         }
     }
 
-    private void ModifyColumnRequired(ColumnChanges columnChanges) {
+    private void modifyColumnRequired(ColumnChanges columnChanges) {
         if (columnChanges.getNewColumn().isRequired()) {
             if (columnChanges.getOldColumn().isForeignKey()) {
                 AddNotNullConstraintFK op = new AddNotNullConstraintFK();
                 op.copyFromColumn(columnChanges.getNewColumn());
-                this.AddOperation(op);
+                this.addOperation(op);
             } else {
                 AddNotNullConstraint op = new AddNotNullConstraint();
                 op.copyFromColumn(columnChanges.getNewColumn());
-                this.AddOperation(op);
+                this.addOperation(op);
             }
         } else {
             if (columnChanges.getOldColumn().isForeignKey()) {
                 RemoveNotNullConstraintFK op = new RemoveNotNullConstraintFK();
                 op.copyFromColumn(columnChanges.getNewColumn());
-                this.AddOperation(op);
+                this.addOperation(op);
             } else {
                 RemoveNotNullConstraint op = new RemoveNotNullConstraint();
                 op.copyFromColumn(columnChanges.getNewColumn());
-                this.AddOperation(op);
+                this.addOperation(op);
             }
         }
     }
 
-    private void ModifyColumnForeignConstraint(ColumnChanges columnChanges) {
+    private void modifyColumnForeignConstraint(ColumnChanges columnChanges) {
         ChangeType value = columnChanges.getForeignRelationChangeType();
         switch (value) {
             case ADDED:
                 AddFKConstraint op = new AddFKConstraint();
                 op.setCopyFromConstraint(columnChanges.getNewColumn().getForeignConstraint());
-                this.AddOperation(op);
+                this.addOperation(op);
                 break;
             case REMOVED:
                 RemoveFKConstraint constraint = new RemoveFKConstraint();
                 constraint.setCopyFromConstraint(columnChanges.getOldColumn().getForeignConstraint());
-                this.AddOperation(constraint);
+                this.addOperation(constraint);
                 break;
             case MODIFIED:
                 //throw new NotSupportedException("暂时不支持外键修改。");
                 RemoveFKConstraint removeFKConstraint = new RemoveFKConstraint();
                 removeFKConstraint.setCopyFromConstraint(columnChanges.getOldColumn().getForeignConstraint());
-                this.AddOperation(removeFKConstraint);
+                this.addOperation(removeFKConstraint);
                 AddFKConstraint addFKConstraint = new AddFKConstraint();
                 addFKConstraint.setCopyFromConstraint(columnChanges.getNewColumn().getForeignConstraint());
-                this.AddOperation(addFKConstraint);
+                this.addOperation(addFKConstraint);
                 break;
             default:
                 break;
@@ -296,11 +296,11 @@ public class AutomationMigration {
 
     //region 私有方法
 
-    private void AddOperation(MigrationOperation operation) {
+    private void addOperation(MigrationOperation operation) {
         this.operations.add(operation);
     }
 
-    private void AddRelationAction(Supplier action) {
+    private void addRelationAction(Supplier action) {
         this.relationActions.add(action);
     }
 

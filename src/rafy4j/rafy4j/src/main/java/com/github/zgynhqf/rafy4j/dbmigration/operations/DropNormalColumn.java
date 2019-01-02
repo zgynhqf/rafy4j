@@ -23,11 +23,11 @@ public class DropNormalColumn extends ColumnOperation {
     //endregion
 
     @Override
-    protected void Down() {
+    protected void down() {
         CreateNormalColumn op = new CreateNormalColumn();
         op.copyFrom(this);
         op.setPrimaryKey(this.isPrimaryKey());
         op.setAutoIncrement(this.isAutoIncrement());
-        this.AddOperation(op);
+        this.addOperation(op);
     }
 }

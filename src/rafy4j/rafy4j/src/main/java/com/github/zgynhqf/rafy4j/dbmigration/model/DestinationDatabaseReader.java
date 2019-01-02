@@ -10,5 +10,5 @@ public interface DestinationDatabaseReader extends MetadataReader
 	 * 读取整个库的元数据
 	 * @return
 	 */
-	DestinationDatabase Read();
+	DestinationDatabase read();
 }

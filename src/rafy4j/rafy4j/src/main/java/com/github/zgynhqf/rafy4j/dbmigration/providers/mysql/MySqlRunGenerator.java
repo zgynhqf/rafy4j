@@ -16,7 +16,7 @@ import org.apache.commons.lang3.StringUtils;
 public final class MySqlRunGenerator extends SqlRunGenerator {
     public MySqlRunGenerator() {
         this.setIdentifierQuoter(MySqlIdentifierQuoter.Instance);
-        this.setDbTypeCoverter(MySqlDbTypeConverter.Instance);
+        this.setDbTypeConverter(MySqlDbTypeConverter.Instance);
     }
 
     /**
@@ -25,16 +25,16 @@ public final class MySqlRunGenerator extends SqlRunGenerator {
      * @param op 列操作对象的实体对象
      */
     @Override
-    protected void AddNotNullConstraint(ColumnOperation op) {
-        try (IndentedTextWriter sql = this.Writer()) {
+    protected void addNotNullConstraint(ColumnOperation op) {
+        try (IndentedTextWriter sql = this.writer()) {
             sql.write("ALTER TABLE ");
-            sql.write(this.Quote(op.getTableName()));
+            sql.write(this.quote(op.getTableName()));
             sql.write(" MODIFY ");
 
             sql.plusIndent();
-            this.GenerateColumnDeclaration(sql, op.getColumnName(), op.getDbType(), op.getLength(), true, op.isForeignKey(), op.getDefaultValue());
+            this.generateColumnDeclaration(sql, op.getColumnName(), op.getDbType(), op.getLength(), true, op.isForeignKey(), op.getDefaultValue());
 
-            this.AddRun(sql);
+            this.addRun(sql);
         }
     }
 
@@ -44,10 +44,10 @@ public final class MySqlRunGenerator extends SqlRunGenerator {
      * @param op 创建数据库的实例对象
      */
     @Override
-    protected void Generate(CreateDatabase op) {
+    protected void generate(CreateDatabase op) {
         MySqlCreateDbMigrationRun run = new MySqlCreateDbMigrationRun();
         run.setDatabase(op.getDatabase());
-        this.AddRun(run);
+        this.addRun(run);
     }
 
     /**
@@ -56,10 +56,10 @@ public final class MySqlRunGenerator extends SqlRunGenerator {
      * @param op 删除数据库的实例对象
      */
     @Override
-    protected void Generate(DropDatabase op) {
+    protected void generate(DropDatabase op) {
         MySqlDropDbMigrationRun run = new MySqlDropDbMigrationRun();
         run.setDatabase(op.getDatabase());
-        this.AddRun(run);
+        this.addRun(run);
     }
 
     /**
@@ -68,21 +68,21 @@ public final class MySqlRunGenerator extends SqlRunGenerator {
      * @param op 更新备注的实体对象
      */
     @Override
-    protected void Generate(UpdateComment op) {
+    protected void generate(UpdateComment op) {
         if (StringUtils.isBlank(op.getColumnName())) {
             SqlMigrationRun run = new SqlMigrationRun();
-            run.setSql(String.format("ALTER TABLE `%1$s` COMMENT '%2$s'", this.Prepare(op.getTableName()), op.getComment()));
-            this.AddRun(run);
+            run.setSql(String.format("ALTER TABLE `%1$s` COMMENT '%2$s'", this.prepare(op.getTableName()), op.getComment()));
+            this.addRun(run);
         } else {
             //mysql 不支持外键修改备注，所以过滤掉外键修改备注
             if (op.getColumnName().compareToIgnoreCase("id") != 0 && op.getTableName().compareTo("BlogUser") != 0) {
                 SqlMigrationRun run = new SqlMigrationRun();
                 run.setSql(String.format("ALTER TABLE `%1$s` MODIFY COLUMN `%2$s` %3$s COMMENT '%4$s'",
-                        this.Prepare(op.getTableName()),
-                        this.Prepare(op.getColumnName()),
-                        this.getDbTypeCoverter().ConvertToDatabaseTypeName(op.getColumnDbType()), op.getComment()
+                        this.prepare(op.getTableName()),
+                        this.prepare(op.getColumnName()),
+                        this.getDbTypeConverter().convertToDatabaseTypeName(op.getColumnDbType()), op.getComment()
                 ));
-                this.AddRun(run);
+                this.addRun(run);
             }
         }
     }
@@ -93,29 +93,29 @@ public final class MySqlRunGenerator extends SqlRunGenerator {
      * @param op 增加外键约束的对象
      */
     @Override
-    protected void Generate(AddFKConstraint op) {
-        try (IndentedTextWriter sql = this.Writer()) {
+    protected void generate(AddFKConstraint op) {
+        try (IndentedTextWriter sql = this.writer()) {
             sql.write("ALTER TABLE ");
-            sql.write(this.Quote(op.getDependentTable()));
+            sql.write(this.quote(op.getDependentTable()));
             sql.writeLine();
             sql.write("    ADD CONSTRAINT ");
-            sql.write(this.Quote(op.getConstraintName()));
+            sql.write(this.quote(op.getConstraintName()));
             sql.writeLine();
             sql.write("    FOREIGN KEY ");
-            sql.write(this.Quote(op.getDependentTable()));
+            sql.write(this.quote(op.getDependentTable()));
             sql.write(" (");
-            sql.write(this.Quote(op.getDependentTableColumn()));
+            sql.write(this.quote(op.getDependentTableColumn()));
             sql.write(") REFERENCES ");
-            sql.write(this.Quote(op.getPrincipleTable()));
+            sql.write(this.quote(op.getPrincipleTable()));
             sql.write("(");
-            sql.write(this.Quote(op.getPrincipleTableColumn()));
+            sql.write(this.quote(op.getPrincipleTableColumn()));
             sql.write(")");
 
             if (op.getNeedDeleteCascade()) {
                 sql.write(" ON DELETE CASCADE");
             }
 
-            this.AddRun(sql);
+            this.addRun(sql);
         }
     }
 
@@ -125,15 +125,15 @@ public final class MySqlRunGenerator extends SqlRunGenerator {
      * @param op 删除外键约束对象
      */
     @Override
-    protected void Generate(RemoveFKConstraint op) {
-        try (IndentedTextWriter sql = this.Writer()) {
+    protected void generate(RemoveFKConstraint op) {
+        try (IndentedTextWriter sql = this.writer()) {
             sql.write("ALTER TABLE ");
-            sql.write(this.Quote(op.getDependentTable()));
+            sql.write(this.quote(op.getDependentTable()));
             sql.writeLine();
             sql.write("    DROP FOREIGN KEY ");
-            sql.write(this.Quote(op.getConstraintName()));
+            sql.write(this.quote(op.getConstraintName()));
 
-            this.AddRun(sql);
+            this.addRun(sql);
         }
     }
 
@@ -143,29 +143,29 @@ public final class MySqlRunGenerator extends SqlRunGenerator {
      * @param op 增加逐渐约束的对象
      */
     @Override
-    protected void Generate(AddPKConstraint op) {
-        try (IndentedTextWriter sql = this.Writer()) {
+    protected void generate(AddPKConstraint op) {
+        try (IndentedTextWriter sql = this.writer()) {
             sql.write("ALTER TABLE ");
-            sql.write(this.Quote(op.getTableName()));
+            sql.write(this.quote(op.getTableName()));
             sql.write(" ADD CONSTRAINT PK_");
             sql.write(op.getTableName().toUpperCase());
             sql.write(" PRIMARY KEY ");
-            sql.write(this.Quote(op.getTableName()));
+            sql.write(this.quote(op.getTableName()));
             sql.write("(");
-            sql.write(this.Quote(op.getColumnName()));
+            sql.write(this.quote(op.getColumnName()));
             sql.write(")");
 
-            this.AddRun(sql);
+            this.addRun(sql);
         }
 
-        //using (var sql = this.Writer())
+        //using (var sql = this.writer())
         //{
         //    sql.write("ALTER TABLE ");
-        //    sql.write(this.Quote(op.TableName));
+        //    sql.write(this.quote(op.TableName));
         //    sql.write(" DROP PRIMARY KEY,ADD PRIMARY KEY(");
-        //    sql.write(this.Quote(op.ColumnName));
+        //    sql.write(this.quote(op.ColumnName));
         //    sql.write(")");
-        //    this.AddRun(sql);
+        //    this.addRun(sql);
         //}
     }
 
@@ -175,13 +175,13 @@ public final class MySqlRunGenerator extends SqlRunGenerator {
      * @param op 删除主键约束的对象
      */
     @Override
-    protected void Generate(RemovePKConstraint op) {
-        try (IndentedTextWriter sql = this.Writer()) {
+    protected void generate(RemovePKConstraint op) {
+        try (IndentedTextWriter sql = this.writer()) {
             sql.write("ALTER TABLE ");
-            sql.write(this.Quote(op.getTableName()));
+            sql.write(this.quote(op.getTableName()));
             sql.write(" DROP PRIMARY KEY");
 
-            this.AddRun(sql);
+            this.addRun(sql);
         }
     }
 
@@ -191,12 +191,12 @@ public final class MySqlRunGenerator extends SqlRunGenerator {
      * @param op 删除表对象
      */
     @Override
-    protected void Generate(DropTable op) {
-        try (IndentedTextWriter sql = this.Writer()) {
+    protected void generate(DropTable op) {
+        try (IndentedTextWriter sql = this.writer()) {
             sql.write("DROP TABLE ");
-            sql.write(this.Quote(op.getTableName()));
+            sql.write(this.quote(op.getTableName()));
 
-            this.AddRun(sql);
+            this.addRun(sql);
         }
     }
 
@@ -206,20 +206,20 @@ public final class MySqlRunGenerator extends SqlRunGenerator {
      * @param op 创建表的对象实例
      */
     @Override
-    protected void Generate(CreateTable op) {
+    protected void generate(CreateTable op) {
         if (StringUtils.isBlank(op.getPKName())) {
             GenerationExceptionRun exceptionRun = new GenerationExceptionRun();
             exceptionRun.setMessage("暂时不支持生成没有主键的表：" + op.getTableName());
-            this.AddRun(exceptionRun);
+            this.addRun(exceptionRun);
             return;
         }
 
-        try (IndentedTextWriter sql = this.Writer()) {
+        try (IndentedTextWriter sql = this.writer()) {
             sql.write("CREATE TABLE IF NOT EXISTS ");
-            sql.writeLine(this.Quote(op.getTableName()));
+            sql.writeLine(this.quote(op.getTableName()));
             sql.writeLine("(");
             sql.plusIndent();
-            this.GenerateColumnDeclaration(sql, op.getPKName(), op.getPKDbType(), op.getPKLength(), true, true, null);
+            this.generateColumnDeclaration(sql, op.getPKName(), op.getPKDbType(), op.getPKLength(), true, true, null);
             if (op.isPKAutoIncrement()) {
                 sql.write(" auto_increment");
             }
@@ -228,7 +228,7 @@ public final class MySqlRunGenerator extends SqlRunGenerator {
             sql.minusIndent();
             sql.write(")");
 
-            this.AddRun(sql);
+            this.addRun(sql);
         }
     }
 
@@ -238,18 +238,18 @@ public final class MySqlRunGenerator extends SqlRunGenerator {
      * @param op 修改列类型的实例对象
      */
     @Override
-    protected void Generate(AlterColumnType op) {
-        try (IndentedTextWriter sql = this.Writer()) {
+    protected void generate(AlterColumnType op) {
+        try (IndentedTextWriter sql = this.writer()) {
             sql.write("ALTER TABLE ");
-            sql.write(this.Quote(op.getTableName()));
+            sql.write(this.quote(op.getTableName()));
             sql.writeLine();
 
             sql.plusIndent();
             sql.write("MODIFY ");
 
-            this.GenerateColumnDeclaration(sql, op.getColumnName(), op.getNewType(), op.getLength(), op.isRequired(), op.isForeignKey(), op.getDefaultValue());
+            this.generateColumnDeclaration(sql, op.getColumnName(), op.getNewType(), op.getLength(), op.isRequired(), op.isForeignKey(), op.getDefaultValue());
 
-            this.AddRun(sql);
+            this.addRun(sql);
         }
     }
 
@@ -259,19 +259,19 @@ public final class MySqlRunGenerator extends SqlRunGenerator {
      * @param op 创建普通列的实例对象
      */
     @Override
-    protected void Generate(CreateNormalColumn op) {
+    protected void generate(CreateNormalColumn op) {
         if (op.isAutoIncrement()) throw new NotImplementedException("mysql 数据库不支持创建自增列!");
 
-        try (IndentedTextWriter sql = this.Writer()) {
+        try (IndentedTextWriter sql = this.writer()) {
             sql.write("ALTER TABLE ");
-            sql.write(this.Quote(op.getTableName()));
+            sql.write(this.quote(op.getTableName()));
             sql.writeLine();
 
             sql.plusIndent();
             sql.write("ADD ");
-            this.GenerateColumnDeclaration(sql, op.getColumnName(), op.getDbType(), op.getLength(), false, op.isForeignKey(), op.getDefaultValue());
+            this.generateColumnDeclaration(sql, op.getColumnName(), op.getDbType(), op.getLength(), false, op.isForeignKey(), op.getDefaultValue());
 
-            this.AddRun(sql);
+            this.addRun(sql);
         }
     }
 
@@ -281,17 +281,17 @@ public final class MySqlRunGenerator extends SqlRunGenerator {
      * @param op 列操作的实例对象
      */
     @Override
-    protected void RemoveNotNullConstraint(ColumnOperation op) {
-        try (IndentedTextWriter sql = this.Writer()) {
+    protected void removeNotNullConstraint(ColumnOperation op) {
+        try (IndentedTextWriter sql = this.writer()) {
             sql.write("ALTER TABLE ");
-            sql.write(this.Quote(op.getTableName()));
+            sql.write(this.quote(op.getTableName()));
             sql.writeLine();
 
             sql.plusIndent();
             sql.write("MODIFY ");
-            this.GenerateColumnDeclaration(sql, op.getColumnName(), op.getDbType(), op.getLength(), false, op.isForeignKey(), op.getDefaultValue());
+            this.generateColumnDeclaration(sql, op.getColumnName(), op.getDbType(), op.getLength(), false, op.isForeignKey(), op.getDefaultValue());
 
-            this.AddRun(sql);
+            this.addRun(sql);
         }
     }
 }

@@ -73,7 +73,7 @@ public class Table {
      *
      * @return
      */
-    public final Column FindPrimaryColumn() {
+    public final Column findPrimaryColumn() {
         return this.getColumns().stream().filter(c -> c.isPrimaryKey()).findFirst().orElse(null);
     }
 
@@ -82,7 +82,7 @@ public class Table {
      *
      * @return
      */
-    public final List<Column> FindNormalColumns() {
+    public final List<Column> findNormalColumns() {
         return this.getColumns().stream().filter(c -> !c.isPrimaryKey()).collect(Collectors.toList());
     }
 
@@ -94,7 +94,7 @@ public class Table {
     /**
      * 这个表引用的外键表
      */
-    public final List<Table> GetForeignTables() {
+    public final List<Table> getForeignTables() {
         java.util.ArrayList<Table> tables = new java.util.ArrayList<Table>();
 
         for (var column : this.getColumns()) {
@@ -115,20 +115,20 @@ public class Table {
      * @param name
      * @return
      */
-    public final Column FindColumn(String name) {
+    public final Column findColumn(String name) {
         return this.getColumns().stream().filter(c -> c.getName().equalsIgnoreCase(name)).findFirst().orElse(null);
     }
 
-    public final Column AddColumn(String name, JDBCType type) {
-        return this.AddColumn(name, type, null);
+    public final Column addColumn(String name, JDBCType type) {
+        return this.addColumn(name, type, null);
     }
 
-    public final Column AddColumn(String name, JDBCType type, String length) {
-        return this.AddColumn(name, type, length, false, false, null);
+    public final Column addColumn(String name, JDBCType type, String length) {
+        return this.addColumn(name, type, length, false, false, null);
     }
 
-    public final Column AddColumn(String name, JDBCType type, boolean isRequired, boolean isPrimaryKey) {
-        return this.AddColumn(name, type, null, isRequired, isPrimaryKey, null);
+    public final Column addColumn(String name, JDBCType type, boolean isRequired, boolean isPrimaryKey) {
+        return this.addColumn(name, type, null, isRequired, isPrimaryKey, null);
     }
 
     /**
@@ -142,7 +142,7 @@ public class Table {
      * @param foreignConstraint The foreign constraint.
      * @return
      */
-    public final Column AddColumn(String name, JDBCType type, String length, boolean isRequired, boolean isPrimaryKey, ForeignConstraint foreignConstraint) {
+    public final Column addColumn(String name, JDBCType type, String length, boolean isRequired, boolean isPrimaryKey, ForeignConstraint foreignConstraint) {
         Column tempVar = new Column(name, type, length, this);
         tempVar.setRequired(isRequired);
         tempVar.setPrimaryKey(isPrimaryKey);

@@ -9,5 +9,5 @@ public interface MetadataReader {
      *
      * @return
      */
-    Database Read();
+    Database read();
 }

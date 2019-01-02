@@ -28,13 +28,13 @@ public final class MySqlDropDbMigrationRun extends MigrationRun {
      * @param db 数据库操作对象
      */
     @Override
-    protected void RunCore(DbAccessor db) {
+    protected void runCore(DbAccessor db) {
         throw new NotImplementedException("drop database operation is not supportted.");
         //var mysqlInstance = new MySqlConnectionStringBuilder(db.Connection.ConnectionString);
         //MySqlConnection.ClearPool(db.Connection as MySqlConnection);
 
 //        try (DbAccessor db2 = new DbAccessor(db.ConnectionSchema.ConnectionString, DbSetting.Provider_MySql)){
-//            db2.ExecuteText(String.format("DROP DATABASE IF EXISTS %1$s;", this.getDatabase()));
+//            db2.executeText(String.format("DROP DATABASE IF EXISTS %1$s;", this.getDatabase()));
 //        }
     }
 }

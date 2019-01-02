@@ -27,13 +27,13 @@ public abstract class DbMetaReader implements MetadataReader {
         return this.db;
     }
 
-    public final Database Read() {
+    public final Database read() {
         Database database = new Database(this.dbSetting.getDatabase());
 
         try {
-            this.LoadAllTables(database);
+            this.loadAllTables(database);
 
-            this.LoadAllColumns(database);
+            this.loadAllColumns(database);
 
             for (Table table : database.getTables()) {
                 table.sortColumns();
@@ -41,7 +41,7 @@ public abstract class DbMetaReader implements MetadataReader {
 
             this.LoadAllConstraints(database);
 
-            this.LoadAllIdentities(database);
+            this.loadAllIdentities(database);
         } catch (SQLException e) {
             database.setRemoved(true);
         }
@@ -54,21 +54,21 @@ public abstract class DbMetaReader implements MetadataReader {
      *
      * @param database 待加载表的数据库对象
      */
-    protected abstract void LoadAllTables(Database database) throws SQLException;
+    protected abstract void loadAllTables(Database database) throws SQLException;
 
     /**
      * 加载指定数据库中的每个表的所有列
      *
      * @param database 需要加载列的数据库对象
      */
-    protected abstract void LoadAllColumns(Database database) throws SQLException;
+    protected abstract void loadAllColumns(Database database) throws SQLException;
 
     /**
      * 加载指定数据库的所有表中的自增列。
      *
      * @param database 指定的数据库对象
      */
-    protected abstract void LoadAllIdentities(Database database) throws SQLException;
+    protected abstract void loadAllIdentities(Database database) throws SQLException;
 
     /**
      * 加载主键、外键等约束。
@@ -76,7 +76,7 @@ public abstract class DbMetaReader implements MetadataReader {
      * @param database 需要加载约束的数据库对象
      */
     protected void LoadAllConstraints(Database database) throws SQLException {
-        List<Constraint> allConstrains = this.ReadAllConstrains(database);
+        List<Constraint> allConstrains = this.readAllConstrains(database);
 
         for (Table table : database.getTables()) {
             for (Column column : table.getColumns()) {
@@ -106,9 +106,9 @@ public abstract class DbMetaReader implements MetadataReader {
             } else if (constraint.CONSTRAINT_TYPE.equalsIgnoreCase("FOREIGN KEY")) {
                 //外键
                 boolean deleteCascade = constraint.DELETE_RULE.equalsIgnoreCase("CASCADE");
-                Table pkTable = database.FindTable(constraint.PK_TABLE_NAME);
+                Table pkTable = database.findTable(constraint.PK_TABLE_NAME);
                 if (pkTable == null) throw new IllegalStateException();
-                Column pkColumn = pkTable.FindColumn(constraint.PK_COLUMN_NAME);
+                Column pkColumn = pkTable.findColumn(constraint.PK_COLUMN_NAME);
 
                 ForeignConstraint tempVar = new ForeignConstraint(pkColumn);
                 tempVar.setNeedDeleteCascade(deleteCascade);
@@ -124,7 +124,7 @@ public abstract class DbMetaReader implements MetadataReader {
      * @param database The database.
      * @return 以列表的形式返回所有约束数据
      */
-    protected abstract List<Constraint> ReadAllConstrains(Database database) throws SQLException;
+    protected abstract List<Constraint> readAllConstrains(Database database) throws SQLException;
 
     protected static class Constraint {
         public Constraint() {

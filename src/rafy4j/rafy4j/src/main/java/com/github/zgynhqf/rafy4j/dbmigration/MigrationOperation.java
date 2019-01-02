@@ -14,7 +14,7 @@ public abstract class MigrationOperation extends DbMigration {
     private Instant runtimeTimeId = Instant.MIN;
 
     @Override
-    public MigrationType GetMigrationType() {
+    public MigrationType getMigrationType() {
         return MigrationType.AUTO_MIGRATION;
     }
 
@@ -40,7 +40,7 @@ public abstract class MigrationOperation extends DbMigration {
      * 升级时，生成的操作即是本身。
      */
     @Override
-    protected final void Up() {
-        this.AddOperation(this);
+    protected final void up() {
+        this.addOperation(this);
     }
 }

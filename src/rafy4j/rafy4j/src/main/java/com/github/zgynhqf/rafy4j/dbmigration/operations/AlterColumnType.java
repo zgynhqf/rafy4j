@@ -25,13 +25,13 @@ public class AlterColumnType extends ColumnOperation {
     //endregion
 
     @Override
-    protected void Down() {
+    protected void down() {
         AlterColumnType tempVar = new AlterColumnType();
         tempVar.copyFrom(this);
         tempVar.setRequired(this.isRequired());
         tempVar.setDbType(this.getNewType());
         tempVar.setNewType(this.getDbType());
-        this.AddOperation(tempVar);
+        this.addOperation(tempVar);
     }
 
     @Override

@@ -3,10 +3,10 @@ package com.github.zgynhqf.rafy4j.dbmigration.operations;
 public class CreateDatabase extends DatabaseOperation
 {
 	@Override
-	protected void Down()
+	protected void down()
 	{
 		DropDatabase op = new DropDatabase();
 		op.setDatabase(this.getDatabase());
-		this.AddOperation(op);
+		this.addOperation(op);
 	}
 }

@@ -11,9 +11,9 @@ public abstract class MigrationRun {
      *
      * @param db
      */
-    public final void Run(DbAccessor db) {
-        this.RunCore(db);
+    public final void run(DbAccessor db) {
+        this.runCore(db);
     }
 
-    protected abstract void RunCore(DbAccessor db);
+    protected abstract void runCore(DbAccessor db);
 }

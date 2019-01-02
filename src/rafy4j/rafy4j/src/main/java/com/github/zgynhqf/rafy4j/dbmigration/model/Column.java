@@ -169,7 +169,7 @@ public class Column {
         this.foreignConstraint = value;
 
         if (value != null) {
-            value.Init(this);
+            value.init(this);
         }
     }
 

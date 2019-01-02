@@ -34,7 +34,7 @@ public class ForeignConstraint {
     /**
      * @param fkColumn 这个列的外键
      */
-    public final void Init(Column fkColumn) {
+    public final void init(Column fkColumn) {
         if (fkColumn == null) throw new IllegalArgumentException("fkColumn");
         this.setFKColumn(fkColumn);
 

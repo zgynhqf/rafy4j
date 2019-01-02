@@ -40,7 +40,7 @@ public class FormattedSql {
      *
      * @param value
      */
-    public final FormattedSql AppendParameter(Object value) {
+    public final FormattedSql appendParameter(Object value) {
         parameters.writeParameter(this.sql, value);
         return this;
     }
@@ -52,7 +52,7 @@ public class FormattedSql {
      * @param dbType 可以明确指定列的 DbType。
      * @return
      */
-    public final FormattedSql AppendParameter(Object value, JDBCType dbType) {
+    public final FormattedSql appendParameter(Object value, JDBCType dbType) {
         SqlParameterValue parameter = new SqlParameterValue(dbType.getVendorTypeNumber(), value);
         parameters.writeParameter(this.sql, parameter);
         return this;
@@ -64,11 +64,11 @@ public class FormattedSql {
 //     * 获取内部的 TextWriter，用于直接面向字符串进行文本输出。
 //     * 同时，也可以使用新的 TextWriter 来装饰当前的 TextWriter。
 //     */
-//    public final Writer getInnerWriter() {
+//    public final writer getInnerWriter() {
 //        return sql;
 //    }
 //
-//    public final void setInnerWriter(Writer value) {
+//    public final void setInnerWriter(writer value) {
 //        sql = value;
 //    }
 
@@ -77,7 +77,7 @@ public class FormattedSql {
      *
      * @return
      */
-    public final FormattedSql AppendAnd() {
+    public final FormattedSql appendAnd() {
         this.sql.append(" AND ");
         return this;
     }
@@ -87,7 +87,7 @@ public class FormattedSql {
      *
      * @return
      */
-    public final FormattedSql AppendOr() {
+    public final FormattedSql appendOr() {
         this.sql.append(" OR ");
         return this;
     }
@@ -97,7 +97,7 @@ public class FormattedSql {
      *
      * @return
      */
-    public final FormattedSql Append(String value) {
+    public final FormattedSql append(String value) {
         this.sql.append(value);
         return this;
     }
@@ -107,7 +107,7 @@ public class FormattedSql {
      *
      * @return
      */
-    public final FormattedSql Append(char value) {
+    public final FormattedSql append(char value) {
         this.sql.append(value);
         return this;
     }
@@ -117,7 +117,7 @@ public class FormattedSql {
      *
      * @return
      */
-    public final FormattedSql Append(int value) {
+    public final FormattedSql append(int value) {
         this.sql.append(value);
         return this;
     }
@@ -127,7 +127,7 @@ public class FormattedSql {
      *
      * @return
      */
-    public final FormattedSql Append(double value) {
+    public final FormattedSql append(double value) {
         this.sql.append(value);
         return this;
     }
@@ -137,7 +137,7 @@ public class FormattedSql {
      *
      * @return
      */
-    public final FormattedSql Append(Object value) {
+    public final FormattedSql append(Object value) {
         this.sql.append(value);
         return this;
     }
@@ -147,7 +147,7 @@ public class FormattedSql {
      *
      * @return
      */
-    public final FormattedSql Append(boolean value) {
+    public final FormattedSql append(boolean value) {
         this.sql.append(value);
         return this;
     }
@@ -157,7 +157,7 @@ public class FormattedSql {
      *
      * @return
      */
-    public final FormattedSql AppendLine(String value) {
+    public final FormattedSql appendLine(String value) {
         this.sql.append(value);
         return this;
     }
@@ -167,7 +167,7 @@ public class FormattedSql {
      *
      * @return
      */
-    public final FormattedSql AppendLine() {
+    public final FormattedSql appendLine() {
         this.sql.append(Consts.NEW_LINE);
         return this;
     }

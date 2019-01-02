@@ -21,7 +21,7 @@ public class ActionMigrationRun extends MigrationRun {
     }
 
     @Override
-    protected void RunCore(DbAccessor db) {
+    protected void runCore(DbAccessor db) {
         action.accept(db);
     }
 }

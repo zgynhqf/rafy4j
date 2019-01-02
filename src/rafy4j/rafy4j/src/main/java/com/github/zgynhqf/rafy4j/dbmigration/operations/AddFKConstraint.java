@@ -3,10 +3,10 @@ package com.github.zgynhqf.rafy4j.dbmigration.operations;
 public class AddFKConstraint extends FKConstraintOperation
 {
 	@Override
-	protected void Down()
+	protected void down()
 	{
 		RemoveFKConstraint constraint = new RemoveFKConstraint();
 		constraint.setCopyFrom(this);
-		this.AddOperation(constraint);
+		this.addOperation(constraint);
 	}
 }

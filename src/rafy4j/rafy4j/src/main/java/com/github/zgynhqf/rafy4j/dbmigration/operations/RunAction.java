@@ -20,6 +20,6 @@ public class RunAction extends MigrationOperation {
     }
 
     @Override
-    protected void Down() {
+    protected void down() {
     }
 }

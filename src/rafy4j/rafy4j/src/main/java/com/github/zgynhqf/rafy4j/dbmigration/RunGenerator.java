@@ -17,11 +17,11 @@ import java.util.List;
 public abstract class RunGenerator {
     private List<MigrationRun> runList = new ArrayList<>();
 
-    public final List<MigrationRun> Generate(Iterable<MigrationOperation> operations) {
+    public final List<MigrationRun> generate(Iterable<MigrationOperation> operations) {
         this.runList.clear();
 
         for (MigrationOperation op : operations) {
-            this.Distribute(op);
+            this.distribute(op);
         }
 
         return this.runList;
@@ -32,100 +32,100 @@ public abstract class RunGenerator {
      *
      * @param op
      */
-    private void Distribute(MigrationOperation op) {
+    private void distribute(MigrationOperation op) {
         //手工分发的原因：类并不多、可以处理类之间的继承层次关系。
 
         if (op instanceof CreateNormalColumn) {
-            this.Generate((CreateNormalColumn) op);
+            this.generate((CreateNormalColumn) op);
         } else if (op instanceof DropNormalColumn) {
-            this.Generate((DropNormalColumn) op);
+            this.generate((DropNormalColumn) op);
         } else if (op instanceof AddPKConstraint) {
-            this.Generate((AddPKConstraint) op);
+            this.generate((AddPKConstraint) op);
         } else if (op instanceof RemovePKConstraint) {
-            this.Generate((RemovePKConstraint) op);
+            this.generate((RemovePKConstraint) op);
         } else if (op instanceof AddNotNullConstraint) {
-            this.Generate((AddNotNullConstraint) op);
+            this.generate((AddNotNullConstraint) op);
         } else if (op instanceof RemoveNotNullConstraint) {
-            this.Generate((RemoveNotNullConstraint) op);
+            this.generate((RemoveNotNullConstraint) op);
         } else if (op instanceof AddNotNullConstraintFK) {
-            this.Generate((AddNotNullConstraintFK) op);
+            this.generate((AddNotNullConstraintFK) op);
         } else if (op instanceof RemoveNotNullConstraintFK) {
-            this.Generate((RemoveNotNullConstraintFK) op);
+            this.generate((RemoveNotNullConstraintFK) op);
         } else if (op instanceof AlterColumnType) {
-            this.Generate((AlterColumnType) op);
+            this.generate((AlterColumnType) op);
         } else if (op instanceof AddFKConstraint) {
-            this.Generate((AddFKConstraint) op);
+            this.generate((AddFKConstraint) op);
         } else if (op instanceof RemoveFKConstraint) {
-            this.Generate((RemoveFKConstraint) op);
+            this.generate((RemoveFKConstraint) op);
         } else if (op instanceof CreateTable) {
-            this.Generate((CreateTable) op);
+            this.generate((CreateTable) op);
         } else if (op instanceof DropTable) {
-            this.Generate((DropTable) op);
+            this.generate((DropTable) op);
         } else if (op instanceof CreateDatabase) {
-            this.Generate((CreateDatabase) op);
+            this.generate((CreateDatabase) op);
         } else if (op instanceof DropDatabase) {
-            this.Generate((DropDatabase) op);
+            this.generate((DropDatabase) op);
         } else if (op instanceof RunSql) {
-            this.Generate((RunSql) op);
+            this.generate((RunSql) op);
         } else if (op instanceof RunAction) {
-            this.Generate((RunAction) op);
+            this.generate((RunAction) op);
         } else if (op instanceof UpdateComment) {
-            this.Generate((UpdateComment) op);
+            this.generate((UpdateComment) op);
         } else {
-            this.Generate(op);
+            this.generate(op);
         }
     }
 
     // 需要子类实现的抽象方法
 
-    protected abstract void Generate(CreateNormalColumn op);
+    protected abstract void generate(CreateNormalColumn op);
 
-    protected abstract void Generate(DropNormalColumn op);
+    protected abstract void generate(DropNormalColumn op);
 
-    protected abstract void Generate(AddPKConstraint op);
+    protected abstract void generate(AddPKConstraint op);
 
-    protected abstract void Generate(RemovePKConstraint op);
+    protected abstract void generate(RemovePKConstraint op);
 
-    protected abstract void Generate(AddNotNullConstraint op);
+    protected abstract void generate(AddNotNullConstraint op);
 
-    protected abstract void Generate(RemoveNotNullConstraint op);
+    protected abstract void generate(RemoveNotNullConstraint op);
 
-    protected abstract void Generate(AddNotNullConstraintFK op);
+    protected abstract void generate(AddNotNullConstraintFK op);
 
-    protected abstract void Generate(RemoveNotNullConstraintFK op);
+    protected abstract void generate(RemoveNotNullConstraintFK op);
 
-    protected abstract void Generate(AlterColumnType op);
+    protected abstract void generate(AlterColumnType op);
 
-    protected abstract void Generate(AddFKConstraint op);
+    protected abstract void generate(AddFKConstraint op);
 
-    protected abstract void Generate(RemoveFKConstraint op);
+    protected abstract void generate(RemoveFKConstraint op);
 
-    protected abstract void Generate(CreateTable op);
+    protected abstract void generate(CreateTable op);
 
-    protected abstract void Generate(DropTable op);
+    protected abstract void generate(DropTable op);
 
-    protected abstract void Generate(CreateDatabase op);
+    protected abstract void generate(CreateDatabase op);
 
-    protected abstract void Generate(DropDatabase op);
+    protected abstract void generate(DropDatabase op);
 
-    protected abstract void Generate(UpdateComment op);
+    protected abstract void generate(UpdateComment op);
 
-    protected void Generate(MigrationOperation op) {
-        throw new NotImplementedException("Generate(MigrationOperation op)");
+    protected void generate(MigrationOperation op) {
+        throw new NotImplementedException("generate(MigrationOperation op)");
     }
 
     //直接实现的两个子类：RunSql、RunAction
 
-    protected void Generate(RunSql op) {
+    protected void generate(RunSql op) {
         SqlMigrationRun run = new SqlMigrationRun();
         run.setSql(op.getSql());
-        this.AddRun(run);
+        this.addRun(run);
     }
 
-    protected void Generate(RunAction op) {
+    protected void generate(RunAction op) {
         ActionMigrationRun run = new ActionMigrationRun();
         run.setAction(op.getAction());
-        this.AddRun(run);
+        this.addRun(run);
     }
 
     /**
@@ -133,7 +133,7 @@ public abstract class RunGenerator {
      *
      * @return
      */
-    protected final IndentedTextWriter Writer() {
+    protected final IndentedTextWriter writer() {
         return new IndentedTextWriter(new StringWriter());
     }
 
@@ -142,10 +142,10 @@ public abstract class RunGenerator {
      *
      * @param sql
      */
-    protected final void AddRun(IndentedTextWriter sql) {
+    protected final void addRun(IndentedTextWriter sql) {
         SqlMigrationRun op = new SqlMigrationRun();
         op.setSql(sql.toString());
-        this.AddRun(op);
+        this.addRun(op);
     }
 
     /**
@@ -153,7 +153,7 @@ public abstract class RunGenerator {
      *
      * @param run
      */
-    protected final void AddRun(MigrationRun run) {
+    protected final void addRun(MigrationRun run) {
         this.runList.add(run);
     }
 }

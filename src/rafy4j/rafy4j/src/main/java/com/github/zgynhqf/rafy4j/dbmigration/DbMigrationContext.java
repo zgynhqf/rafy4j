@@ -86,10 +86,10 @@ public class DbMigrationContext implements Closeable {
 
         this.setRunDataLossOperation(DataLossOperation.None);
 
-        this.dbProvider = DbMigrationProviderFactory.GetProvider(dbSetting);
+        this.dbProvider = DbMigrationProviderFactory.getProvider(dbSetting);
 
-        this.runGenerator = (SqlRunGenerator) this.dbProvider.CreateRunGenerator();
-        this.setDatabaseMetaReader(this.dbProvider.CreateSchemaReader());
+        this.runGenerator = (SqlRunGenerator) this.dbProvider.createRunGenerator();
+        this.setDatabaseMetaReader(this.dbProvider.createSchemaReader());
     }
 
     //region Components
@@ -195,14 +195,14 @@ public class DbMigrationContext implements Closeable {
         dataLossOperation = value;
     }
 
-    public final void NotifyDataLoss(String actionName) {
+    public final void notifyDataLoss(String actionName) {
         //此函数中可以记录所有数据丢失操作的日志。
         //暂不实现。
     }
 
     //endregion
 
-    //region AutoMigrate
+    //region autoMigrate
 
     /**
      * 自动移植到目标结构
@@ -210,7 +210,7 @@ public class DbMigrationContext implements Closeable {
      *
      * @param destination 目标结构
      */
-    public final void MigrateTo(DestinationDatabase destination) {
+    public final void migrateTo(DestinationDatabase destination) {
 //            ********************** 代码块解释 *********************************
 //             *
 //             * 主要更新逻辑如下：
@@ -224,18 +224,18 @@ public class DbMigrationContext implements Closeable {
 //            *********************************************************************
 //
 //        if (this.getSupportHistory()) {
-//            Must(this.MigrateToHistory(LocalDateTime.MAX));
+//            must(this.MigrateToHistory(LocalDateTime.MAX));
 //        }
 //
 //        java.util.ArrayList<ManualDbMigration> manualPendings = this.GetManualPendings();
 //        var schemaPending = manualPendings.Where(m = > m.Type == ManualMigrationType.SCHEMA).ToList();
 //        var dataPending = manualPendings.Where(m = > m.Type == ManualMigrationType.data).ToList();
 
-        Database dbMeta = this.getDatabaseMetaReader().Read();
+        Database dbMeta = this.getDatabaseMetaReader().read();
 
-        ModelDiffer differ = new ModelDiffer(runGenerator.getDbTypeCoverter());
+        ModelDiffer differ = new ModelDiffer(runGenerator.getDbTypeConverter());
         differ.IDbIdentifierProvider = runGenerator.getIdentifierQuoter();
-        DatabaseChanges changeSet = differ.Distinguish(dbMeta, destination);
+        DatabaseChanges changeSet = differ.distinguish(dbMeta, destination);
 
         //判断是否正处于升级阶段。（或者是处于创建阶段。）
         //不能直接用 dbMeta.Tables.Count > 0 来判断，这是因为里面可能有 IgnoreTables 中指定表。
@@ -244,18 +244,18 @@ public class DbMigrationContext implements Closeable {
 //                        destination.getTables().size() > changeSet.getTablesChanged()
 //                                .stream().filter(t -> t.getChangeType() == ChangeType.ADDED).count();
 //        if (updating) {
-//            Must(this.MigrateUpBatch(schemaPending));
+//            must(this.migrateUpBatch(schemaPending));
 
-        Must(this.AutoMigrate(changeSet));
+        must(this.autoMigrate(changeSet));
 //        } else {
 //            if (manualPendings.size() > 0) {
 //                //此时，自动升级的时间都应该小于所有手工升级
-//                Must(this.AutoMigrate(changeSet, manualPendings[0].getTimeId()));
+//                must(this.autoMigrate(changeSet, manualPendings[0].getTimeId()));
 //            } else {
-//            Must(this.AutoMigrate(changeSet));
+//            must(this.autoMigrate(changeSet));
 //            }
 //
-//            Must(this.MigrateUpBatch(schemaPending));
+//            must(this.migrateUpBatch(schemaPending));
 //        }
 
 //        if (dataPending.size() > 0) {
@@ -271,7 +271,7 @@ public class DbMigrationContext implements Closeable {
 //            java.util.Date dbVersion = this.GetDbVersion();
 //            var maxDataPending = dataPending.Max(m = > m.TimeId);
 //
-//            Must(this.MigrateUpBatch(dataPending));
+//            must(this.migrateUpBatch(dataPending));
 //
 //            if (dbVersion.compareTo(maxDataPending) > 0) {
 //                this.getDbVersionProvider().SetDbVersion(dbVersion);
@@ -284,27 +284,27 @@ public class DbMigrationContext implements Closeable {
      */
     private static final long TIME_ID_SPAN = 10;
 
-    private Result AutoMigrate(DatabaseChanges changeSet) {
-        return this.AutoMigrate(changeSet, null);
+    private Result autoMigrate(DatabaseChanges changeSet) {
+        return this.autoMigrate(changeSet, null);
     }
 
-    private Result AutoMigrate(DatabaseChanges changeSet, Instant maxTime) {
+    private Result autoMigrate(DatabaseChanges changeSet, Instant maxTime) {
         //生成所有自动迁移操作
         AutomationMigration auto = new AutomationMigration();
         auto.Context = this;
-        auto.GenerateOpertions(changeSet);
+        auto.generateOperations(changeSet);
         List<MigrationOperation> autoMigrations = auto.getOperations();
 
         if (autoMigrations.size() > 0) {
-            this.GenerateTimeId(autoMigrations, maxTime);
+            this.generateTimeId(autoMigrations, maxTime);
 
-            return this.MigrateUpBatch(autoMigrations);
+            return this.migrateUpBatch(autoMigrations);
         }
 
         return Result.ok();
     }
 
-    private void GenerateTimeId(List<MigrationOperation> autoMigrations, Instant maxTime) {
+    private void generateTimeId(List<MigrationOperation> autoMigrations, Instant maxTime) {
 //            ********************** 代码块解释 *********************************
 //             *
 //             * 如果提供了最大时间限制，则所有自动升级的时间都由该时间向前反推得出。
@@ -339,7 +339,7 @@ public class DbMigrationContext implements Closeable {
 //    public final void MigrateManually() {
 //        java.util.ArrayList<ManualDbMigration> pendings = this.GetManualPendings();
 //
-//        Must(this.MigrateUpBatch(pendings));
+//        must(this.migrateUpBatch(pendings));
 //    }
 //
 //    private java.util.ArrayList<ManualDbMigration> GetManualPendings() {
@@ -352,13 +352,13 @@ public class DbMigrationContext implements Closeable {
 
     //endregion
 
-    //region RefreshComments
+    //region refreshComments
 
     /**
      * 使用指定的注释来更新数据库中的相关注释内容。
      * 更新注释前，请保证真实数据库中的包含了指定的库中的所有表和字段。
      */
-    public final void RefreshComments(Database database) {
+    public final void refreshComments(Database database) {
         List<MigrationOperation> operations = new ArrayList<MigrationOperation>(1000);
 
         for (Table table : database.getTables()) {
@@ -381,7 +381,7 @@ public class DbMigrationContext implements Closeable {
             }
         }
 
-        Must(this.MigrateUpBatch(operations));
+        must(this.migrateUpBatch(operations));
     }
 
     //endregion
@@ -427,7 +427,7 @@ public class DbMigrationContext implements Closeable {
 //            var migrations = histories.Reverse().Select(h = > this.getHistoryRepository().TryRestore(h)).
 //            Where(h = > h != null).ToList();
 //
-//            return this.MigrateUpBatch(migrations, true);
+//            return this.migrateUpBatch(migrations, true);
 //        }
 //
 //        return true;
@@ -467,12 +467,12 @@ public class DbMigrationContext implements Closeable {
 //            for (var history : histories) {
 //                dbmigration migration = historyRepo.TryRestore(history);
 //                if (migration != null) {
-//                    //CreateDatabase 不能回滚，需要使用 DeleteDatabase 方法。
+//                    //CreateDatabase 不能回滚，需要使用 deleteDatabase 方法。
 //                    if (!(migration instanceof CreateDatabase)) {
-//                        this.MigrateDown(migration);
+//                        this.migrateDown(migration);
 //
 //                        var version = migration.getTimeId().AddMilliseconds(-TIME_ID_SPAN / 2);
-//                        Must(this.getDbVersionProvider().SetDbVersion(version));
+//                        must(this.getDbVersionProvider().SetDbVersion(version));
 //
 //                        if (rollbackAction == RollbackAction.DeleteHistory) {
 //                            historyRepo.Remove(this.getDbName(), history);
@@ -590,7 +590,7 @@ public class DbMigrationContext implements Closeable {
      *
      * @return
      */
-    public final boolean DatabaseExists() {
+    public final boolean databaseExists() {
         DbAccessor dba = this.getDBA();
         try {
             Connection connection = dba.startConnection();
@@ -615,12 +615,12 @@ public class DbMigrationContext implements Closeable {
      * 删除数据库
      * 以及它的历史信息、版本号信息。
      * <p>
-     * 注意，如果需要保留整个历史库的升级信息，请使用 MigrateTo(RemovedDatabase) 方法。
+     * 注意，如果需要保留整个历史库的升级信息，请使用 migrateTo(RemovedDatabase) 方法。
      */
-    public final void DeleteDatabase() {
+    public final void deleteDatabase() {
         DropDatabase dropDatabase = new DropDatabase();
         dropDatabase.setDatabase(this.getDbName());
-        this.MigrateUp(dropDatabase);
+        this.migrateUp(dropDatabase);
 
         //        boolean embaded = this.getDbVersionProvider() instanceof EmbadedDbVersionProvider;
 //
@@ -643,14 +643,14 @@ public class DbMigrationContext implements Closeable {
         return this.dba;
     }
 
-    //ORIGINAL LINE: private Result MigrateUpBatch(IEnumerable<dbmigration> migrations, bool addByDeveloperHistory = false)
-    private Result MigrateUpBatch(List<MigrationOperation> migrations) {//, boolean addByDeveloperHistory) {
+    //ORIGINAL LINE: private Result migrateUpBatch(IEnumerable<dbmigration> migrations, bool addByDeveloperHistory = false)
+    private Result migrateUpBatch(List<MigrationOperation> migrations) {//, boolean addByDeveloperHistory) {
         Result res = Result.ok();
 
         //对于每一个数据库操作，进行升级操作
 //        int i = 0, count = migrations.size();
         for (MigrationOperation migration : migrations) {
-            this.MigrateUp(migration);
+            this.migrateUp(migration);
 
 //            //如果不是客户端被动升级，需要创建历史记录
 //            if (!addByDeveloperHistory && this.getSupportHistory()) {
@@ -672,7 +672,7 @@ public class DbMigrationContext implements Closeable {
 
 //            if (!res.isSuccess()) {
 //                //升级日志添加出错，回滚，并终止之后的升级列表。
-//                this.MigrateDown(migration);
+//                this.migrateDown(migration);
 //                break;
 //            }
 //
@@ -683,20 +683,20 @@ public class DbMigrationContext implements Closeable {
         return res;
     }
 
-    private void MigrateUp(DbMigration migration) {
-        this.RunMigration(migration, true);
+    private void migrateUp(DbMigration migration) {
+        this.runMigration(migration, true);
     }
 
-    private void MigrateDown(DbMigration migration) {
-        this.RunMigration(migration, false);
+    private void migrateDown(DbMigration migration) {
+        this.runMigration(migration, false);
     }
 
-    private void RunMigration(DbMigration migration, boolean up) {
-        List<MigrationRun> runList = this.GenerateRunList(migration, up);
+    private void runMigration(DbMigration migration, boolean up) {
+        List<MigrationRun> runList = this.generateRunList(migration, up);
 
         if (runList.isEmpty()) return;
 
-        this.ExecuteWithoutDebug(() -> {
+        this.executeWithoutDebug(() -> {
             DbAccessor dba = this.getDBA();
             if (runList.size() > 1) {
                 /*********************** 代码块解释 *********************************
@@ -710,7 +710,7 @@ public class DbMigrationContext implements Closeable {
                     dba.startTransaction();
                     for (MigrationRun item : runList) {
                         this.currentRun = (SqlMigrationRun) ((item instanceof SqlMigrationRun) ? item : null);
-                        item.Run(dba);
+                        item.run(dba);
                     }
                     dba.commit();
                 } catch (SQLException e) {
@@ -721,7 +721,7 @@ public class DbMigrationContext implements Closeable {
             } else {
                 MigrationRun singleRun = runList.get(0);
                 this.currentRun = (SqlMigrationRun) (singleRun instanceof SqlMigrationRun ? singleRun : null);
-                singleRun.Run(dba);
+                singleRun.run(dba);
             }
             return null;
         });
@@ -729,28 +729,28 @@ public class DbMigrationContext implements Closeable {
 
     private SqlMigrationRun currentRun;
 
-    private void ExecuteWithoutDebug(Supplier<Void> action) {
+    private void executeWithoutDebug(Supplier<Void> action) {
         try {
             action.get();
         } catch (Exception ex) {
             String error = ex.getMessage();
             if (ex instanceof SQLException) {
-                error = DbMigrationExceptionMessageFormatter.FormatMessage((SQLException) ex, currentRun);
+                error = DbMigrationExceptionMessageFormatter.formatMessage((SQLException) ex, currentRun);
             }
             throw new DbMigrationException(error, ex);
         }
     }
 
-    private List<MigrationRun> GenerateRunList(DbMigration migration, boolean up) {
+    private List<MigrationRun> generateRunList(DbMigration migration, boolean up) {
         migration.setDatabaseMetaReader(this.getDatabaseMetaReader());
 
         if (up) {
-            migration.GenerateUpOperations();
+            migration.generateUpOperations();
         } else {
-            migration.GenerateDownOperations();
+            migration.generateDownOperations();
         }
 
-        List<MigrationRun> runList = runGenerator.Generate(migration.getOperations());
+        List<MigrationRun> runList = runGenerator.generate(migration.getOperations());
 
         return runList;
     }
@@ -779,7 +779,7 @@ public class DbMigrationContext implements Closeable {
 
     //region Helper
 
-    private static Result Must(Result res) {
+    private static Result must(Result res) {
         if (!res.isSuccess()) {
             throw new DbMigrationException(res.getMessage());
         }

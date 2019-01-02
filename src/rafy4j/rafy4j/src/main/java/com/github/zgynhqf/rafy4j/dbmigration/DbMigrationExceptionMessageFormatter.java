@@ -6,7 +6,7 @@ import com.github.zgynhqf.rafy4j.dbmigration.run.SqlMigrationRun;
 import java.sql.SQLException;
 
 class DbMigrationExceptionMessageFormatter {
-    static String FormatMessage(SQLException ex, SqlMigrationRun sqlRun) {
+    static String formatMessage(SQLException ex, SqlMigrationRun sqlRun) {
 //        String errorMsg = "";
 //
 //        if (ex instanceof SQLException) {

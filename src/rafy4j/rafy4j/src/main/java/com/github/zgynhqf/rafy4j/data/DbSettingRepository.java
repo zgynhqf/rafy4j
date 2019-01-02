@@ -52,7 +52,7 @@ public class DbSettingRepository {
      * @param dbSettingName
      * @return
      */
-    public DbSetting FindOrCreate(String dbSettingName) {
+    public DbSetting findOrCreate(String dbSettingName) {
         DbSetting res = store.get(dbSettingName);
         if (res != null) return res;
 

@@ -28,7 +28,7 @@ public class MySqlDbTypeConverter extends DbTypeConverter {
      * @return 返回MySql数据库中的具体类型值
      */
     @Override
-    public String ConvertToDatabaseTypeName(JDBCType fieldType, String length) {
+    public String convertToDatabaseTypeName(JDBCType fieldType, String length) {
         switch (fieldType) {
             case VARCHAR:
             case NVARCHAR:
@@ -74,7 +74,7 @@ public class MySqlDbTypeConverter extends DbTypeConverter {
      * @return
      */
     @Override
-    public JDBCType ConvertToDbType(String dbTypeName) {
+    public JDBCType convertToDbType(String dbTypeName) {
         if (upperContains(dbTypeName, "VARCHAR")) return JDBCType.VARCHAR;
         if (upperContains(dbTypeName, "CHAR")) return JDBCType.CHAR;
         if (upperContains(dbTypeName, "TINYTEXT")) return JDBCType.VARCHAR;
@@ -119,17 +119,17 @@ public class MySqlDbTypeConverter extends DbTypeConverter {
      * @return
      */
     @Override
-    public Object ToDbParameterValue(Object value) {
-        value = super.ToDbParameterValue(value);
+    public Object toDbParameterValue(Object value) {
+        value = super.toDbParameterValue(value);
 
         if (value != null) {
             Class<?> valueClass = value.getClass();
             if (TypeHelper.isPrimitiveTypeOrClass(valueClass, PrimitiveType.BOOLEAN)) {
                 value = (boolean) value ? 1 : 0;
             } else if (valueClass.isEnum()) {
-                value = TypeHelper.CoerceValue(Integer.class, value);
+                value = TypeHelper.coerceValue(Integer.class, value);
             } else if (value instanceof LocalDateTime) {
-                value = TypeHelper.CoerceValue(Date.class, value);
+                value = TypeHelper.coerceValue(Date.class, value);
             }
         }
 
@@ -140,22 +140,22 @@ public class MySqlDbTypeConverter extends DbTypeConverter {
      * 将指定的值转换为一个 CLR 类型的值。
      *
      * @param dbValue The database value.
-     * @param clrType Type of the color.
+     * @param jreType Type of the color.
      * @return
      */
     @Override
-    public Object ToClrValue(Object dbValue, Class clrType) {
-        dbValue = super.ToClrValue(dbValue, clrType);
+    public Object toJreValue(Object dbValue, Class jreType) {
+        dbValue = super.toJreValue(dbValue, jreType);
 
-        if (dbValue == null && clrType == String.class) {
+        if (dbValue == null && jreType == String.class) {
             dbValue = ""; //null 转换为空字符串
         }
 
         // DateTime to LocalDateTime
         // https://msdn.microsoft.com/zh-cn/library/bb546101.aspx
         // DateTime DateTime2 区别 http://www.studyofnet.com/news/1050.html
-        if (clrType == LocalDateTime.class && dbValue != null) {
-            dbValue = TypeHelper.CoerceValue(LocalDateTime.class, dbValue);
+        if (jreType == LocalDateTime.class && dbValue != null) {
+            dbValue = TypeHelper.coerceValue(LocalDateTime.class, dbValue);
         }
 
         return dbValue;

@@ -32,12 +32,12 @@ public final class MySqlMetaReader extends DbMetaReader {
      * @param database 待加载表的数据库对象
      */
     @Override
-    protected void LoadAllTables(Database database) throws SQLException {
+    protected void loadAllTables(Database database) throws SQLException {
         String sql = "SELECT TABLE_NAME" + Consts.NEW_LINE +
                 "FROM INFORMATION_SCHEMA.TABLES" + Consts.NEW_LINE +
                 "WHERE TABLE_SCHEMA = '" + database.getName() + "'";
 
-        this.getDb().QueryDataReader(sql, reader -> {
+        this.getDb().queryDataReader(sql, reader -> {
             while (reader.next()) {
                 String tableName = reader.getString("TABLE_NAME");
                 Table table = new Table(tableName, database);
@@ -53,7 +53,7 @@ public final class MySqlMetaReader extends DbMetaReader {
      * @param database 需要加载列的数据库对象
      */
     @Override
-    protected void LoadAllColumns(Database database) throws SQLException {
+    protected void loadAllColumns(Database database) throws SQLException {
         //用一句 Sql 将所有的表的所有字段都一次性查询出来。
         //不再使用 @"SHOW FULL COLUMNS FROM `" + table.Name + "`;"
         String sql = "SELECT TABLE_NAME, COLUMN_NAME, IS_NULLABLE, COLUMN_TYPE, EXTRA" + Consts.NEW_LINE
@@ -70,18 +70,18 @@ public final class MySqlMetaReader extends DbMetaReader {
 //                + StringUtils.join(database.getTables().stream().map(t -> "'" + t.getName() + "'").toArray(), ",")
 //                + ") AND TABLE_SCHEMA = '" + database.getName() + "'" + Consts.NEW_LINE
 //                + "ORDER BY TABLE_NAME";
-        this.getDb().QueryDataReader(sql, columnsReader -> {
+        this.getDb().queryDataReader(sql, columnsReader -> {
             Table currentTable = null; //当前正在处理的表。（放在循环外，有缓存的作用。）
             while (columnsReader.next()) {
                 //找到该列所对应的表。
                 String tableName = columnsReader.getString("TABLE_NAME");
                 if (currentTable == null || !currentTable.getName().equalsIgnoreCase(tableName)) {
-                    currentTable = database.FindTable(tableName);
+                    currentTable = database.findTable(tableName);
                 }
 
                 String columnName = columnsReader.getString("COLUMN_NAME");
                 String sqlType = columnsReader.getString("COLUMN_TYPE");
-                JDBCType dbType = MySqlDbTypeConverter.Instance.ConvertToDbType(sqlType);
+                JDBCType dbType = MySqlDbTypeConverter.Instance.convertToDbType(sqlType);
 
                 Column column = new Column(columnName, dbType, null, currentTable);
 
@@ -102,7 +102,7 @@ public final class MySqlMetaReader extends DbMetaReader {
      * @return 以列表的形式返回所有约束数据
      */
     @Override
-    protected List<Constraint> ReadAllConstrains(Database database) throws SQLException {
+    protected List<Constraint> readAllConstrains(Database database) throws SQLException {
         ArrayList<Constraint> allConstrains = new ArrayList<>();
 
         String sql = "SELECT O.CONSTRAINT_SCHEMA, O.CONSTRAINT_NAME, O.TABLE_SCHEMA, O.TABLE_NAME, O.COLUMN_NAME, O.REFERENCED_TABLE_SCHEMA, O.REFERENCED_TABLE_NAME, O.REFERENCED_COLUMN_NAME, O.UPDATE_RULE, O.DELETE_RULE, O.UNIQUE_CONSTRAINT_NAME, T.CONSTRAINT_TYPE" + Consts.NEW_LINE
@@ -114,7 +114,7 @@ public final class MySqlMetaReader extends DbMetaReader {
                 + "        INNER JOIN INFORMATION_SCHEMA.TABLE_CONSTRAINTS T ON O.TABLE_NAME = T.TABLE_NAME AND T.CONSTRAINT_NAME = O.CONSTRAINT_NAME" + Consts.NEW_LINE
                 + "        WHERE O.CONSTRAINT_SCHEMA != 'mysql' AND O.CONSTRAINT_SCHEMA != 'sys' AND O.CONSTRAINT_SCHEMA = '" + database.getName() + "'";
 
-        this.getDb().QueryDataReader(sql, constraintReader -> {
+        this.getDb().queryDataReader(sql, constraintReader -> {
             while (constraintReader.next()) {
                 Constraint c = new Constraint();
                 c.CONSTRAINT_NAME = constraintReader.getString("CONSTRAINT_NAME");
@@ -137,8 +137,8 @@ public final class MySqlMetaReader extends DbMetaReader {
     }
 
     @Override
-    protected void LoadAllIdentities(Database database) {
+    protected void loadAllIdentities(Database database) {
         //do nothing.
-        //自增列，已经在 LoadAllColumns 方法中直接加载了。
+        //自增列，已经在 loadAllColumns 方法中直接加载了。
     }
 }

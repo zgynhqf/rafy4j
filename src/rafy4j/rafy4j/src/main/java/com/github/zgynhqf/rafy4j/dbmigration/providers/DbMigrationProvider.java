@@ -28,14 +28,14 @@ public abstract class DbMigrationProvider {
      *
      * @return
      */
-    public abstract MetadataReader CreateSchemaReader();
+    public abstract MetadataReader createSchemaReader();
 
     /**
      * 创建一个执行生成器
      *
      * @return
      */
-    public abstract RunGenerator CreateRunGenerator();
+    public abstract RunGenerator createRunGenerator();
 //
 //    /**
 //     * 创建一个数据库备份器

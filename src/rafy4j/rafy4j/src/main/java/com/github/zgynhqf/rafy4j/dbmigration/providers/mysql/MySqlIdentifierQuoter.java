@@ -19,7 +19,7 @@ public class MySqlIdentifierQuoter extends BaseDbIdentifierQuoter {
     }
 
     @Override
-    public String Prepare(String identifier) {
-        return LimitIdentifier(identifier, IDENTIFIER_MAX_LENGTH);
+    public String prepare(String identifier) {
+        return limitIdentifier(identifier, IDENTIFIER_MAX_LENGTH);
     }
 }

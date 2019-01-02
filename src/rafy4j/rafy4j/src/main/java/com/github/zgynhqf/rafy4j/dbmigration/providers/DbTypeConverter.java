@@ -18,8 +18,8 @@ import java.util.UUID;
  * 数据库字段类型的转换器。
  */
 public abstract class DbTypeConverter {
-    public String ConvertToDatabaseTypeName(JDBCType fieldType) {
-        return this.ConvertToDatabaseTypeName(fieldType, null);
+    public String convertToDatabaseTypeName(JDBCType fieldType) {
+        return this.convertToDatabaseTypeName(fieldType, null);
     }
 
     /**
@@ -29,7 +29,7 @@ public abstract class DbTypeConverter {
      * @param length
      * @return
      */
-    public abstract String ConvertToDatabaseTypeName(JDBCType fieldType, String length);
+    public abstract String convertToDatabaseTypeName(JDBCType fieldType, String length);
 
     /**
      * 将从数据库 SCHEMA Meta 中读取出来的列的类型名称，转换为其对应的 JDBCType。
@@ -37,34 +37,30 @@ public abstract class DbTypeConverter {
      * @param databaseTypeName 从数据库 SCHEMA Meta 中读取出来的列的类型名称。
      * @return
      */
-    public abstract JDBCType ConvertToDbType(String databaseTypeName);
+    public abstract JDBCType convertToDbType(String databaseTypeName);
 
     /**
      * 返回 CLR 类型默认映射的数据库的类型。
      *
-     * @param clazz
+     * @param type
      * @return
      */
-    public JDBCType FromClrType(Class clazz) {
-        if (clazz.isEnum() || clazz == String.class) {
-            return JDBCType.VARCHAR;
-        }
-        if (TypeHelper.isPrimitiveTypeOrClass(clazz, PrimitiveType.INTEGER)) return JDBCType.INTEGER;
-        if (TypeHelper.isPrimitiveTypeOrClass(clazz, PrimitiveType.LONG)) return JDBCType.BIGINT;
-        if (TypeHelper.isPrimitiveTypeOrClass(clazz, PrimitiveType.BOOLEAN)) return JDBCType.BOOLEAN;
-        if (TypeHelper.isPrimitiveTypeOrClass(clazz, PrimitiveType.FLOAT)) return JDBCType.FLOAT;
-        if (TypeHelper.isPrimitiveTypeOrClass(clazz, PrimitiveType.DOUBLE)) return JDBCType.DOUBLE;
-        if (TypeHelper.isPrimitiveTypeOrClass(clazz, PrimitiveType.CHAR)) return JDBCType.CHAR;
-        if (clazz == Date.class || clazz == LocalDateTime.class ||
-                clazz == LocalDate.class || clazz == LocalTime.class) {
+    public JDBCType fromJreType(Class type) {
+        if (type.isEnum() || type == String.class) return JDBCType.VARCHAR;
+        if (TypeHelper.isPrimitiveTypeOrClass(type, PrimitiveType.INTEGER)) return JDBCType.INTEGER;
+        if (TypeHelper.isPrimitiveTypeOrClass(type, PrimitiveType.LONG)) return JDBCType.BIGINT;
+        if (TypeHelper.isPrimitiveTypeOrClass(type, PrimitiveType.BOOLEAN)) return JDBCType.BOOLEAN;
+        if (TypeHelper.isPrimitiveTypeOrClass(type, PrimitiveType.FLOAT)) return JDBCType.FLOAT;
+        if (TypeHelper.isPrimitiveTypeOrClass(type, PrimitiveType.DOUBLE)) return JDBCType.DOUBLE;
+        if (TypeHelper.isPrimitiveTypeOrClass(type, PrimitiveType.CHAR)) return JDBCType.CHAR;
+        if (type == Date.class || type == LocalDateTime.class ||
+                type == LocalDate.class || type == LocalTime.class) {
             return JDBCType.DATE;
         }
-        if (clazz == byte[].class) return JDBCType.BINARY;
+        if (type == byte[].class) return JDBCType.BINARY;
 
-        if (TypeHelper.IsNullable(clazz)) {
-            return this.FromClrType(TypeHelper.IgnoreNullable(clazz));
-        }
-        if (clazz == UUID.class) return JDBCType.VARCHAR;
+        if (TypeHelper.isOptional(type)) return this.fromJreType(TypeHelper.ignoreOptional(type));
+        if (type == UUID.class) return JDBCType.VARCHAR;
 
         //default
         return JDBCType.VARCHAR;
@@ -77,7 +73,7 @@ public abstract class DbTypeConverter {
      * @param value
      * @return
      */
-    public Object ToDbParameterValue(Object value) {
+    public Object toDbParameterValue(Object value) {
         return value;
         //        return (value != null) ? value : DBNull.getValue();
     }
@@ -89,7 +85,7 @@ public abstract class DbTypeConverter {
      * @param clrType Type of the color.
      * @return
      */
-    public Object ToClrValue(Object dbValue, Class clrType) {
+    public Object toJreValue(Object dbValue, Class clrType) {
         return dbValue;
 //        return dbValue == DBNull.getValue() ? null : dbValue;
     }
@@ -100,7 +96,7 @@ public abstract class DbTypeConverter {
      * @param type
      * @return
      */
-    public Object GetDefaultValue(JDBCType type) {
+    public Object getDefaultValue(JDBCType type) {
         switch (type) {
             case VARCHAR:
             case NVARCHAR:
@@ -133,7 +129,7 @@ public abstract class DbTypeConverter {
      * @param newColumnType
      * @return
      */
-    public boolean IsCompatible(JDBCType oldColumnType, JDBCType newColumnType) {
+    public boolean isCompatible(JDBCType oldColumnType, JDBCType newColumnType) {
         if (oldColumnType == newColumnType) return true;
 
         //如果两个列都属性同一类型的数据库类型，这里也表示库的类型没有变化。

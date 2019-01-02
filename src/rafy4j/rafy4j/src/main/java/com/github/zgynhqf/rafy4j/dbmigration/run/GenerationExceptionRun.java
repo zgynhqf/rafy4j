@@ -5,7 +5,7 @@ import com.github.zgynhqf.rafy4j.dbmigration.DbMigrationException;
 import com.github.zgynhqf.rafy4j.dbmigration.MigrationRun;
 
 /**
- * 在 Generate 的过程中最好不要出现异常，可以使用此类来延迟异常的抛出，在真正开始执行 Sql（run） 时才抛出异常。
+ * 在 generate 的过程中最好不要出现异常，可以使用此类来延迟异常的抛出，在真正开始执行 Sql（run） 时才抛出异常。
  */
 public class GenerationExceptionRun extends MigrationRun {
     private String message;
@@ -19,7 +19,7 @@ public class GenerationExceptionRun extends MigrationRun {
     }
 
     @Override
-    protected void RunCore(DbAccessor db) {
+    protected void runCore(DbAccessor db) {
         throw new DbMigrationException(this.getMessage());
     }
 }

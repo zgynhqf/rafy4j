@@ -25,6 +25,7 @@ public class TableChanges {
         this.setColumnsChanged(new ArrayList<ColumnChanges>());
     }
 
+    //region gs
     public final Table getOldTable() {
         return oldTable;
     }
@@ -56,6 +57,7 @@ public class TableChanges {
     private void setChangeType(ChangeType value) {
         changeType = value;
     }
+    //endregion
 
     public final String getName() {
         return this.GetCoreTable().getName();
