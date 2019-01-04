@@ -22,6 +22,7 @@ public class EntityMetaParser {
      * 是否映射驼峰到下划线。
      */
     private boolean mapCamelToUnderline = true;
+    private boolean mapAllEntitiesToTable = true;
 
     //region gs
     public boolean isMapCamelToUnderline() {
@@ -31,30 +32,49 @@ public class EntityMetaParser {
     public void setMapCamelToUnderline(boolean mapCamelToUnderline) {
         this.mapCamelToUnderline = mapCamelToUnderline;
     }
+
+    public boolean isMapAllEntitiesToTable() {
+        return mapAllEntitiesToTable;
+    }
+
+    public void setMapAllEntitiesToTable(boolean mapAllEntitiesToTable) {
+        this.mapAllEntitiesToTable = mapAllEntitiesToTable;
+    }
     //endregion
 
     /**
      * 通过反射，来解析指定的类型所对应的关键元数据。
+     *
      * @param type
      * @return
      */
     public EntityMeta parse(Class<?> type) {
         EntityMeta meta = new EntityMeta();
 
-        MappingTable annotation = AnnotationHelper.findAnnotation(type, MappingTable.class);
+        boolean ignoreMapping = AnnotationHelper.findAnnotation(type, IgnoreMapping.class) != null;
+        if (!ignoreMapping) {
+            boolean mappingTable = mapAllEntitiesToTable;
 
-        meta.setTableName(annotation.name());
+            MappingTable annotation = AnnotationHelper.findAnnotation(type, MappingTable.class);
+            if (annotation != null) {
+                meta.setTableName(annotation.name());
 
-        //默认映射的表名。
-        if (StringUtils.isBlank(meta.getTableName())) {
-            String name = type.getSimpleName();
-            if (mapCamelToUnderline) {
-                name = NameUtils.camelToUnderline(name);
+                meta.setMapAllFieldsToColumn(annotation.mapAllFieldsToColumn());
+
+                mappingTable = true;
             }
-            meta.setTableName(name);
-        }
 
-        meta.setMapAllFieldsToColumn(annotation.mapAllFieldsToColumn());
+            //默认映射的表名。
+            if (mappingTable) {
+                if (StringUtils.isBlank(meta.getTableName())) {
+                    String name = type.getSimpleName();
+                    if (mapCamelToUnderline) {
+                        name = NameUtils.camelToUnderline(name);
+                    }
+                    meta.setTableName(name);
+                }
+            }
+        }
 
         parseProperties(meta, type);
 

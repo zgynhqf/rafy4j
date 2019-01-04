@@ -16,7 +16,7 @@ public class EntityMeta {
     /**
      * 是否映射所有的字段到列。
      */
-    private boolean mapAllFieldsToColumn;
+    private boolean mapAllFieldsToColumn = true;
     private List<EntityFieldMeta> fields = new ArrayList<>();
 
     /**

@@ -1,6 +1,5 @@
 package com.github.zgynhqf.rafy4j;
 
-import com.github.zgynhqf.rafy4j.annotation.MappingTable;
 import com.github.zgynhqf.rafy4j.data.DbSetting;
 import com.github.zgynhqf.rafy4j.dbmigration.model.*;
 import com.github.zgynhqf.rafy4j.dbmigration.providers.DbMigrationProviderFactory;
@@ -9,7 +8,6 @@ import com.github.zgynhqf.rafy4j.env.EntityConvention;
 import com.github.zgynhqf.rafy4j.metadata.EntityFieldMeta;
 import com.github.zgynhqf.rafy4j.metadata.EntityMeta;
 import com.github.zgynhqf.rafy4j.metadata.EntityMetaParser;
-import com.github.zgynhqf.rafy4j.utils.AnnotationHelper;
 import com.github.zgynhqf.rafy4j.utils.TypeHelper;
 import com.github.zgynhqf.rafy4j.utils.TypesSearcher;
 import com.sun.javafx.scene.control.behavior.OptionalBoolean;
@@ -29,12 +27,6 @@ public class ClassMetaReader implements DestinationDatabaseReader {
      * 需要忽略的表的表名的集合。
      */
     private List<String> ignoreTables;
-    //    /**
-//     * 此属性用于指定需要读取的实体集合对应的数据库配置名称。
-//     * 默认值：将要生成的数据库的配置名。
-//     * 当需要生成的数据库的配置名与实体集合的数据库配置名不一致时，可以摄者此属性来指定实体集合对应的数据库配置名称。
-//     */
-//    private String entityDbSettingName;
     private boolean isGeneratingForeignKey = true;
     private String entityPackage;
     private EntityMetaParser metaParser = new EntityMetaParser();
@@ -43,7 +35,6 @@ public class ClassMetaReader implements DestinationDatabaseReader {
         this.dbSetting = dbSetting;
         ignoreTables = new ArrayList<>();
 
-//        entityDbSettingName = dbSetting.getName();
         this.entityPackage = entityPackage;
     }
 
@@ -67,6 +58,13 @@ public class ClassMetaReader implements DestinationDatabaseReader {
         metaParser.setMapCamelToUnderline(mapCamelToUnderline);
     }
 
+    public boolean isMapAllEntitiesToTable() {
+        return metaParser.isMapAllEntitiesToTable();
+    }
+
+    public void setMapAllEntitiesToTable(boolean mapAllEntitiesToTable) {
+        metaParser.setMapAllEntitiesToTable(mapAllEntitiesToTable);
+    }
     //
 //    /**
 //     * 是否需要同时读取出相应的注释。
@@ -116,8 +114,8 @@ public class ClassMetaReader implements DestinationDatabaseReader {
             reader.dbTypeConverter = DbMigrationProviderFactory.getDbTypeConverter(dbSetting.getDriverName());
             reader.database = result;
             reader.entities = tableEntityTypes;
+            reader.setGeneratingForeignKey(this.isGeneratingForeignKey());
 //            reader.setReadComment(this.getReadComment());
-            reader.setIsGeneratingForeignKey(this.isGeneratingForeignKey());
 //            reader.setAdditionalPropertiesComments(this.getAdditionalPropertiesComments());
             reader.Read();
         }
@@ -138,12 +136,9 @@ public class ClassMetaReader implements DestinationDatabaseReader {
             int modifiers = type.getModifiers();
             if (!Modifier.isAbstract(modifiers) && !Modifier.isInterface(modifiers)) {
                 //判断实体类型是否映射了某一个数据库
-                MappingTable annotation = AnnotationHelper.findAnnotation(type, MappingTable.class);
-                if (annotation != null) {
-                    EntityMeta meta = metaParser.parse(type);
+                EntityMeta meta = metaParser.parse(type);
 
-                    tableEntityTypes.add(meta);
-                }
+                tableEntityTypes.add(meta);
             }
         }
 
@@ -154,7 +149,10 @@ public class ClassMetaReader implements DestinationDatabaseReader {
         private DbTypeConverter dbTypeConverter;
         private DestinationDatabase database;
         private List<EntityMeta> entities;
-        private boolean isGeneratingForeignKey = true;
+        /**
+         * 是否生成外键，默认true
+         */
+        private boolean generatingForeignKey = true;
         /**
          * 临时存储在这个列表中，最后再整合到 database 中。
          */
@@ -189,16 +187,12 @@ public class ClassMetaReader implements DestinationDatabaseReader {
         //endregion
 
         //region gs
-
-        /**
-         * 是否生成外键，默认true
-         */
-        public final boolean getIsGeneratingForeignKey() {
-            return isGeneratingForeignKey;
+        public final boolean isGeneratingForeignKey() {
+            return generatingForeignKey;
         }
 
-        public final void setIsGeneratingForeignKey(boolean value) {
-            isGeneratingForeignKey = value;
+        public final void setGeneratingForeignKey(boolean value) {
+            generatingForeignKey = value;
         }
         //endregion
 
@@ -210,7 +204,7 @@ public class ClassMetaReader implements DestinationDatabaseReader {
             }
 
             //在所有关系完成之后在创建外键的元数据
-            this.BuildFKRelations();
+            this.buildFKRelations();
         }
 
         /**
@@ -244,7 +238,7 @@ public class ClassMetaReader implements DestinationDatabaseReader {
 //
 //                        //是否生成外键
 //                        // 默认 IsGeneratingForeignKey 为 true
-//                        if (getIsGeneratingForeignKey()) {
+//                        if (generatingForeignKey()) {
 //                            var refMeta = em.Property(refProperty.RefEntityProperty);
 //                            if (refMeta.ReferenceInfo == null) {
 //                                throw new InvalidOperationException("refMeta.ReferenceInfo == null");
@@ -273,7 +267,7 @@ public class ClassMetaReader implements DestinationDatabaseReader {
 //                                }
 //                            }
 //                        }
-//                    } else if (getIsGeneratingForeignKey() && mp == Entity.TreePIdProperty) {
+//                    } else if (generatingForeignKey() && mp == Entity.TreePIdProperty) {
 //                        var id = em.Property(Entity.IdProperty);
 //                        //有时一些表的 Id 只是自增长，但并不是主键，不能创建外键。
 //                        if (id.ColumnMeta.IsPrimaryKey) {
@@ -333,7 +327,7 @@ public class ClassMetaReader implements DestinationDatabaseReader {
 
             table.sortColumns();
 
-            this.AddTable(table);
+            this.addTable(table);
         }
 
         /**
@@ -351,7 +345,7 @@ public class ClassMetaReader implements DestinationDatabaseReader {
          *
          * @param table
          */
-        private void AddTable(Table table) {
+        private void addTable(Table table) {
             Table existingTable = this.database.findTable(table.getName());
             if (existingTable != null) {
                 //由于有类的继承关系存在，合并两个表的所有字段。
@@ -372,7 +366,7 @@ public class ClassMetaReader implements DestinationDatabaseReader {
         /**
          * 构造外键的描述，并创建好与数据库、表、列的相关依赖关系
          */
-        private void BuildFKRelations() {
+        private void buildFKRelations() {
             for (ForeignConstraintInfo foreign : this.foreigns) {
                 //外键表必须找到，否则这个外键不会加入到集合中。
                 Table fkTable = this.database.findTable(foreign.FkTableName);

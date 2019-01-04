@@ -8,10 +8,10 @@ import lombok.Data;
  * @date: 2018-12-25 15:46
  **/
 @Data
-@MappingTable
 public class User {
     private long id;
     private String name;
     private int age;
     private boolean isRejected;
+    private double money;
 }

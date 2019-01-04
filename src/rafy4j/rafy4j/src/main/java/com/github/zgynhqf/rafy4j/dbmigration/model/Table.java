@@ -5,6 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.sql.JDBCType;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -143,11 +144,10 @@ public class Table {
      * @return
      */
     public final Column addColumn(String name, JDBCType type, String length, boolean isRequired, boolean isPrimaryKey, ForeignConstraint foreignConstraint) {
-        Column tempVar = new Column(name, type, length, this);
-        tempVar.setRequired(isRequired);
-        tempVar.setPrimaryKey(isPrimaryKey);
-        tempVar.setForeignConstraint(foreignConstraint);
-        Column column = tempVar;
+        Column column = new Column(name, type, length, this);
+        column.setRequired(isRequired);
+        column.setPrimaryKey(isPrimaryKey);
+        column.setForeignConstraint(foreignConstraint);
 
         this.getColumns().add(column);
 
@@ -155,7 +155,7 @@ public class Table {
     }
 
     public final void sortColumns() {
-        columns.sort((c1, c2) -> c1.getName().compareTo(c2.getName()));
+        columns.sort(Comparator.comparing(Column::getName));
     }
 
     @Override
