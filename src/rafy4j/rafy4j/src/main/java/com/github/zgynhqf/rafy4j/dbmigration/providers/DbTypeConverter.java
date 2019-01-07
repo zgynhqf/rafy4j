@@ -46,17 +46,21 @@ public abstract class DbTypeConverter {
      * @return
      */
     public JDBCType fromJreType(Class type) {
+        //枚举，使用字符串保存。
         if (type.isEnum() || type == String.class) return JDBCType.VARCHAR;
+
+        //以下根据使用频率来确定优先级。
         if (TypeHelper.isPrimitiveTypeOrClass(type, PrimitiveType.INTEGER)) return JDBCType.INTEGER;
         if (TypeHelper.isPrimitiveTypeOrClass(type, PrimitiveType.LONG)) return JDBCType.BIGINT;
         if (TypeHelper.isPrimitiveTypeOrClass(type, PrimitiveType.BOOLEAN)) return JDBCType.BOOLEAN;
-        if (TypeHelper.isPrimitiveTypeOrClass(type, PrimitiveType.FLOAT)) return JDBCType.FLOAT;
         if (TypeHelper.isPrimitiveTypeOrClass(type, PrimitiveType.DOUBLE)) return JDBCType.DOUBLE;
-        if (TypeHelper.isPrimitiveTypeOrClass(type, PrimitiveType.CHAR)) return JDBCType.CHAR;
         if (type == Date.class || type == LocalDateTime.class ||
                 type == LocalDate.class || type == LocalTime.class) {
             return JDBCType.DATE;
         }
+        if (type == BigDecimal.class) return JDBCType.DECIMAL;
+        if (TypeHelper.isPrimitiveTypeOrClass(type, PrimitiveType.FLOAT)) return JDBCType.FLOAT;
+        if (TypeHelper.isPrimitiveTypeOrClass(type, PrimitiveType.CHAR)) return JDBCType.CHAR;
         if (type == byte[].class) return JDBCType.BINARY;
 
         if (TypeHelper.isOptional(type)) return this.fromJreType(TypeHelper.ignoreOptional(type));
@@ -147,6 +151,6 @@ public abstract class DbTypeConverter {
 
     private static JDBCType[][] CompatibleTypes = new JDBCType[][]{
             new JDBCType[]{JDBCType.VARCHAR, JDBCType.NVARCHAR},
-            new JDBCType[]{JDBCType.INTEGER, JDBCType.BIGINT, JDBCType.FLOAT, JDBCType.DOUBLE}
+            new JDBCType[]{JDBCType.INTEGER, JDBCType.BIGINT, JDBCType.FLOAT, JDBCType.DOUBLE, JDBCType.DECIMAL}
     };
 }

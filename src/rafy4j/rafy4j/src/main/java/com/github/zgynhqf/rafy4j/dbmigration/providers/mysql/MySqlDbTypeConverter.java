@@ -60,7 +60,7 @@ public class MySqlDbTypeConverter extends DbTypeConverter {
                 if (!StringUtils.isBlank(length)) {
                     return "DECIMAL(" + length + ")";
                 }
-                return "DECIMAL(18,2)";
+                return "DECIMAL(30,6)";
             default:
                 break;
         }
