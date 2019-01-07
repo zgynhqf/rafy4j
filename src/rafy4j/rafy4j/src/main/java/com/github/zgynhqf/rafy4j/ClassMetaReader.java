@@ -28,14 +28,14 @@ public class ClassMetaReader implements DestinationDatabaseReader {
      */
     private List<String> ignoreTables;
     private boolean isGeneratingForeignKey = true;
-    private String entityPackage;
+    private String[] entityPackages;
     private EntityMetaParser metaParser = new EntityMetaParser();
 
-    public ClassMetaReader(String entityPackage, DbSetting dbSetting) {
+    public ClassMetaReader(DbSetting dbSetting, String... entityPackage) {
         this.dbSetting = dbSetting;
         ignoreTables = new ArrayList<>();
 
-        this.entityPackage = entityPackage;
+        this.entityPackages = entityPackage;
     }
 
     //region gs
@@ -131,7 +131,7 @@ public class ClassMetaReader implements DestinationDatabaseReader {
         List<EntityMeta> tableEntityTypes = new ArrayList<>();
 
         //程序集列表，生成数据库会反射找到程序集内的实体类型进行数据库映射
-        Set<Class<?>> classes = TypesSearcher.getClasses(entityPackage);
+        Set<Class<?>> classes = TypesSearcher.getClasses(entityPackages);
         for (Class<?> type : classes) {
             int modifiers = type.getModifiers();
             if (!Modifier.isAbstract(modifiers) && !Modifier.isInterface(modifiers)) {

@@ -59,7 +59,9 @@ public class Rafy4jTestApplicationTests {
 //            context.HistoryRepository = new DbHistoryRepository();
             context.setRunDataLossOperation(DataLossOperation.All);
 
-            ClassMetaReader classMetaReader = new ClassMetaReader(User.class.getPackage().getName(), dbSetting);
+            ClassMetaReader classMetaReader = new ClassMetaReader(
+                    dbSetting,
+                    User.class.getPackage().getName());
             DestinationDatabase destination = classMetaReader.read();
 
             action.accept(destination);

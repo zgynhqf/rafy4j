@@ -153,7 +153,7 @@ public class Result<T> extends HashMap<String, Object> {
         return r;
     }
 
-    public static Result data(Object data) {
+    public static <T> Result<T> data(T data) {
         Result r = Result.ok();
         r.setData(data);
         return r;
