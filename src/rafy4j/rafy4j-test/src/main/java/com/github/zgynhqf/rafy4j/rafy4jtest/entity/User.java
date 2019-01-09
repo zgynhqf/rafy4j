@@ -1,6 +1,5 @@
 package com.github.zgynhqf.rafy4j.rafy4jtest.entity;
 
-import com.github.zgynhqf.rafy4j.annotation.MappingTable;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -14,7 +13,14 @@ import java.util.UUID;
 public class User {
     private long id;
     private String name;
+    /**
+     * 映射不可空的字段。
+     */
     private int age;
+    /**
+     * 映射可空的字段
+     */
+    private Integer nullableAge;
     private boolean isRejected;
     private double money;
     private UUID extId;

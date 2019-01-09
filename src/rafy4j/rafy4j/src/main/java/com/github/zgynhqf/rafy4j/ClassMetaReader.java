@@ -8,6 +8,7 @@ import com.github.zgynhqf.rafy4j.env.EntityConvention;
 import com.github.zgynhqf.rafy4j.metadata.EntityFieldMeta;
 import com.github.zgynhqf.rafy4j.metadata.EntityMeta;
 import com.github.zgynhqf.rafy4j.metadata.EntityMetaParser;
+import com.github.zgynhqf.rafy4j.utils.PrimitiveType;
 import com.github.zgynhqf.rafy4j.utils.TypeHelper;
 import com.github.zgynhqf.rafy4j.utils.TypesSearcher;
 import com.sun.javafx.scene.control.behavior.OptionalBoolean;
@@ -293,8 +294,14 @@ public class ClassMetaReader implements DestinationDatabaseReader {
                 Column column = new Column(columnName, dbType, fieldMeta.getColumnLength(), table);
                 if (fieldMeta.getIsNullable() != OptionalBoolean.ANY) {
                     column.setRequired(fieldMeta.getIsNullable() == OptionalBoolean.FALSE);
-//                } else {
-//                    column.setRequired(!isNullableRef && !TypeHelper.isOptional(fieldType));
+                } else {
+                    //如果不是可空引用、可选类型、原生类型的类类型，则设置数据库字段为不可空。
+                    if (!isNullableRef &&!TypeHelper.isOptional(fieldType)) {
+                        PrimitiveType primitiveType = TypeHelper.getPrimitiveType(fieldType);
+                        if (primitiveType == null || TypeHelper.isPrimitiveType(fieldType, primitiveType)) {
+                            column.setRequired(true);
+                        }
+                    }
                 }
                 //IsPrimaryKey 的设置放在 IsRequired 之后，可以防止在设置可空的同时把列调整为非主键。
                 if (fieldMeta.getIsPrimaryKey() != OptionalBoolean.ANY) {

@@ -34,7 +34,7 @@ public class TypeHelper {
      */
     public static boolean isPrimitiveTypeOrClass(Class<?> clazz, PrimitiveType type) {
         return isPrimitiveType(clazz, type) ||
-                isWarpClass(clazz, type);
+                isPrimitiveWarpClass(clazz, type);
     }
 
     /**
@@ -44,7 +44,7 @@ public class TypeHelper {
      * @param type
      * @return
      */
-    public static boolean isWarpClass(Class<?> clazz, PrimitiveType type) {
+    public static boolean isPrimitiveWarpClass(Class<?> clazz, PrimitiveType type) {
         return isPrimitiveTypeOrClassCore(clazz, type, false);
     }
 
@@ -59,6 +59,13 @@ public class TypeHelper {
         return isPrimitiveTypeOrClassCore(clazz, type, true);
     }
 
+    /**
+     *
+     * @param clazz
+     * @param type
+     * @param checkPrimitive 是检查原生类型，还是检查引用类型。
+     * @return
+     */
     private static boolean isPrimitiveTypeOrClassCore(Class<?> clazz, PrimitiveType type, boolean checkPrimitive) {
         switch (type) {
             case BOOLEAN:
