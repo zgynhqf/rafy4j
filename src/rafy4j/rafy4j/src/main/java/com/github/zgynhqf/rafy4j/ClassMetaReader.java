@@ -305,12 +305,12 @@ public class ClassMetaReader implements DestinationDatabaseReader {
                     column.setRequired(fieldMeta.getIsNullable() == OptionalBoolean.FALSE);
                 } else {
                     //如果不是可空引用、可选类型、原生类型的类类型，则设置数据库字段为不可空。
-                    if (!isNullableRef && !TypeHelper.isOptional(fieldType)) {
+//                    if (!isNullableRef && !TypeHelper.isOptional(fieldType)) {
                         PrimitiveType primitiveType = TypeHelper.getPrimitiveType(fieldType);
-                        if (primitiveType == null || TypeHelper.isPrimitiveType(fieldType, primitiveType)) {
+                        if (primitiveType != null && TypeHelper.isPrimitiveType(fieldType, primitiveType)) {
                             column.setRequired(true);
                         }
-                    }
+//                    }
                 }
                 //IsPrimaryKey 的设置放在 IsRequired 之后，可以防止在设置可空的同时把列调整为非主键。
                 if (fieldMeta.getIsPrimaryKey() != OptionalBoolean.ANY) {
