@@ -3,6 +3,7 @@ package com.github.zgynhqf.rafy4j.rafy4jtest.entity;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -25,4 +26,8 @@ public class User {
     private double money;
     private UUID extId;
     private BigDecimal decimalValue;
+    /**
+     * 复合类型，不应该映射数据库。
+     */
+    private List<User> subUsers;
 }

@@ -31,7 +31,7 @@
         <dependency>
             <groupId>com.github.zgynhqf.rafy4j</groupId>
             <artifactId>rafy4j</artifactId>
-            <version>1.3.40</version>
+            <version>1.3.42</version>
         </dependency>
 
         <dependency>

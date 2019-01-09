@@ -90,8 +90,8 @@ public class EntityMetaParser {
             fieldMeta.setField(field);
 
             MappingColumn columnAnnotation = AnnotationHelper.findAnnotation(field, MappingColumn.class);
-            IgnoreMapping ignoreColumnAnnotation = AnnotationHelper.findAnnotation(field, IgnoreMapping.class);
-            boolean isMappingColumn = (columnAnnotation != null || meta.isMapAllFieldsToColumn()) && ignoreColumnAnnotation == null;
+            boolean isMappingColumn = (columnAnnotation != null || meta.isMapAllFieldsToColumn())
+                    && AnnotationHelper.findAnnotation(field, IgnoreMapping.class) == null;
             if (isMappingColumn) {
                 if (columnAnnotation != null) {
                     fieldMeta.setColumnName(columnAnnotation.name());

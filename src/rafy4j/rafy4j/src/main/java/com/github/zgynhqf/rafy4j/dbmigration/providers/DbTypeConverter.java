@@ -40,10 +40,10 @@ public abstract class DbTypeConverter {
     public abstract JDBCType convertToDbType(String databaseTypeName);
 
     /**
-     * 返回 CLR 类型默认映射的数据库的类型。
+     * 返回 JRE 类型默认映射的数据库的类型。
      *
      * @param type
-     * @return
+     * @return 如果是不支持映射的 JER 类型，则会返回 null。
      */
     public JDBCType fromJreType(Class type) {
         //枚举，使用字符串保存。
@@ -66,8 +66,7 @@ public abstract class DbTypeConverter {
         if (TypeHelper.isOptional(type)) return this.fromJreType(TypeHelper.ignoreOptional(type));
         if (type == UUID.class) return JDBCType.VARCHAR;
 
-        //default
-        return JDBCType.VARCHAR;
+        return null;
     }
 
     /**

@@ -12,6 +12,8 @@ import com.github.zgynhqf.rafy4j.utils.PrimitiveType;
 import com.github.zgynhqf.rafy4j.utils.TypeHelper;
 import com.github.zgynhqf.rafy4j.utils.TypesSearcher;
 import com.sun.javafx.scene.control.behavior.OptionalBoolean;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Modifier;
 import java.sql.JDBCType;
@@ -23,6 +25,8 @@ import java.util.Set;
  * 从 Rafy 元数据中读取整个数据库的元数据。
  */
 public class ClassMetaReader implements DestinationDatabaseReader {
+    private static Logger logger = LoggerFactory.getLogger(ClassMetaReader.class);
+
     private DbSetting dbSetting;
     /**
      * 需要忽略的表的表名的集合。
@@ -291,12 +295,17 @@ public class ClassMetaReader implements DestinationDatabaseReader {
 //                }
 //                var dbType = columnMeta.DbType.GetValueOrDefault(dbTypeConverter.fromJreType(dataType));
                 JDBCType dbType = dbTypeConverter.fromJreType(dataType);
+                if (dbType == null) {
+//                    logger.info("{} 不支持映射类型为 {} 的字段，名为 {} 的字段将会被忽略。", dbTypeConverter.getClass(), dataType ,fieldMeta.getName());
+                    continue;
+                }
+
                 Column column = new Column(columnName, dbType, fieldMeta.getColumnLength(), table);
                 if (fieldMeta.getIsNullable() != OptionalBoolean.ANY) {
                     column.setRequired(fieldMeta.getIsNullable() == OptionalBoolean.FALSE);
                 } else {
                     //如果不是可空引用、可选类型、原生类型的类类型，则设置数据库字段为不可空。
-                    if (!isNullableRef &&!TypeHelper.isOptional(fieldType)) {
+                    if (!isNullableRef && !TypeHelper.isOptional(fieldType)) {
                         PrimitiveType primitiveType = TypeHelper.getPrimitiveType(fieldType);
                         if (primitiveType == null || TypeHelper.isPrimitiveType(fieldType, primitiveType)) {
                             column.setRequired(true);
