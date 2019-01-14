@@ -23,7 +23,7 @@ import java.util.function.Consumer;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class Rafy4jTestApplicationTests {
+public class Rafy4jTest_DbMigration {
 
     @Test
     public void contextLoads() {
