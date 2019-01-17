@@ -10,8 +10,7 @@ import java.util.HashMap;
  * @date: 2018-11-30 21:33
  **/
 @Data
-@EqualsAndHashCode(callSuper = true)
-public class Result<T> extends HashMap<String, Object> {
+public class Result<T> {
     /**
      * A string message used by the success result.
      */
@@ -32,6 +31,7 @@ public class Result<T> extends HashMap<String, Object> {
 
     /**
      * create a Result with success status.
+     *
      * @param success
      */
     public Result(boolean success) {
@@ -43,6 +43,7 @@ public class Result<T> extends HashMap<String, Object> {
 
     /**
      * create a failed Result.
+     *
      * @param message
      */
     public Result(String message) {
@@ -54,6 +55,7 @@ public class Result<T> extends HashMap<String, Object> {
 
     /**
      * create a error message with its status.
+     *
      * @param statusCode
      */
     public Result(int statusCode) {
@@ -65,6 +67,7 @@ public class Result<T> extends HashMap<String, Object> {
 
     /**
      * create a successful result with corresponding data.
+     *
      * @param data
      */
     public Result(T data) {
@@ -76,6 +79,7 @@ public class Result<T> extends HashMap<String, Object> {
 
     /**
      * create a result with its message.
+     *
      * @param success
      * @param message
      */
@@ -88,6 +92,7 @@ public class Result<T> extends HashMap<String, Object> {
 
     /**
      * create a result by specifying its success status and a message.
+     *
      * @param success
      * @param statusCode
      */
@@ -100,6 +105,7 @@ public class Result<T> extends HashMap<String, Object> {
 
     /**
      * create a failed result by its statusCode and a error message.
+     *
      * @param statusCode
      * @param message
      */
@@ -112,6 +118,7 @@ public class Result<T> extends HashMap<String, Object> {
 
     /**
      * create a result by specifing all its status.
+     *
      * @param success
      * @param statusCode
      * @param message
@@ -125,6 +132,7 @@ public class Result<T> extends HashMap<String, Object> {
 
     /**
      * Indicates whether this instance's StatusCode and a specified object's StatusCode are equal.
+     *
      * @param another
      * @return
      */
