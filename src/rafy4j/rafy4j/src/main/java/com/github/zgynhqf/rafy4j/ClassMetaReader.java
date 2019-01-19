@@ -139,7 +139,8 @@ public class ClassMetaReader implements DestinationDatabaseReader {
         Set<Class<?>> classes = TypesSearcher.getClasses(entityPackages);
         for (Class<?> type : classes) {
             int modifiers = type.getModifiers();
-            if (!Modifier.isAbstract(modifiers) && !Modifier.isInterface(modifiers)) {
+            if (!Modifier.isAbstract(modifiers) && !type.isAnnotation() && !type.isEnum()
+                    && !type.isInterface() && !type.isAnonymousClass()) {
                 //判断实体类型是否映射了某一个数据库
                 EntityMeta meta = metaParser.parse(type);
 
@@ -306,10 +307,10 @@ public class ClassMetaReader implements DestinationDatabaseReader {
                 } else {
                     //如果不是可空引用、可选类型、原生类型的类类型，则设置数据库字段为不可空。
 //                    if (!isNullableRef && !TypeHelper.isOptional(fieldType)) {
-                        PrimitiveType primitiveType = TypeHelper.getPrimitiveType(fieldType);
-                        if (primitiveType != null && TypeHelper.isPrimitiveType(fieldType, primitiveType)) {
-                            column.setRequired(true);
-                        }
+                    PrimitiveType primitiveType = TypeHelper.getPrimitiveType(fieldType);
+                    if (primitiveType != null && TypeHelper.isPrimitiveType(fieldType, primitiveType)) {
+                        column.setRequired(true);
+                    }
 //                    }
                 }
                 //IsPrimaryKey 的设置放在 IsRequired 之后，可以防止在设置可空的同时把列调整为非主键。
