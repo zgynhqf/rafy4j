@@ -8,11 +8,14 @@ import com.github.zgynhqf.rafy4j.dbmigration.model.Database;
 import com.github.zgynhqf.rafy4j.dbmigration.model.DestinationDatabase;
 import com.github.zgynhqf.rafy4j.dbmigration.model.Table;
 import com.github.zgynhqf.rafy4j.env.RafyEnvironment;
+import com.github.zgynhqf.rafy4j.metadata.EntityMetaStore;
 import com.github.zgynhqf.rafy4j.rafy4jtest.config.TestConfig;
 import com.github.zgynhqf.rafy4j.rafy4jtest.entity.User;
 import lombok.var;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -24,9 +27,12 @@ import java.util.function.Consumer;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class Rafy4jTest_DbMigration {
+    @Autowired
+    private EntityMetaStore metaStore;
 
-    @Test
+    @Before
     public void contextLoads() {
+        metaStore.addEntityPackages(User.class.getPackage());
     }
 
     @Test
@@ -59,9 +65,7 @@ public class Rafy4jTest_DbMigration {
 //            context.HistoryRepository = new DbHistoryRepository();
             context.setRunDataLossOperation(DataLossOperation.All);
 
-            ClassMetaReader classMetaReader = new ClassMetaReader(
-                    dbSetting,
-                    User.class.getPackage().getName());
+            ClassMetaReader classMetaReader = new ClassMetaReader(dbSetting, metaStore);
             DestinationDatabase destination = classMetaReader.read();
 
             action.accept(destination);

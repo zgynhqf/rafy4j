@@ -49,7 +49,7 @@ public class EntityMetaParser {
      * @return
      */
     public EntityMeta parse(Class<?> type) {
-        EntityMeta meta = new EntityMeta();
+        EntityMeta meta = new EntityMeta(type);
 
         boolean ignoreMapping = AnnotationHelper.findAnnotation(type, IgnoreMapping.class) != null;
         if (!ignoreMapping) {

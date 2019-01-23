@@ -19,6 +19,10 @@ public class EntityMeta {
     private boolean mapAllFieldsToColumn = true;
     private List<EntityFieldMeta> fields = new ArrayList<>();
 
+    public EntityMeta(Class<?> type) {
+        this.type = type;
+    }
+
     /**
      * 返回是否映射到数据库表。
      * @return
@@ -34,10 +38,6 @@ public class EntityMeta {
 
     public Class<?> getType() {
         return type;
-    }
-
-    public void setType(Class<?> type) {
-        this.type = type;
     }
 
     public String getTableName() {

@@ -13,9 +13,9 @@ import org.springframework.beans.factory.support.GenericBeanDefinition;
  * @date: 2018-12-26 12:22
  **/
 public abstract class RafyEnvironment {
+    //region bean
     private static BeanFactory beanFactory;
     private static BeanDefinitionRegistry beanDefinitionRegistry;
-    private static DbSettingRepository dbSettingRepository;
 
     public static BeanFactory getBeanFactory() {
         return beanFactory;
@@ -36,19 +36,13 @@ public abstract class RafyEnvironment {
     }
 
     /**
-     * 获取容器中的 DbSettingRepository。
-     * 若容器中没有，则创建一个。
-     *
+     * 获取指定类型的 Bean，如果这个 Bean 的定义找不到，则会主动向容器中添加这个定义。
+     * @param requiredType
+     * @param <T>
      * @return
      */
-    public static DbSettingRepository getDbSettingRepository() {
-        if (dbSettingRepository == null) {
-            //如果开发者没有注册 DbSettingRepository，则手工注册一个默认的。
-            tryCreateDefaultBean(DbSettingRepository.class);
-
-            dbSettingRepository = beanFactory.getBean(DbSettingRepository.class);
-        }
-        return dbSettingRepository;
+    public static <T> T getBean(Class<T> requiredType){
+        return beanFactory.getBean(requiredType);
     }
 
     /**
@@ -64,5 +58,21 @@ public abstract class RafyEnvironment {
                 setScope(SCOPE_SINGLETON);
             }});
         }
+    }
+    //endregion
+
+    private static DbSettingRepository dbSettingRepository;
+
+    /**
+     * 获取容器中的 DbSettingRepository。
+     * 若容器中没有，则创建一个。
+     *
+     * @return
+     */
+    public static DbSettingRepository getDbSettingRepository() {
+        if (dbSettingRepository == null) {
+            dbSettingRepository = getBean(DbSettingRepository.class);
+        }
+        return dbSettingRepository;
     }
 }

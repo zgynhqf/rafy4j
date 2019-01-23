@@ -7,19 +7,17 @@ import com.github.zgynhqf.rafy4j.dbmigration.providers.DbTypeConverter;
 import com.github.zgynhqf.rafy4j.env.EntityConvention;
 import com.github.zgynhqf.rafy4j.metadata.EntityFieldMeta;
 import com.github.zgynhqf.rafy4j.metadata.EntityMeta;
-import com.github.zgynhqf.rafy4j.metadata.EntityMetaParser;
+import com.github.zgynhqf.rafy4j.metadata.EntityMetaStore;
 import com.github.zgynhqf.rafy4j.utils.PrimitiveType;
 import com.github.zgynhqf.rafy4j.utils.TypeHelper;
-import com.github.zgynhqf.rafy4j.utils.TypesSearcher;
 import com.sun.javafx.scene.control.behavior.OptionalBoolean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.lang.reflect.Modifier;
 import java.sql.JDBCType;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 /**
  * 从 Rafy 元数据中读取整个数据库的元数据。
@@ -33,14 +31,12 @@ public class ClassMetaReader implements DestinationDatabaseReader {
      */
     private List<String> ignoreTables;
     private boolean isGeneratingForeignKey = true;
-    private String[] entityPackages;
-    private EntityMetaParser metaParser = new EntityMetaParser();
+    private EntityMetaStore entityMetaStore;
 
-    public ClassMetaReader(DbSetting dbSetting, String... entityPackage) {
+    public ClassMetaReader(DbSetting dbSetting, EntityMetaStore entityMetaStore) {
         this.dbSetting = dbSetting;
         ignoreTables = new ArrayList<>();
-
-        this.entityPackages = entityPackage;
+        this.entityMetaStore = entityMetaStore;
     }
 
     //region gs
@@ -55,22 +51,6 @@ public class ClassMetaReader implements DestinationDatabaseReader {
         return isGeneratingForeignKey;
     }
 
-    public boolean isMapCamelToUnderline() {
-        return metaParser.isMapCamelToUnderline();
-    }
-
-    public void setMapCamelToUnderline(boolean mapCamelToUnderline) {
-        metaParser.setMapCamelToUnderline(mapCamelToUnderline);
-    }
-
-    public boolean isMapAllEntitiesToTable() {
-        return metaParser.isMapAllEntitiesToTable();
-    }
-
-    public void setMapAllEntitiesToTable(boolean mapAllEntitiesToTable) {
-        metaParser.setMapAllEntitiesToTable(mapAllEntitiesToTable);
-    }
-    //
 //    /**
 //     * 是否需要同时读取出相应的注释。
 //     */
@@ -106,19 +86,17 @@ public class ClassMetaReader implements DestinationDatabaseReader {
      * @return
      */
     public final DestinationDatabase read() {
-        List<EntityMeta> tableEntityTypes = this.getMappingEntityTypes();
-
         DestinationDatabase result = new DestinationDatabase(dbSetting.getDatabase());
 
         result.getIgnoreTables().addAll(ignoreTables);
 
-        if (tableEntityTypes.isEmpty()) {
+        if (entityMetaStore.isEmpty()) {
             result.setRemoved(true);
         } else {
             TypesMetaReader reader = this.createTypesMetaReader();
             reader.dbTypeConverter = DbMigrationProviderFactory.getDbTypeConverter(dbSetting.getDriverName());
             reader.database = result;
-            reader.entities = tableEntityTypes;
+            reader.entities = entityMetaStore.values();
             reader.setGeneratingForeignKey(this.isGeneratingForeignKey());
 //            reader.setReadComment(this.getReadComment());
 //            reader.setAdditionalPropertiesComments(this.getAdditionalPropertiesComments());
@@ -132,29 +110,10 @@ public class ClassMetaReader implements DestinationDatabaseReader {
         return new TypesMetaReader();
     }
 
-    private List<EntityMeta> getMappingEntityTypes() {
-        List<EntityMeta> tableEntityTypes = new ArrayList<>();
-
-        //程序集列表，生成数据库会反射找到程序集内的实体类型进行数据库映射
-        Set<Class<?>> classes = TypesSearcher.getClasses(entityPackages);
-        for (Class<?> type : classes) {
-            int modifiers = type.getModifiers();
-            if (!Modifier.isAbstract(modifiers) && !type.isAnnotation() && !type.isEnum()
-                    && !type.isInterface() && !type.isAnonymousClass()) {
-                //判断实体类型是否映射了某一个数据库
-                EntityMeta meta = metaParser.parse(type);
-
-                tableEntityTypes.add(meta);
-            }
-        }
-
-        return tableEntityTypes;
-    }
-
     public static class TypesMetaReader {
         private DbTypeConverter dbTypeConverter;
         private DestinationDatabase database;
-        private List<EntityMeta> entities;
+        private Collection<EntityMeta> entities;
         /**
          * 是否生成外键，默认true
          */
