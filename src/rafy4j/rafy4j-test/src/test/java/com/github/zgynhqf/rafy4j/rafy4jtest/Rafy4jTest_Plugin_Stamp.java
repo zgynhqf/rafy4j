@@ -57,6 +57,17 @@ public class Rafy4jTest_Plugin_Stamp {
         Assert.assertTrue(userAfterInsert.getUpdateTime().before(userAfterUpdate.getUpdateTime()));
         Assert.assertEquals("rafy4j", userAfterUpdate.getUpdater());
 
+        //再次更新，也需要能更新此值。
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        userMapper.updateById(userAfterUpdate);
+        User userAfterUpdate2 = userMapper.selectById(user.getId());
+        Assert.assertNotNull(userAfterUpdate2.getUpdateTime());
+        Assert.assertTrue(userAfterUpdate.getUpdateTime().before(userAfterUpdate2.getUpdateTime()));
+
         userMapper.delete(null);
     }
 }
