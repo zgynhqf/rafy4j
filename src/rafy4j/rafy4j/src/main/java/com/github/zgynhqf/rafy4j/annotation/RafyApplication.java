@@ -17,4 +17,10 @@ import java.lang.annotation.*;
 @Import({RafyBeanImporter.class})
 //@Import({RafyBeanImporter.class, RafyConfigurationImportSelector.class})
 public @interface RafyApplication {
+    /**
+     * 列出所有实体类所在包的代理类（代理类为包中的任意一个类型）
+     *
+     * @return
+     */
+    Class<?>[] entityPackageClasses() default {};
 }

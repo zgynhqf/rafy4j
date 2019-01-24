@@ -39,7 +39,9 @@ public class Rafy4jTest_Domain {
         user.setName("hqf");
         userMapper.insert(user);
 
-        int count = userMapper.selectCount(null);
+        List<User> users = userMapper.selectList(null);
+
+        int count = users.size();
         Assert.assertEquals(oldCount + 1, count);
 
         userMapper.delete(null);

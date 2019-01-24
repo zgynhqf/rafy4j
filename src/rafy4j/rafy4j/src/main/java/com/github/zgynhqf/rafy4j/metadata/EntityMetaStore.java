@@ -1,6 +1,8 @@
 package com.github.zgynhqf.rafy4j.metadata;
 
+import com.github.zgynhqf.rafy4j.annotation.RafyApplicationAnnotationHolder;
 import com.github.zgynhqf.rafy4j.utils.TypesSearcher;
+import org.springframework.beans.factory.InitializingBean;
 
 import java.lang.reflect.Modifier;
 import java.util.*;
@@ -12,12 +14,31 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author: huqingfang
  * @date: 2019-01-21 13:48
  **/
-public class EntityMetaStore extends ConcurrentHashMap<Class<?>, EntityMeta> {
+public class EntityMetaStore extends ConcurrentHashMap<Class<?>, EntityMeta> implements InitializingBean {
     private EntityMetaParser metaParser;
 
     public EntityMetaStore() {
         super(20);
         metaParser = new EntityMetaParser();
+    }
+
+    /**
+     * 初始化
+     * 将 {@link com.github.zgynhqf.rafy4j.annotation.RafyApplication} 中标记的所有实体包中的所有实体，
+     * 都加载其相应的元数据。
+     * @throws Exception
+     */
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        Class<?>[] entityPackageClasses = RafyApplicationAnnotationHolder.getEntityPackageClasses();
+
+        String[] packages = new String[entityPackageClasses.length];
+        for (int i = 0; i < entityPackageClasses.length; i++) {
+            Class<?> deleteEntity = entityPackageClasses[i];
+            packages[i] = deleteEntity.getPackage().getName();
+        }
+
+        this.addEntityPackages(packages);
     }
 
     /**

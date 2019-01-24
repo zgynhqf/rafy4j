@@ -7,6 +7,7 @@ import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.GenericBeanDefinition;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
+import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.type.AnnotationMetadata;
 
 /**
@@ -16,10 +17,15 @@ import org.springframework.core.type.AnnotationMetadata;
 class RafyBeanImporter implements ImportBeanDefinitionRegistrar, BeanFactoryAware {
     @Override
     public void registerBeanDefinitions(AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry) {
-        registry.registerBeanDefinition(RafyConfig.class.getName(), new GenericBeanDefinition() {{
-            setBeanClass(RafyConfig.class);
-        }});
         RafyEnvironment.setBeanDefinitionRegistry(registry);
+
+        GenericBeanDefinition rafyConfigBean = new GenericBeanDefinition();
+        rafyConfigBean.setBeanClass(RafyConfig.class);
+        registry.registerBeanDefinition(RafyConfig.class.getName(), rafyConfigBean);
+
+        RafyApplicationAnnotationHolder.setAnnotationAttributes(
+                AnnotationAttributes.fromMap(importingClassMetadata.getAnnotationAttributes(RafyApplication.class.getName()))
+        );
     }
 
     @Override
