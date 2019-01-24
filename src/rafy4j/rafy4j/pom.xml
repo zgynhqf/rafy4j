@@ -13,7 +13,7 @@
 
     <groupId>com.github.zgynhqf.rafy4j</groupId>
     <artifactId>rafy4j</artifactId>
-    <version>1.4.45</version>
+    <version>1.5.50</version>
 
     <name>com.github.zgynhqf.rafy4j:rafy4j</name>
     <url>https://github.com/zgynhqf/rafy4j</url>
@@ -44,6 +44,21 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <optional>true</optional>
+        </dependency>
+
+        <!--mybatis-plus-->
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus-boot-starter</artifactId>
+            <version>3.0.7.1</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!--spring security-->
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-core</artifactId>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 

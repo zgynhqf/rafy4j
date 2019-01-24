@@ -62,4 +62,19 @@ public class NameUtils {
         }
         return sb.toString();
     }
+
+    /**
+     * <p>
+     * 首字母转换小写
+     * </p>
+     *
+     * @param param 需要转换的字符串
+     * @return 转换好的字符串
+     */
+    public static String firstToLowerCase(String param) {
+        if (StringUtils.isEmpty(param)) {
+            return param;
+        }
+        return param.substring(0, 1).toLowerCase() + param.substring(1);
+    }
 }
