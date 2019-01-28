@@ -9,6 +9,7 @@ import com.github.zgynhqf.rafy4j.utils.TypeHelper;
 import org.apache.commons.lang3.StringUtils;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.List;
 
 /**
@@ -85,6 +86,10 @@ public class EntityMetaParser {
         List<Field> fields = TypeHelper.getMembers(type, t -> t.getDeclaredFields());
         for (int i = 0; i < fields.size(); i++) {
             Field field = fields.get(i);
+
+            //忽略静态字段。
+            int modifiers = field.getModifiers();
+            if(Modifier.isStatic(modifiers)) continue;
 
             EntityFieldMeta fieldMeta = new EntityFieldMeta();
             fieldMeta.setField(field);
