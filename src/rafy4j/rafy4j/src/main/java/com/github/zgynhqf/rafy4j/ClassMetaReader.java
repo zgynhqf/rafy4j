@@ -1,5 +1,7 @@
 package com.github.zgynhqf.rafy4j;
 
+import com.github.zgynhqf.rafy4j.annotation.Reference;
+import com.github.zgynhqf.rafy4j.annotation.ReferenceType;
 import com.github.zgynhqf.rafy4j.data.DbSetting;
 import com.github.zgynhqf.rafy4j.dbmigration.model.*;
 import com.github.zgynhqf.rafy4j.dbmigration.providers.DbMigrationProviderFactory;
@@ -8,6 +10,7 @@ import com.github.zgynhqf.rafy4j.env.EntityConvention;
 import com.github.zgynhqf.rafy4j.metadata.EntityFieldMeta;
 import com.github.zgynhqf.rafy4j.metadata.EntityMeta;
 import com.github.zgynhqf.rafy4j.metadata.EntityMetaStore;
+import com.github.zgynhqf.rafy4j.utils.AnnotationHelper;
 import com.github.zgynhqf.rafy4j.utils.PrimitiveType;
 import com.github.zgynhqf.rafy4j.utils.TypeHelper;
 import com.sun.javafx.scene.control.behavior.OptionalBoolean;
@@ -16,7 +19,6 @@ import org.slf4j.LoggerFactory;
 
 import java.sql.JDBCType;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -30,7 +32,10 @@ public class ClassMetaReader implements DestinationDatabaseReader {
      * 需要忽略的表的表名的集合。
      */
     private List<String> ignoreTables;
-    private boolean isGeneratingForeignKey = true;
+    /**
+     * 是否生成外键，默认true
+     */
+    private boolean generatingForeignKey = true;
     private EntityMetaStore entityMetaStore;
 
     public ClassMetaReader(DbSetting dbSetting, EntityMetaStore entityMetaStore) {
@@ -44,14 +49,15 @@ public class ClassMetaReader implements DestinationDatabaseReader {
         return ignoreTables;
     }
 
-    /**
-     * 是否生成外键，默认true
-     */
     public final boolean isGeneratingForeignKey() {
-        return isGeneratingForeignKey;
+        return generatingForeignKey;
     }
 
-//    /**
+    public void setGeneratingForeignKey(boolean generatingForeignKey) {
+        this.generatingForeignKey = generatingForeignKey;
+    }
+
+    //    /**
 //     * 是否需要同时读取出相应的注释。
 //     */
 //    private boolean privateReadComment;
@@ -96,8 +102,8 @@ public class ClassMetaReader implements DestinationDatabaseReader {
             TypesMetaReader reader = this.createTypesMetaReader();
             reader.dbTypeConverter = DbMigrationProviderFactory.getDbTypeConverter(dbSetting.getDriverName());
             reader.database = result;
-            reader.entities = entityMetaStore.values();
-            reader.setGeneratingForeignKey(this.isGeneratingForeignKey());
+            reader.entityMetaStore = entityMetaStore;
+            reader.setGeneratingForeignKey(generatingForeignKey);
 //            reader.setReadComment(this.getReadComment());
 //            reader.setAdditionalPropertiesComments(this.getAdditionalPropertiesComments());
             reader.Read();
@@ -113,7 +119,7 @@ public class ClassMetaReader implements DestinationDatabaseReader {
     public static class TypesMetaReader {
         private DbTypeConverter dbTypeConverter;
         private DestinationDatabase database;
-        private Collection<EntityMeta> entities;
+        private EntityMetaStore entityMetaStore;
         /**
          * 是否生成外键，默认true
          */
@@ -164,7 +170,7 @@ public class ClassMetaReader implements DestinationDatabaseReader {
         public final void Read() {
 //            _commentFinder.setAdditionalPropertiesComments(this.getAdditionalPropertiesComments());
 
-            for (EntityMeta meta : entities) {
+            for (EntityMeta meta : entityMetaStore.values()) {
                 this.BuildTable(meta);
             }
 
@@ -194,60 +200,6 @@ public class ClassMetaReader implements DestinationDatabaseReader {
                 //类型
                 Class<?> fieldType = fieldMeta.getField().getType();
 
-                //region 引用关系
-                boolean isNullableRef = false;
-//                if (columnMeta.HasFKConstraint) {
-//                    var refProperty = (IRefProperty) ((mp instanceof IRefProperty) ? mp : null);
-//                    if (refProperty != null) {
-//                        isNullableRef = refProperty.Nullable;
-//
-//                        //是否生成外键
-//                        // 默认 IsGeneratingForeignKey 为 true
-//                        if (generatingForeignKey()) {
-//                            var refMeta = em.Property(refProperty.RefEntityProperty);
-//                            if (refMeta.ReferenceInfo == null) {
-//                                throw new InvalidOperationException("refMeta.ReferenceInfo == null");
-//                            }
-//
-//                            //引用实体的类型。
-//                            var refTypeMeta = refMeta.ReferenceInfo.RefTypeMeta;
-//                            if (refTypeMeta != null) {
-//                                var refTableMeta = refTypeMeta.TableMeta;
-//                                if (refTableMeta != null) {
-//                                    //如果主键表已经被忽略，那么到这个表上的外键也不能建立了。
-//                                    //这是因为被忽略的表的结构是未知的，不一定是以这个字段为主键。
-//                                    if (!this.database.isIgnored(refTableMeta.TableName)) {
-//                                        var id = refTypeMeta.Property(Entity.IdProperty);
-//                                        //有时一些表的 Id 只是自增长，但并不是主键，不能创建外键。
-//                                        if (id.ColumnMeta.IsPrimaryKey) {
-//                                            ForeignConstraintInfo tempVar = new ForeignConstraintInfo();
-//                                            tempVar.FkTableName = tableMeta.TableName;
-//                                            tempVar.PkTableName = refTableMeta.TableName;
-//                                            tempVar.FkColumn = columnName;
-//                                            tempVar.PkColumn = id.ColumnMeta.ColumnName;
-//                                            tempVar.NeedDeleteCascade = refProperty.ReferenceType == ReferenceType.Parent;
-//                                            this.foreigns.add(tempVar);
-//                                        }
-//                                    }
-//                                }
-//                            }
-//                        }
-//                    } else if (generatingForeignKey() && mp == Entity.TreePIdProperty) {
-//                        var id = em.Property(Entity.IdProperty);
-//                        //有时一些表的 Id 只是自增长，但并不是主键，不能创建外键。
-//                        if (id.ColumnMeta.IsPrimaryKey) {
-//                            ForeignConstraintInfo tempVar2 = new ForeignConstraintInfo();
-//                            tempVar2.FkTableName = tableMeta.TableName;
-//                            tempVar2.PkTableName = tableMeta.TableName;
-//                            tempVar2.FkColumn = columnName;
-//                            tempVar2.PkColumn = id.ColumnMeta.ColumnName;
-//                            tempVar2.NeedDeleteCascade = false;
-//                            this.foreigns.add(tempVar2);
-//                        }
-//                    }
-//                }
-                //endregion
-
                 Class dataType = TypeHelper.ignoreOptional(fieldType);
                 //对于支持多数据类型的 Id、TreePId 属性进行特殊处理。
 //                if (mp == Entity.IdProperty || mp == Entity.TreePIdProperty) {
@@ -259,6 +211,9 @@ public class ClassMetaReader implements DestinationDatabaseReader {
 //                    logger.info("{} 不支持映射类型为 {} 的字段，名为 {} 的字段将会被忽略。", dbTypeConverter.getClass(), dataType ,fieldMeta.getName());
                     continue;
                 }
+
+                //是否为约定的 Id 列的列名。
+                boolean isIdCovention = columnName.equalsIgnoreCase(EntityConvention.IdColumnName);
 
                 Column column = new Column(columnName, dbType, fieldMeta.getColumnLength(), table);
                 if (fieldMeta.getIsNullable() != OptionalBoolean.ANY) {
@@ -276,16 +231,28 @@ public class ClassMetaReader implements DestinationDatabaseReader {
                 if (fieldMeta.getIsPrimaryKey() != OptionalBoolean.ANY) {
                     column.setPrimaryKey(fieldMeta.getIsPrimaryKey() == OptionalBoolean.TRUE);
                 } else {
-                    column.setPrimaryKey(column.getName().equalsIgnoreCase(EntityConvention.IdColumnName));
+                    column.setPrimaryKey(isIdCovention);
                 }
                 if (fieldMeta.getIsAutoIncrement() != OptionalBoolean.ANY) {
                     column.setAutoIncrement(fieldMeta.getIsAutoIncrement() == OptionalBoolean.TRUE);
                 } else {
-                    column.setAutoIncrement(column.getName().equalsIgnoreCase(EntityConvention.IdColumnName));
+                    column.setAutoIncrement(isIdCovention);
                 }
                 column.setDefaultValue(fieldMeta.getDefaultValue());
 
                 table.getColumns().add(column);
+
+                //region 引用关系
+                if (generatingForeignKey) {
+                    Reference annotation = AnnotationHelper.findAnnotation(fieldMeta.getField(), Reference.class);
+                    if (annotation != null) {
+                        ForeignConstraintInfo fcInfo = new ForeignConstraintInfo();
+                        fcInfo.FKColumn = column;
+                        fcInfo.Annotation = annotation;
+                        this.foreigns.add(fcInfo);
+                    }
+                }
+                //endregion
 
                 this.onColumnCreated(column, fieldMeta);
 
@@ -344,19 +311,28 @@ public class ClassMetaReader implements DestinationDatabaseReader {
          */
         private void buildFKRelations() {
             for (ForeignConstraintInfo foreign : this.foreigns) {
-                //外键表必须找到，否则这个外键不会加入到集合中。
-                Table fkTable = this.database.findTable(foreign.FkTableName);
-                Column fkColumn = fkTable.findColumn(foreign.FkColumn);
+                //引用实体的类型。
+                EntityMeta refTypeMeta = entityMetaStore.getEntityMeta(foreign.Annotation.entity());
+                if (refTypeMeta == null || !refTypeMeta.isMappingTable()) continue;
 
-                Table pkTable = this.database.findTable(foreign.PkTableName);
+                //如果主键表已经被忽略，那么到这个表上的外键也不能建立了。
+                //这是因为被忽略的表的结构是未知的，不一定是以这个字段为主键。
+                String pkTableName = refTypeMeta.getTableName();
+                if (this.database.isIgnored(pkTableName)) continue;
+
                 //有可能这个引用的表并不在这个数据库中，此时不需要创建外键。
-                if (pkTable != null) {
-                    //找到主键列，创建引用关系
-                    Column pkColumn = pkTable.findColumn(foreign.PkColumn);
-                    ForeignConstraint foreignConstraint = new ForeignConstraint(pkColumn);
-                    foreignConstraint.setNeedDeleteCascade(foreign.NeedDeleteCascade);
-                    fkColumn.setForeignConstraint(foreignConstraint);
-                }
+                Table pkTable = this.database.findTable(pkTableName);
+                if (pkTable == null) continue;
+
+                //找到主键列，创建引用关系
+                Column pkColumn = pkTable.findPrimaryColumn();
+                if (pkColumn == null) continue;
+
+                boolean needDeleteCascade = foreign.Annotation.referenceType() == ReferenceType.AGGREGATION_PARENT;
+
+                ForeignConstraint foreignConstraint = new ForeignConstraint(pkColumn);
+                foreignConstraint.setNeedDeleteCascade(needDeleteCascade);
+                foreign.FKColumn.setForeignConstraint(foreignConstraint);
             }
         }
 
@@ -364,8 +340,8 @@ public class ClassMetaReader implements DestinationDatabaseReader {
          * 简单描述外键约束的信息，在表构建完成后，用些信息构造外键约束
          */
         private static class ForeignConstraintInfo {
-            public String FkTableName, PkTableName, FkColumn, PkColumn;
-            public boolean NeedDeleteCascade;
+            Column FKColumn;
+            Reference Annotation;
         }
     }
 }
