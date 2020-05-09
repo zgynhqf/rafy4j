@@ -1,5 +1,6 @@
 package com.github.zgynhqf.rafy4j.utils;
 
+import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.core.annotation.AnnotationUtils;
 
 import java.lang.annotation.Annotation;
@@ -12,6 +13,7 @@ import java.lang.reflect.AnnotatedElement;
 public class AnnotationHelper {
     /**
      * 以一种支持组合注解的形式来查找 Annotation。
+     *
      * @param annotatedElement
      * @param annotationType
      * @param <A>
@@ -19,6 +21,7 @@ public class AnnotationHelper {
      */
     public static <A extends Annotation> A findAnnotation(AnnotatedElement annotatedElement, Class<A> annotationType) {
         //目前通过 Spring 中自带的 AnnotationUtils 来实现。
-        return AnnotationUtils.findAnnotation(annotatedElement, annotationType);
+        return AnnotatedElementUtils.findMergedAnnotation(annotatedElement, annotationType);
+//        return AnnotationUtils.findAnnotation(annotatedElement, annotationType);
     }
 }
